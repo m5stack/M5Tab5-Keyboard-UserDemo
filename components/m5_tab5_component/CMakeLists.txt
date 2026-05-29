@@ -1,0 +1,56 @@
+set(m5_tab5_component_srcs
+    "src/m5_tab5_component.cpp"
+    "src/tools/m5tab5_tools_lvgl.cpp"
+    "src/drivers/m5tab5_builtin_drivers.cpp"
+    "src/drivers/m5tab5_sys_i2c.cpp"
+    "src/drivers/lcd_st7121/m5tab5_lcd_st7121.cpp"
+    "src/drivers/lcd_st7121/esp_lcd_st7121.c"
+    "src/drivers/lcd_st7123/m5tab5_lcd_st7123.cpp"
+    "src/drivers/lcd_st7123/esp_lcd_st7123.c"
+    "src/drivers/lcd_ili9881/m5tab5_lcd_ili9881.cpp"
+    "src/drivers/lcd_ili9881/esp_lcd_ili9881c.c"
+    "src/drivers/touch_st7121/m5tab5_touch_st7121.cpp"
+    "src/drivers/touch_st7121/esp_lcd_touch_st7121.c"
+    "src/drivers/touch_st7123/m5tab5_touch_st7123.cpp"
+    "src/drivers/touch_st7123/esp_lcd_touch_st7123.c"
+    "src/drivers/touch_gt911/m5tab5_touch_gt911.cpp"
+    "src/drivers/touch_gt911/esp_lcd_touch_gt911.c"
+    "src/drivers/extio_pi4ioe5v6408/m5tab5_extio_pi4ioe5v6408.cpp"
+    "src/drivers/rtc_rx8130/m5tab5_rtc_rx8130.cpp"
+    "src/variants/m5tab5_variant_registry.cpp"
+    "src/variants/m5tab5_variant_reference.cpp"
+    "src/variants/m5tab5_variant_autodetect.cpp"
+    "src/lvgl_port/lvgl_port.cpp"
+    "src/lvgl_port/lvgl_port_disp.cpp"
+    "src/lvgl_port/lvgl_port_touch.cpp"
+)
+
+idf_component_register(
+    SRCS ${m5_tab5_component_srcs}
+    INCLUDE_DIRS
+        "include"
+    PRIV_INCLUDE_DIRS
+        "src"
+        "src/drivers"
+        "src/variants"
+        "src/lvgl_port"
+    REQUIRES
+        espressif__esp_lvgl_port
+        esp_lcd
+        esp_lcd_touch
+        lvgl__lvgl
+    PRIV_REQUIRES
+        driver
+        esp_driver_gpio
+        esp_driver_i2c
+        esp_driver_ledc
+        esp_hw_support
+        espressif__i2c_bus
+        nvs_flash
+        esp_netif
+        esp_event
+        esp_wifi
+        esp_driver_ppa
+        esp_mm
+        esp_timer
+)

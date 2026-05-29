@@ -1,0 +1,29 @@
+menu "M5 Tab5 Component"
+
+    config M5_TAB5_DEV_STATE
+        bool "Component is in dev state"
+        default y
+        help
+            The component is currently treated as a development-only API surface.
+            No historical source or binary compatibility is required while the
+            file layout and public interfaces are being reworked.
+
+    choice M5_TAB5_VARIANT_SELECT
+        prompt "Tab5 variant selection"
+        default M5_TAB5_VARIANT_SELECT_AUTO
+        help
+            Select whether the component should detect the attached hardware at runtime
+            or force a known reference variant at build time.
+
+        config M5_TAB5_VARIANT_SELECT_AUTO
+            bool "Auto detect from variant registry"
+
+        config M5_TAB5_VARIANT_SELECT_REFERENCE
+            bool "Force reference variant"
+    endchoice
+
+    config M5_TAB5_ENABLE_OPTIONAL_DRIVER_INIT
+        bool "Initialize optional drivers during component begin"
+        default y
+
+endmenu
