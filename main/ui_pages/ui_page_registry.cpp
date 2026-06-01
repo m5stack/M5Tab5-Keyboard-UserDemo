@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-﻿#include "ui_page_registry.h"
+#include "ui_page_registry.h"
 #include "ui_page_manager.h"
 #include "lvgl_port.h"
 #include <esp_log.h>

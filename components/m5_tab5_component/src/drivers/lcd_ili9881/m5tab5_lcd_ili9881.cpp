@@ -71,27 +71,26 @@ esp_err_t m5tab5_lcd_ili9881_init(m5tab5_runtime_t* runtime)
 {
     const char* TAG = m5tab5_driver_log_tag();
 
-    // 1. Backlight / èå
+    // 1. Backlight / 背光
     ESP_RETURN_ON_ERROR(backlight_init(), TAG, "backlight init failed");
 
-    // 2. DSI PHY power / DSI PHY ä¾çµ
+    // 2. DSI PHY power / DSI PHY 供电
     ESP_RETURN_ON_ERROR(enable_dsi_phy_power(), TAG, "DSI PHY power failed");
 
-    // 3. Create MIPI DSI bus / åå»º MIPI DSI æ»çº¿
+    // 3. Create MIPI DSI bus / 创建 MIPI DSI 总线
     esp_lcd_dsi_bus_config_t bus_cfg = ILI9881C_PANEL_BUS_DSI_2CH_CONFIG();
     ESP_RETURN_ON_ERROR(esp_lcd_new_dsi_bus(&bus_cfg, &s_handles.mipi_dsi_bus), TAG, "new DSI bus failed");
 
-    // 4. Create DBI panel IO / åå»º DBI é¢æ¿ IO
+    // 4. Create DBI panel IO / 创建 DBI 面板 IO
     esp_lcd_dbi_io_config_t dbi_cfg = ILI9881C_PANEL_IO_DBI_CONFIG();
     ESP_RETURN_ON_ERROR(esp_lcd_new_panel_io_dbi(s_handles.mipi_dsi_bus, &dbi_cfg, &s_handles.io), TAG,
                         "new panel IO failed");
 
-    // 5. Create the ILI9881C panel / åå»º ILI9881C é¢æ¿
+    // 5. Create the ILI9881C panel / 创建 ILI9881C 面板
     esp_lcd_dpi_panel_config_t dpi_cfg = ILI9881C_720_1280_PANEL_60HZ_DPI_CONFIG(LCD_COLOR_FMT_RGB565);
 
     ili9881c_vendor_config_t vendor_cfg = {
-        .init_cmds =
-            nullptr,  // use built-in default / ä½¿ç¨åç½®é»è®¤åå§ååºå?
+        .init_cmds      = nullptr,  // use built-in default / 使用内置默认初始化序�?
         .init_cmds_size = 0,
         .mipi_config =
             {
@@ -102,8 +101,7 @@ esp_err_t m5tab5_lcd_ili9881_init(m5tab5_runtime_t* runtime)
     };
 
     esp_lcd_panel_dev_config_t panel_cfg = {
-        .reset_gpio_num =
-            GPIO_NUM_NC,  // LCD_RST controlled via IO expander / LCD_RST ç?IO æ©å±å¨æ§å?
+        .reset_gpio_num = GPIO_NUM_NC,  // LCD_RST controlled via IO expander / LCD_RST �?IO 扩展器控�?
         .rgb_ele_order  = LCD_RGB_ELEMENT_ORDER_RGB,
         .data_endian    = LCD_RGB_DATA_ENDIAN_BIG,
         .bits_per_pixel = 16,
@@ -112,7 +110,7 @@ esp_err_t m5tab5_lcd_ili9881_init(m5tab5_runtime_t* runtime)
     ESP_RETURN_ON_ERROR(esp_lcd_new_panel_ili9881c(s_handles.io, &panel_cfg, &s_handles.panel), TAG,
                         "new ili9881c panel failed");
 
-    // 6. Reset -> Init -> Display ON / å¤ä½ -> åå§å?-> æå¼æ¾ç¤º
+    // 6. Reset -> Init -> Display ON / 复位 -> 初始�?-> 打开显示
     ESP_RETURN_ON_ERROR(esp_lcd_panel_reset(s_handles.panel), TAG, "panel reset failed");
     ESP_RETURN_ON_ERROR(esp_lcd_panel_init(s_handles.panel), TAG, "panel init failed");
     ESP_RETURN_ON_ERROR(esp_lcd_panel_disp_on_off(s_handles.panel, true), TAG, "display on failed");

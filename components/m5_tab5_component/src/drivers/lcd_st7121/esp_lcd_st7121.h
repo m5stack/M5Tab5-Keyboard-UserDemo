@@ -7,9 +7,9 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  * ST7121 MIPI-DSI LCD panel driver for M5Stack Tab5
- * éç¨äº?M5Stack Tab5 ç?ST7121 MIPI-DSI LCD é¢æ¿é©±å¨
+ * 适用�?M5Stack Tab5 �?ST7121 MIPI-DSI LCD 面板驱动
  * Standalone esp_lcd panel driver with no external dependencies beyond esp-idf.
- * ç¬ç«ç?esp_lcd é¢æ¿é©±å¨ï¼é¤ esp-idf å¤æ é¢å¤ä¾èµã?
+ * 独立�?esp_lcd 面板驱动，除 esp-idf 外无额外依赖�?
  */
 #pragma once
 
@@ -24,7 +24,7 @@
 extern "C" {
 #endif
 
-/* ---- ST7121 TDDI Panel Parameters / ST7121 TDDI é¢æ¿åæ°ï¼?20Ã1280ï¼? éé DSIï¼?----
+/* ---- ST7121 TDDI Panel Parameters / ST7121 TDDI 面板参数�?20×1280�? 通道 DSI�?----
  */
 #define ST7121_H_RES             720
 #define ST7121_V_RES             1280
@@ -40,60 +40,59 @@ extern "C" {
 
 /**
  * @brief LCD panel initialization commands.
- *        LCD é¢æ¿åå§åå½ä»¤ã?
+ *        LCD 面板初始化命令�?
  */
 typedef struct {
-    int cmd;               /*<! The specific LCD command / å·ä½ç?LCD å½ä»¤ */
+    int cmd;               /*<! The specific LCD command / 具体�?LCD 命令 */
     const void *data;      /*<! Buffer that holds the command specific data /
-                              å­æ¾è¯¥å½ä»¤æ°æ®çç¼å²å?*/
-    size_t data_bytes;     /*<! Size of `data` in memory, in bytes / `data` çåå­å­èæ° */
+                              存放该命令数据的缓冲�?*/
+    size_t data_bytes;     /*<! Size of `data` in memory, in bytes / `data` 的内存字节数 */
     unsigned int delay_ms; /*<! Delay in milliseconds after this command /
-                              æ§è¡è¯¥å½ä»¤åçå»¶æ¶ï¼æ¯«ç§ï¼?*/
+                              执行该命令后的延时（毫秒�?*/
 } st7121_lcd_init_cmd_t;
 
 /**
  * @brief LCD panel vendor configuration.
- *        LCD é¢æ¿ååéç½®ã?
+ *        LCD 面板厂商配置�?
  * @note  Pass this to `esp_lcd_panel_dev_config_t::vendor_config`.
- * @note  è¯¥ç»æéè¦ä¼ ç»?`esp_lcd_panel_dev_config_t::vendor_config`ã?
+ * @note  该结构需要传�?`esp_lcd_panel_dev_config_t::vendor_config`�?
  */
 typedef struct {
     const st7121_lcd_init_cmd_t *init_cmds; /*!< Pointer to the initialization command array. NULL uses the built-in
-                                               default. / åå§åå½ä»¤æ°ç»æéï¼NULL
-                                               è¡¨ç¤ºä½¿ç¨åç½®é»è®¤åºåã?*/
-    uint16_t init_cmds_size; /*!< Number of commands in the array above / ä¸è¿°æ°ç»ä¸­çå½ä»¤æ°é
-                              */
+                                               default. / 初始化命令数组指针；NULL
+                                               表示使用内置默认序列�?*/
+    uint16_t init_cmds_size;                /*!< Number of commands in the array above / 上述数组中的命令数量
+                                             */
     struct {
-        esp_lcd_dsi_bus_handle_t dsi_bus; /*!< MIPI-DSI bus handle / MIPI-DSI æ»çº¿å¥æ */
-        const esp_lcd_dpi_panel_config_t
-            *dpi_config;  /*!< MIPI-DPI panel configuration / MIPI-DPI é¢æ¿éç½® */
-        uint8_t lane_num; /*!< Number of MIPI-DSI data lanes / MIPI-DSI æ°æ®ééæ°é */
+        esp_lcd_dsi_bus_handle_t dsi_bus;             /*!< MIPI-DSI bus handle / MIPI-DSI 总线句柄 */
+        const esp_lcd_dpi_panel_config_t *dpi_config; /*!< MIPI-DPI panel configuration / MIPI-DPI 面板配置 */
+        uint8_t lane_num; /*!< Number of MIPI-DSI data lanes / MIPI-DSI 数据通道数量 */
     } mipi_config;
 } st7121_vendor_config_t;
 
 /**
  * @brief Create an LCD panel instance for ST7121.
- *        ä¸?ST7121 åå»º LCD é¢æ¿å®ä¾ã?
+ *        �?ST7121 创建 LCD 面板实例�?
  *
  * @param[in]  io              LCD panel IO handle (DBI)
  * @param[in]  panel_dev_config General panel device configuration
  * @param[out] ret_panel       Returned LCD panel handle
- * @param[in]  io              LCD é¢æ¿ IO å¥æï¼DBIï¼?
- * @param[in]  panel_dev_config éç¨é¢æ¿è®¾å¤éç½®
- * @param[out] ret_panel       è¿åç?LCD é¢æ¿å¥æ
+ * @param[in]  io              LCD 面板 IO 句柄（DBI�?
+ * @param[in]  panel_dev_config 通用面板设备配置
+ * @param[out] ret_panel       返回�?LCD 面板句柄
  * @return
  *      - ESP_ERR_INVALID_ARG   if parameter is invalid
  *      - ESP_ERR_NO_MEM        if out of memory
  *      - ESP_OK                on success
- *      - ESP_ERR_INVALID_ARG   åæ°æ æ
- *      - ESP_ERR_NO_MEM        åå­ä¸è¶³
- *      - ESP_OK                æå
+ *      - ESP_ERR_INVALID_ARG   参数无效
+ *      - ESP_ERR_NO_MEM        内存不足
+ *      - ESP_OK                成功
  */
 esp_err_t esp_lcd_new_panel_st7121(const esp_lcd_panel_io_handle_t io,
                                    const esp_lcd_panel_dev_config_t *panel_dev_config,
                                    esp_lcd_panel_handle_t *ret_panel);
 
-/* ---- Helper Macros for Quick Configuration / å¿«ééç½®è¾å©å® ---- */
+/* ---- Helper Macros for Quick Configuration / 快速配置辅助宏 ---- */
 
 #define ST7121_PANEL_BUS_DSI_2CH_CONFIG()                   \
     {                                                       \
@@ -111,8 +110,8 @@ esp_err_t esp_lcd_new_panel_st7121(const esp_lcd_panel_io_handle_t io,
     }
 
 /**
- * @note  refresh_rate â?70 MHz / 802 / 1524 â?57 Hz
- * @note  å·æ°ççº¦ä¸?70 MHz / 802 / 1524 â?57 Hz
+ * @note  refresh_rate �?70 MHz / 802 / 1524 �?57 Hz
+ * @note  刷新率约�?70 MHz / 802 / 1524 �?57 Hz
  */
 #define ST7121_720_1280_PANEL_60HZ_DPI_CONFIG(px_format)       \
     {                                                          \

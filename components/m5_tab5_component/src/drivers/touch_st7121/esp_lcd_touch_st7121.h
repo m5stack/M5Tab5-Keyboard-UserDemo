@@ -7,9 +7,9 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  * ST7121 MIPI-DSI touch panel driver (TDDI) for M5Stack Tab5
- * éç¨äº?M5Stack Tab5 ç?ST7121 MIPI-DSI è§¦æ¸é¢æ¿é©±å¨ï¼TDDIï¼?
+ * 适用�?M5Stack Tab5 �?ST7121 MIPI-DSI 触摸面板驱动（TDDI�?
  * Standalone esp_lcd_touch driver using the same protocol as ST7123.
- * ç¬ç«ç?esp_lcd_touch é©±å¨ï¼ä¸ ST7123 ä½¿ç¨ç¸ååè®®ã?
+ * 独立�?esp_lcd_touch 驱动，与 ST7123 使用相同协议�?
  */
 #pragma once
 
@@ -21,40 +21,40 @@ extern "C" {
 
 /**
  * @brief Create a new ST7121 touch driver.
- *        åå»ºä¸ä¸ªæ°ç?ST7121 è§¦æ¸é©±å¨å®ä¾ã?
+ *        创建一个新�?ST7121 触摸驱动实例�?
  *
  * @note  The I2C communication must be initialized before this function is used.
- * @note  è°ç¨è¯¥å½æ°åå¿é¡»åå®æ?I2C éä¿¡åå§åã?
+ * @note  调用该函数前必须先完�?I2C 通信初始化�?
  * @note  ST7121 is a TDDI panel, so the LCD must be initialized before touch can work.
- * @note  ST7121 å±äº TDDI
- * é¢æ¿ï¼å æ­¤å¿é¡»ååå§å?LCDï¼è§¦æ¸åè½æè½æ­£å¸¸å·¥ä½ã?
+ * @note  ST7121 属于 TDDI
+ * 面板，因此必须先初始�?LCD，触摸功能才能正常工作�?
  *
  * @param[in]  io     LCD panel IO handle, created by esp_lcd_new_panel_io_i2c()
  * @param[in]  config Touch panel configuration
  * @param[out] tp     Returned touch panel handle
- * @param[in]  io     ç?esp_lcd_new_panel_io_i2c() åå»ºç?LCD é¢æ¿ IO å¥æ
- * @param[in]  config è§¦æ¸é¢æ¿éç½®
- * @param[out] tp     è¿åçè§¦æ¸é¢æ¿å¥æ?
+ * @param[in]  io     �?esp_lcd_new_panel_io_i2c() 创建�?LCD 面板 IO 句柄
+ * @param[in]  config 触摸面板配置
+ * @param[out] tp     返回的触摸面板句�?
  * @return
  *      - ESP_OK on success
  *      - ESP_ERR_INVALID_ARG if parameter is invalid
  *      - ESP_ERR_NO_MEM if out of memory
- *      - ESP_OK æå
- *      - ESP_ERR_INVALID_ARG åæ°æ æ
- *      - ESP_ERR_NO_MEM åå­ä¸è¶³
+ *      - ESP_OK 成功
+ *      - ESP_ERR_INVALID_ARG 参数无效
+ *      - ESP_ERR_NO_MEM 内存不足
  */
 esp_err_t esp_lcd_touch_new_i2c_st7121(const esp_lcd_panel_io_handle_t io, const esp_lcd_touch_config_t *config,
                                        esp_lcd_touch_handle_t *tp);
 
 /**
  * @brief I2C address of the ST7121 touch controller.
- *        ST7121 è§¦æ¸æ§å¶å¨ç I2C å°åã?
+ *        ST7121 触摸控制器的 I2C 地址�?
  */
 #define ESP_LCD_TOUCH_IO_I2C_ST7121_ADDRESS (0x55)
 
 /**
  * @brief Touch IO configuration macro for ST7121.
- *        ST7121 çè§¦æ?IO éç½®å®ã?
+ *        ST7121 的触�?IO 配置宏�?
  */
 #define ESP_LCD_TOUCH_IO_I2C_ST7121_CONFIG()                                                                      \
     {                                                                                                             \

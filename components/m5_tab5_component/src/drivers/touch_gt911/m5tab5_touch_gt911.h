@@ -14,7 +14,7 @@ namespace m5::tab5 {
 const m5tab5_device_driver_descriptor_t* m5tab5_get_touch_gt911_driver();
 
 /// Handles created by the GT911 touch driver and stored in runtime->touch_handle.
-/// GT911 è§¦æ¸é©±å¨åå»ºçå¥æï¼ä¿å­å?runtime->touch_handle ä¸­ã?
+/// GT911 触摸驱动创建的句柄，保存�?runtime->touch_handle 中�?
 struct m5tab5_touch_gt911_handles_t {
     esp_lcd_panel_io_handle_t tp_io = nullptr;
     esp_lcd_touch_handle_t tp       = nullptr;

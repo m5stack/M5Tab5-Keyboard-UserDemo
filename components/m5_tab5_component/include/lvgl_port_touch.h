@@ -6,7 +6,7 @@
 
 /**
  * @file lvgl_port_touch.h
- * @brief LVGL è§¦æ¸è¾å¥æ¥å£
+ * @brief LVGL 触摸输入接口
  */
 
 #pragma once
@@ -25,52 +25,52 @@ extern "C" {
 
 #ifdef lvgl_PORT_TOUCH_COMPONENT
 /**
- * @brief è§¦æ¸éç½®ç»æ
+ * @brief 触摸配置结构
  */
 typedef struct {
-    lv_display_t *disp;            /*!< LVGL æ¾ç¤ºå¥æ */
-    esp_lcd_touch_handle_t handle; /*!< LCD è§¦æ¸å¥æ */
+    lv_display_t *disp;            /*!< LVGL 显示句柄 */
+    esp_lcd_touch_handle_t handle; /*!< LCD 触摸句柄 */
     struct {
-        float x; /*!< X è½´ç¼©æ¾æ¯ä¾?*/
-        float y; /*!< Y è½´ç¼©æ¾æ¯ä¾?*/
+        float x; /*!< X 轴缩放比�?*/
+        float y; /*!< Y 轴缩放比�?*/
     } scale;
 } lvgl_touch_cfg_t;
 
 /**
- * @brief æ·»å  LCD è§¦æ¸ä½ä¸ºè¾å¥è®¾å¤
+ * @brief 添加 LCD 触摸作为输入设备
  *
- * @param touch_cfg è§¦æ¸éç½®ç»æ
- * @return lv_indev_t* æåè¿å LVGL
- * è¾å¥è®¾å¤å¥æï¼å¤±è´¥è¿å?NULL
+ * @param touch_cfg 触摸配置结构
+ * @return lv_indev_t* 成功返回 LVGL
+ * 输入设备句柄，失败返�?NULL
  */
 lv_indev_t *lvgl_port_add_touch(const lvgl_touch_cfg_t *touch_cfg);
 
 /**
- * @brief ç§»é¤ LCD è§¦æ¸è¾å¥è®¾å¤
+ * @brief 移除 LCD 触摸输入设备
  *
- * @param touch è¾å¥è®¾å¤å¥æ
- * @return ESP_OK æå
+ * @param touch 输入设备句柄
+ * @return ESP_OK 成功
  */
 esp_err_t lvgl_port_remove_touch(lv_indev_t *touch);
 
 /**
- * @brief è®¾ç½®è§¦æ¸æè½¬è§åº¦
+ * @brief 设置触摸旋转角度
  *
- * å½ä½¿ç?PPA ç¡¬ä»¶æè½¬æ¶ï¼LVGL ç?display rotation
- * ä¸ä¼è¢«è®¾ç½®ï¼
- * éè¦åç¬è®¾ç½®è§¦æ¸çæè½¬è§åº¦æ¥å¹éæ¾ç¤ºæè½¬ã?
+ * 当使�?PPA 硬件旋转时，LVGL �?display rotation
+ * 不会被设置，
+ * 需要单独设置触摸的旋转角度来匹配显示旋转�?
  *
- * @param touch è¾å¥è®¾å¤å¥æ
- * @param rotation æè½¬è§åº¦ (LV_DISPLAY_ROTATION_0/90/180/270)
- * @return ESP_OK æå
+ * @param touch 输入设备句柄
+ * @param rotation 旋转角度 (LV_DISPLAY_ROTATION_0/90/180/270)
+ * @return ESP_OK 成功
  */
 esp_err_t lvgl_port_set_touch_rotation(lv_indev_t *touch, lv_display_rotation_t rotation);
 
 /**
- * @brief è·åè§¦æ¸å½åæè½¬è§åº¦
+ * @brief 获取触摸当前旋转角度
  *
- * @param touch è¾å¥è®¾å¤å¥æ
- * @return lv_display_rotation_t å½åæè½¬è§åº¦
+ * @param touch 输入设备句柄
+ * @return lv_display_rotation_t 当前旋转角度
  */
 lv_display_rotation_t lvgl_port_get_touch_rotation(lv_indev_t *touch);
 #endif

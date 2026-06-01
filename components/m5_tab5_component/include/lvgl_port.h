@@ -6,31 +6,31 @@
 
 /**
  * @file lvgl_port.h
- * @brief LVGL IDF ç§»æ¤å±?- ä¸»æ¥å?
+ * @brief LVGL IDF 移植�?- 主接�?
  *
- * æä¾ LVGL ä¸?ESP-IDF çéæï¼åæ¬ï¼?
- * - LVGL ä»»å¡ç®¡ç
- * - æ¾ç¤ºé©±å¨ (é»è®¤/DSI/RGB)
- * - è§¦æ¸è¾å¥
+ * 提供 LVGL �?ESP-IDF 的集成，包括�?
+ * - LVGL 任务管理
+ * - 显示驱动 (默认/DSI/RGB)
+ * - 触摸输入
  *
- * ä½¿ç¨ç¤ºä¾:
+ * 使用示例:
  * @code
- * // 1. åå§å?LVGL ç«¯å£
+ * // 1. 初始�?LVGL 端口
  * lvgl_port_cfg_t cfg = lvgl_PORT_INIT_CONFIG();
  * lvgl_port_init(&cfg);
  *
- * // 2. æ·»å  DSI æ¾ç¤º (æ¯æ PPA æè½¬)
+ * // 2. 添加 DSI 显示 (支持 PPA 旋转)
  * lvgl_disp_cfg_t disp_cfg = { ... };
  * lvgl_disp_dsi_cfg_t dsi_cfg = { .flags.avoid_tearing = 1, .flags.use_ppa = 1 };
  * lv_display_t *disp = lvgl_port_add_disp_dsi(&disp_cfg, &dsi_cfg);
  *
- * // 3. æ·»å è§¦æ¸
+ * // 3. 添加触摸
  * lvgl_touch_cfg_t touch_cfg = { .disp = disp, .handle = tp_handle };
  * lv_indev_t *touch = lvgl_port_add_touch(&touch_cfg);
  *
- * // 4. ä½¿ç¨ LVGL
+ * // 4. 使用 LVGL
  * lvgl_port_lock(0);
- * // ... LVGL æä½ ...
+ * // ... LVGL 操作 ...
  * lvgl_port_unlock();
  * @endcode
  */
@@ -48,7 +48,7 @@ extern "C" {
 #endif
 
 /**
- * @brief LVGL ç«¯å£ä»»å¡äºä»¶ç±»å
+ * @brief LVGL 端口任务事件类型
  */
 typedef enum {
     lvgl_PORT_EVENT_DISPLAY = 0x01,
@@ -57,7 +57,7 @@ typedef enum {
 } lvgl_port_event_type_t;
 
 /**
- * @brief LVGL ç«¯å£ä»»å¡äºä»¶
+ * @brief LVGL 端口任务事件
  */
 typedef struct {
     lvgl_port_event_type_t type;
@@ -65,19 +65,19 @@ typedef struct {
 } lvgl_port_event_t;
 
 /**
- * @brief åå§åéç½®ç»æ?
+ * @brief 初始化配置结�?
  */
 typedef struct {
-    int task_priority;     /*!< LVGL ä»»å¡ä¼åçº?*/
-    int task_stack;        /*!< LVGL ä»»å¡æ å¤§å°?*/
-    int task_affinity;     /*!< LVGL ä»»å¡æ ¸å¿äº²åæ?(-1 è¡¨ç¤ºæ äº²åæ? */
-    int task_max_sleep_ms; /*!< LVGL ä»»å¡æå¤§ä¼ç æ¶é?*/
-    unsigned task_stack_caps; /*!< LVGL ä»»å¡æ åå­è½å?(è§?esp_heap_caps.h) */
-    int timer_period_ms;      /*!< LVGL å®æ¶å¨å¨æ?(ms) */
+    int task_priority;        /*!< LVGL 任务优先�?*/
+    int task_stack;           /*!< LVGL 任务栈大�?*/
+    int task_affinity;        /*!< LVGL 任务核心亲和�?(-1 表示无亲和�? */
+    int task_max_sleep_ms;    /*!< LVGL 任务最大休眠时�?*/
+    unsigned task_stack_caps; /*!< LVGL 任务栈内存能�?(�?esp_heap_caps.h) */
+    int timer_period_ms;      /*!< LVGL 定时器周�?(ms) */
 } lvgl_port_cfg_t;
 
 /**
- * @brief LVGL ç«¯å£é»è®¤éç½®
+ * @brief LVGL 端口默认配置
  */
 #define lvgl_PORT_INIT_CONFIG()                                        \
     {                                                                  \
@@ -90,70 +90,70 @@ typedef struct {
     }
 
 /**
- * @brief åå§å?LVGL ç«¯å£
+ * @brief 初始�?LVGL 端口
  *
- * @note æ­¤å½æ°åå§å LVGL å¹¶åå»ºå®æ¶å¨åä»»å?
+ * @note 此函数初始化 LVGL 并创建定时器和任�?
  *
- * @param cfg éç½®åæ°
+ * @param cfg 配置参数
  * @return
- *      - ESP_OK æå
- *      - ESP_ERR_INVALID_ARG åæ°æ æ
- *      - ESP_ERR_INVALID_STATE esp_timer åºæªåå§å?
- *      - ESP_ERR_NO_MEM åå­åéå¤±è´¥
+ *      - ESP_OK 成功
+ *      - ESP_ERR_INVALID_ARG 参数无效
+ *      - ESP_ERR_INVALID_STATE esp_timer 库未初始�?
+ *      - ESP_ERR_NO_MEM 内存分配失败
  */
 esp_err_t lvgl_port_init(const lvgl_port_cfg_t *cfg);
 
 /**
- * @brief ååå§å LVGL ç«¯å£
+ * @brief 反初始化 LVGL 端口
  *
  * @return
- *      - ESP_OK æå
- *      - ESP_ERR_TIMEOUT åæ­¢ LVGL ä»»å¡è¶æ¶
+ *      - ESP_OK 成功
+ *      - ESP_ERR_TIMEOUT 停止 LVGL 任务超时
  */
 esp_err_t lvgl_port_deinit(void);
 
 /**
- * @brief è·å LVGL äºæ¥é?
+ * @brief 获取 LVGL 互斥�?
  *
- * @param timeout_ms è¶æ¶æ¶é´ (ms)ï¼? è¡¨ç¤ºæ°¸ä¹ç­å¾
+ * @param timeout_ms 超时时间 (ms)�? 表示永久等待
  * @return
- *      - true æåè·åé?
- *      - false è·åéå¤±è´?
+ *      - true 成功获取�?
+ *      - false 获取锁失�?
  */
 bool lvgl_port_lock(uint32_t timeout_ms);
 
 /**
- * @brief éæ¾ LVGL äºæ¥é?
+ * @brief 释放 LVGL 互斥�?
  */
 void lvgl_port_unlock(void);
 
 /**
- * @brief åæ­¢ LVGL å®æ¶å?
+ * @brief 停止 LVGL 定时�?
  *
  * @return
- *      - ESP_OK æå
- *      - ESP_ERR_INVALID_STATE å®æ¶å¨æªè¿è¡
+ *      - ESP_OK 成功
+ *      - ESP_ERR_INVALID_STATE 定时器未运行
  */
 esp_err_t lvgl_port_stop(void);
 
 /**
- * @brief æ¢å¤ LVGL å®æ¶å?
+ * @brief 恢复 LVGL 定时�?
  *
  * @return
- *      - ESP_OK æå
- *      - ESP_ERR_INVALID_STATE å®æ¶å¨æªè¿è¡
+ *      - ESP_OK 成功
+ *      - ESP_ERR_INVALID_STATE 定时器未运行
  */
 esp_err_t lvgl_port_resume(void);
 
 /**
- * @brief å¤é LVGL ä»»å¡
+ * @brief 唤醒 LVGL 任务
  *
- * @param event äºä»¶ç±»å
- * @param param åæ° (ä¿ç)
+ * @param event 事件类型
+ * @param param 参数 (保留)
  * @return
- *      - ESP_OK æå
- *      - ESP_ERR_NOT_SUPPORTED æªå®ç?
- *      - ESP_ERR_INVALID_STATE éåæªåå§å
+ *      - ESP_OK 成功
+ *      - ESP_ERR_NOT_SUPPORTED 未实�?
+ *      - ESP_ERR_INVALID_STATE 队列未初始化
  */
 esp_err_t lvgl_port_task_wake(lvgl_port_event_type_t event, void *param);
 

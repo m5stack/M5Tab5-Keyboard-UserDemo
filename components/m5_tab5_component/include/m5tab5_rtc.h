@@ -15,11 +15,11 @@
 namespace m5::tab5 {
 
 /// Time of day. Negative value (-1) means "don't care / not set".
-/// ä¸å¤©ä¸­çæ¶é´ãè´å¼ï¼-1ï¼è¡¨ç¤ºâä¸å³å¿ / æªè®¾ç½®âã?
+/// 一天中的时间。负值（-1）表示“不关心 / 未设置”�?
 struct m5tab5_rtc_time_t {
-    int8_t hours;    ///< 0-23 / 0 å?23 å°æ¶
-    int8_t minutes;  ///< 0-59 / 0 å?59 åé
-    int8_t seconds;  ///< 0-59 / 0 å?59 ç§?
+    int8_t hours;    ///< 0-23 / 0 �?23 小时
+    int8_t minutes;  ///< 0-59 / 0 �?59 分钟
+    int8_t seconds;  ///< 0-59 / 0 �?59 �?
 
     m5tab5_rtc_time_t(int8_t h = -1, int8_t m = -1, int8_t s = -1) : hours(h), minutes(m), seconds(s)
     {
@@ -31,13 +31,13 @@ struct m5tab5_rtc_time_t {
 };
 
 /// Calendar date. Negative value (-1) means "don't care / not set".
-/// æ¥åæ¥æãè´å¼ï¼-1ï¼è¡¨ç¤ºâä¸å³å¿ / æªè®¾ç½®âã?
+/// 日历日期。负值（-1）表示“不关心 / 未设置”�?
 struct m5tab5_rtc_date_t {
-    int16_t year;    ///< 2000-2099 (RX8130 stores century-less, adjusted to 2000-2099) / 2000 å?2099ï¼RX8130
-                     ///< ä¸å­ä¸çºªä½ï¼è¿éç»ä¸æç®å?2000 å?2099ï¼?
-    int8_t month;    ///< 1-12 / 1 å?12 æ?
-    int8_t day;      ///< 1-31 / 1 å?31 æ?
-    int8_t weekday;  ///< 0=Sun, 1=Mon, ... 6=Sat / 0=å¨æ¥ï¼?=å¨ä¸ï¼?..ï¼?=å¨å­
+    int16_t year;    ///< 2000-2099 (RX8130 stores century-less, adjusted to 2000-2099) / 2000 �?2099（RX8130
+                     ///< 不存世纪位，这里统一折算�?2000 �?2099�?
+    int8_t month;    ///< 1-12 / 1 �?12 �?
+    int8_t day;      ///< 1-31 / 1 �?31 �?
+    int8_t weekday;  ///< 0=Sun, 1=Mon, ... 6=Sat / 0=周日�?=周一�?..�?=周六
 
     m5tab5_rtc_date_t(int16_t y = 2000, int8_t mo = 1, int8_t d = -1, int8_t wd = -1)
         : year(y), month(mo), day(d), weekday(wd)
@@ -54,7 +54,7 @@ struct m5tab5_rtc_date_t {
 };
 
 /// Combined date and time.
-/// ç»ååçæ¥æåæ¶é´ã?
+/// 组合后的日期和时间�?
 struct m5tab5_rtc_datetime_t {
     m5tab5_rtc_date_t date;
     m5tab5_rtc_time_t time;
@@ -69,7 +69,7 @@ struct m5tab5_rtc_datetime_t {
     }
 
     /// Convert to a POSIX tm struct (no timezone adjustment).
-    /// è½¬æ¢ä¸?POSIX tm ç»æä½ï¼ä¸åæ¶åºä¿®æ­£ï¼ã?
+    /// 转换�?POSIX tm 结构体（不做时区修正）�?
     struct tm to_tm() const
     {
         struct tm t = {};
@@ -84,36 +84,36 @@ struct m5tab5_rtc_datetime_t {
     }
 };
 
-// ââ Global Singleton RTC Interface / å¨å±åä¾ RTC æ¥å£
-// âââââââââââââââââââââ Operates on the built-in RX8130 singleton using the
-// SYS I2C bus. ä½¿ç¨ SYS I2C æ»çº¿æä½åç½®ç?RX8130 åä¾å®ä¾ã? All functions are thread-safe (protected by
-// the i2c_bus semaphore). ææå½æ°é½å·å¤çº¿ç¨å®å¨æ§ï¼ç?i2c_bus ä¿¡å·éä¿æ¤ï¼ã? Must be called after
-// m5tab5_component::begin() has succeeded. å¿é¡»å?m5tab5_component::begin() æååè°ç¨ã?
+// ── Global Singleton RTC Interface / 全局单例 RTC 接口
+// ───────────────────── Operates on the built-in RX8130 singleton using the
+// SYS I2C bus. 使用 SYS I2C 总线操作内置�?RX8130 单例实例�? All functions are thread-safe (protected by
+// the i2c_bus semaphore). 所有函数都具备线程安全性（�?i2c_bus 信号量保护）�? Must be called after
+// m5tab5_component::begin() has succeeded. 必须�?m5tab5_component::begin() 成功后调用�?
 
 /// Lazily initialize the RX8130 singleton. Idempotent.
-/// å»¶è¿åå§å?RX8130 åä¾ï¼æ¯æéå¤è°ç¨ã?
+/// 延迟初始�?RX8130 单例，支持重复调用�?
 /// @return ESP_OK if the chip is present and initialized,
 ///         ESP_ERR_NOT_FOUND if no RX8130 is detected.
-/// @return å¦æè¯çå­å¨å¹¶åå§åæååè¿å?ESP_OKï¼?
-///         å¦ææªæ£æµå° RX8130 åè¿å?ESP_ERR_NOT_FOUNDã?
+/// @return 如果芯片存在并初始化成功则返�?ESP_OK�?
+///         如果未检测到 RX8130 则返�?ESP_ERR_NOT_FOUND�?
 esp_err_t m5tab5_rtc_init();
 
 /// Read the current date and time from the RX8130.
-/// ä»?RX8130 è¯»åå½åæ¥æåæ¶é´ã?
+/// �?RX8130 读取当前日期和时间�?
 /// @return ESP_ERR_INVALID_STATE if m5tab5_rtc_init() has not succeeded yet.
-/// @return å¦æ m5tab5_rtc_init() å°æªæåï¼åè¿å ESP_ERR_INVALID_STATEã?
+/// @return 如果 m5tab5_rtc_init() 尚未成功，则返回 ESP_ERR_INVALID_STATE�?
 esp_err_t m5tab5_rtc_get_datetime(m5tab5_rtc_datetime_t* out);
 
 /// Write date and time to the RX8130.
-/// å°æ¥æåæ¶é´åå¥ RX8130ã?
+/// 将日期和时间写入 RX8130�?
 /// @return ESP_ERR_INVALID_STATE if m5tab5_rtc_init() has not succeeded yet.
-/// @return å¦æ m5tab5_rtc_init() å°æªæåï¼åè¿å ESP_ERR_INVALID_STATEã?
+/// @return 如果 m5tab5_rtc_init() 尚未成功，则返回 ESP_ERR_INVALID_STATE�?
 esp_err_t m5tab5_rtc_set_datetime(const m5tab5_rtc_datetime_t* dt);
 
 /// Return true if the RX8130 backup-voltage low flag (VBLF) is set.
-/// å¦æ RX8130 çå¤ä»½ä½çµåæ å¿ï¼VBLFï¼è¢«ç½®ä½ï¼åè¿å trueã?
+/// 如果 RX8130 的备份低电压标志（VBLF）被置位，则返回 true�?
 /// When true, the stored time may be invalid and should be set again.
-/// ä¸?true æ¶è¡¨ç¤ºå·²å­æ¶é´å¯è½æ æï¼å»ºè®®éæ°è®¾ç½®ã?
+/// �?true 时表示已存时间可能无效，建议重新设置�?
 bool m5tab5_rtc_volt_low();
 
 }  // namespace m5::tab5

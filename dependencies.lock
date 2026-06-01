@@ -107,6 +107,6 @@ direct_dependencies:
 - espressif/i2c_bus
 - idf
 - m5_tab5_component
-manifest_hash: 0d7f840b435054f214d59824fecb96895929fa362b77e8a93bdd23a22c376652
+manifest_hash: a15b9523f88741b4a44ed7b8bd8dd100b1665e59ac41cb4840af704d9846fea0
 target: esp32p4
 version: 2.0.0

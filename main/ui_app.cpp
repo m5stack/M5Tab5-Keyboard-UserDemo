@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-﻿#include "ui_app.h"
+#include "ui_app.h"
 #include "ui_pages/ui_page_manager.h"
 #include "ui_pages/ui_page_factory.h"
 #include "ui_pages/ui_page_normal.h"

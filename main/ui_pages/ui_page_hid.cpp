@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-﻿#include "ui_page_hid.h"
+ "ui_page_hid.h"
 #include "ui_page_manager.h"
 #include "m5_tab5_keyboard.h"
 #include "lvgl_port.h"
