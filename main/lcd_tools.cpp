@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2025-2026 M5Stack
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 #include "lcd_tools.h"
 
 #include "m5_tab5_component.h"

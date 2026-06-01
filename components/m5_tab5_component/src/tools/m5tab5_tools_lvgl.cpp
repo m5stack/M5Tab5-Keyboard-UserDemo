@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2025-2026 M5Stack
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 #include "m5tab5_tools.h"
 
 #include "esp_check.h"
@@ -89,7 +95,7 @@ esp_err_t m5tab5_lvgl_init(const m5tab5_runtime_t& runtime,
         };
         *lv_touch_indev = lvgl_port_add_touch(&touch_cfg);
         if (*lv_touch_indev == nullptr) {
-            ESP_LOGW(TAG, "lvgl_port_add_touch failed â€?touch will be unavailable");
+            ESP_LOGW(TAG, "lvgl_port_add_touch failed éˆ¥?touch will be unavailable");
         }
     }
 

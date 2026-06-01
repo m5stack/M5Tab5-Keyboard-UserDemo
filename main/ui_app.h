@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2025-2026 M5Stack
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 #ifndef UI_APP_H
 #define UI_APP_H
 

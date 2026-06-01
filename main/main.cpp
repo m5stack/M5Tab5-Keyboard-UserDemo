@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2025-2026 M5Stack
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 ﻿#include <stdio.h>
 #include <inttypes.h>
 #include <esp_log.h>

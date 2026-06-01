@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2025-2026 M5Stack
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 #include "variants/m5tab5_variant_registry.h"
 #include "drivers/m5tab5_driver_common.h"
 #include "m5tab5_pinmap.h"

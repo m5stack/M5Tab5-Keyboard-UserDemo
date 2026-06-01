@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2025-2026 M5Stack
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 #include "drivers/m5tab5_builtin_drivers.h"
 #include "drivers/lcd_st7121/m5tab5_lcd_st7121.h"
 #include "drivers/lcd_st7123/m5tab5_lcd_st7123.h"

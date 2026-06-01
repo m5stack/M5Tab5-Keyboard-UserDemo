@@ -1,23 +1,29 @@
 /*
+ * SPDX-FileCopyrightText: 2025-2026 M5Stack
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+/*
  * Shared SYS I2C master bus singleton for m5tab5 drivers.
- * m5tab5 驱动共用�?SYS I2C 主机总线单例�?
+ * m5tab5 é©±å¨å±ç¨ç?SYS I2C ä¸»æºæ»çº¿åä¾ã?
  * The SYS I2C bus (SDA=GPIO31, SCL=GPIO32, port 0) is used by:
- * SYS I2C 总线（SDA=GPIO31，SCL=GPIO32，端�?0）当前用于：
+ * SYS I2C æ»çº¿ï¼SDA=GPIO31ï¼SCL=GPIO32ï¼ç«¯å?0ï¼å½åç¨äºï¼
  *   - PI4IOE5V6408 IO expander (LCD reset + touch reset)
- *   - PI4IOE5V6408 IO 扩展器（LCD 复位 + 触摸复位�?
+ *   - PI4IOE5V6408 IO æ©å±å¨ï¼LCD å¤ä½ + è§¦æ¸å¤ä½ï¼?
  *   - GT911 capacitive touch panel
- *   - GT911 电容触摸面板
+ *   - GT911 çµå®¹è§¦æ¸é¢æ¿
  *   - ST7123 TDDI touch
- *   - ST7123 TDDI 触摸控制�?
+ *   - ST7123 TDDI è§¦æ¸æ§å¶å?
  *
  * Uses espressif/i2c_bus for thread-safe bus management.
- * 使用 espressif/i2c_bus 提供线程安全的总线管理�?
+ * ä½¿ç¨ espressif/i2c_bus æä¾çº¿ç¨å®å¨çæ»çº¿ç®¡çã?
  * Call m5tab5_get_sys_i2c_bus()               -> i2c_bus_handle_t
- * 调用 m5tab5_get_sys_i2c_bus()               -> i2c_bus_handle_t
+ * è°ç¨ m5tab5_get_sys_i2c_bus()               -> i2c_bus_handle_t
  * Call m5tab5_get_sys_i2c_master_bus_handle() -> i2c_master_bus_handle_t
- * 调用 m5tab5_get_sys_i2c_master_bus_handle() -> i2c_master_bus_handle_t
+ * è°ç¨ m5tab5_get_sys_i2c_master_bus_handle() -> i2c_master_bus_handle_t
  *   (needed by esp_lcd_new_panel_io_i2c)
- *   （供 esp_lcd_new_panel_io_i2c 使用�?
+ *   ï¼ä¾ esp_lcd_new_panel_io_i2c ä½¿ç¨ï¼?
  */
 
 #include "drivers/m5tab5_driver_common.h"

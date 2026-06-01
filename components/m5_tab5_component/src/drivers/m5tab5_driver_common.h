@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2025-2026 M5Stack
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 #pragma once
 
 #include "esp_err.h"
@@ -16,11 +22,11 @@ inline const char* m5tab5_driver_log_tag()
 }
 
 /// Return the shared SYS I2C bus handle (i2c_bus wrapper, lazily initialized singleton).
-/// 返回共享�?SYS I2C 总线句柄（i2c_bus 包装层，延迟初始化的单例）�?
+/// è¿åå±äº«ç?SYS I2C æ»çº¿å¥æï¼i2c_bus åè£å±ï¼å»¶è¿åå§åçåä¾ï¼ã?
 i2c_bus_handle_t m5tab5_get_sys_i2c_bus();
 
 /// Return the underlying IDF i2c_master_bus_handle_t for esp_lcd_new_panel_io_i2c.
-/// 返回底层 IDF �?i2c_master_bus_handle_t，供 esp_lcd_new_panel_io_i2c 使用�?
+/// è¿ååºå± IDF ç?i2c_master_bus_handle_tï¼ä¾ esp_lcd_new_panel_io_i2c ä½¿ç¨ã?
 i2c_master_bus_handle_t m5tab5_get_sys_i2c_master_bus_handle();
 
 }  // namespace m5::tab5

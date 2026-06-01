@@ -1,4 +1,10 @@
 /*
+ * SPDX-FileCopyrightText: 2025-2026 M5Stack
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+/*
  * SPDX-License-Identifier: Apache-2.0
  * ST7121 MIPI-DSI LCD panel driver for M5Stack Tab5
  * 适用于 M5Stack Tab5 的 ST7121 MIPI-DSI LCD 面板驱动

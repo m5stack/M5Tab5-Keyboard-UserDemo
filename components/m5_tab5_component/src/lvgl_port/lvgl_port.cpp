@@ -1,6 +1,12 @@
+/*
+ * SPDX-FileCopyrightText: 2025-2026 M5Stack
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 /**
  * @file lvgl_port.cpp
- * @brief LVGL IDF 移植层实�?- 主模�?
+ * @brief LVGL IDF ç§»æ¤å±å®ç?- ä¸»æ¨¡å?
  */
 
 #include "lvgl_port.h"
@@ -13,7 +19,7 @@
 
 static const char *TAG = "lvgl_port";
 
-// LVGL 端口上下�?
+// LVGL ç«¯å£ä¸ä¸æ?
 typedef struct {
     TaskHandle_t task_handle;
     esp_timer_handle_t tick_timer;
@@ -25,23 +31,23 @@ typedef struct {
 
 static lvgl_port_ctx_t s_port_ctx{};
 
-// LVGL 定时器回�?
+// LVGL å®æ¶å¨åè°?
 static void lvgl_tick_cb(void *arg)
 {
     lv_tick_inc(*(int *)arg);
 }
 
-// LVGL 任务
+// LVGL ä»»å¡
 static void lvgl_task(void *arg)
 {
     ESP_LOGI(TAG, "LVGL task started");
 
-    // 等待一小段时间让系统稳�?
+    // ç­å¾ä¸å°æ®µæ¶é´è®©ç³»ç»ç¨³å®?
     vTaskDelay(pdMS_TO_TICKS(100));
     ESP_LOGI(TAG, "LVGL task entering main loop");
 
     while (s_port_ctx.running) {
-        // 使用短超时而不是无限等�?
+        // ä½¿ç¨ç­è¶æ¶èä¸æ¯æ éç­å¾?
         if (xSemaphoreTakeRecursive(s_port_ctx.lvgl_mutex, pdMS_TO_TICKS(100)) == pdTRUE) {
             uint32_t sleep_ms = lv_timer_handler();
             xSemaphoreGiveRecursive(s_port_ctx.lvgl_mutex);
@@ -59,7 +65,7 @@ static void lvgl_task(void *arg)
         }
     }
 
-    // 任务退出前清理
+    // ä»»å¡éåºåæ¸ç
     s_port_ctx.task_handle = NULL;
     vTaskDelete(NULL);
 }
@@ -78,10 +84,10 @@ esp_err_t lvgl_port_init(const lvgl_port_cfg_t *cfg)
 
     ESP_LOGI(TAG, "Initializing LVGL port...");
 
-    // 初始�?LVGL
+    // åå§å?LVGL
     lv_init();
 
-    // 创建递归互斥�?
+    // åå»ºéå½äºæ¥é?
     s_port_ctx.lvgl_mutex = xSemaphoreCreateRecursiveMutex();
     if (s_port_ctx.lvgl_mutex == NULL) {
         ESP_LOGE(TAG, "Failed to create LVGL mutex");
@@ -90,7 +96,7 @@ esp_err_t lvgl_port_init(const lvgl_port_cfg_t *cfg)
 
     s_port_ctx.task_max_sleep_ms = cfg->task_max_sleep_ms;
 
-    // 创建 LVGL tick 定时�?
+    // åå»º LVGL tick å®æ¶å?
     static int timer_period_ms;
     timer_period_ms = cfg->timer_period_ms;
 
@@ -117,7 +123,7 @@ esp_err_t lvgl_port_init(const lvgl_port_cfg_t *cfg)
         return ret;
     }
 
-    // 创建 LVGL 任务
+    // åå»º LVGL ä»»å¡
     s_port_ctx.running = true;
 
     unsigned stack_caps = cfg->task_stack_caps;
@@ -169,10 +175,10 @@ esp_err_t lvgl_port_deinit(void)
 
     ESP_LOGI(TAG, "Deinitializing LVGL port...");
 
-    // 停止任务
+    // åæ­¢ä»»å¡
     s_port_ctx.running = false;
 
-    // 等待任务退�?
+    // ç­å¾ä»»å¡éå?
     int timeout = 50;
     while (s_port_ctx.task_handle != NULL && timeout > 0) {
         vTaskDelay(pdMS_TO_TICKS(10));
@@ -185,14 +191,14 @@ esp_err_t lvgl_port_deinit(void)
         s_port_ctx.task_handle = NULL;
     }
 
-    // 停止定时�?
+    // åæ­¢å®æ¶å?
     if (s_port_ctx.tick_timer) {
         esp_timer_stop(s_port_ctx.tick_timer);
         esp_timer_delete(s_port_ctx.tick_timer);
         s_port_ctx.tick_timer = NULL;
     }
 
-    // 删除互斥�?
+    // å é¤äºæ¥é?
     if (s_port_ctx.lvgl_mutex) {
         vSemaphoreDelete(s_port_ctx.lvgl_mutex);
         s_port_ctx.lvgl_mutex = NULL;
@@ -234,13 +240,13 @@ esp_err_t lvgl_port_resume(void)
     if (s_port_ctx.tick_timer == NULL) {
         return ESP_ERR_INVALID_STATE;
     }
-    // 获取原来的周期并重新启动
-    return esp_timer_start_periodic(s_port_ctx.tick_timer, 5 * 1000);  // 默认 5ms
+    // è·ååæ¥çå¨æå¹¶éæ°å¯å¨
+    return esp_timer_start_periodic(s_port_ctx.tick_timer, 5 * 1000);  // é»è®¤ 5ms
 }
 
 esp_err_t lvgl_port_task_wake(lvgl_port_event_type_t event, void *param)
 {
-    // 目前简单实现，后续可以添加事件队列
+    // ç®åç®åå®ç°ï¼åç»­å¯ä»¥æ·»å äºä»¶éå
     (void)event;
     (void)param;
     return ESP_OK;

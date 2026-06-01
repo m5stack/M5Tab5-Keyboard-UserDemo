@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2025-2026 M5Stack
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 ﻿#include "ui_page_hid.h"
 #include "ui_page_manager.h"
 #include "m5_tab5_keyboard.h"
