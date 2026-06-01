@@ -68,25 +68,25 @@ typedef struct {
  * @brief åå§åéç½®ç»æ?
  */
 typedef struct {
-    int task_priority;          /*!< LVGL ä»»å¡ä¼åçº?*/
-    int task_stack;             /*!< LVGL ä»»å¡æ å¤§å°?*/
-    int task_affinity;          /*!< LVGL ä»»å¡æ ¸å¿äº²åæ?(-1 è¡¨ç¤ºæ äº²åæ? */
-    int task_max_sleep_ms;      /*!< LVGL ä»»å¡æå¤§ä¼ç æ¶é?*/
-    unsigned task_stack_caps;   /*!< LVGL ä»»å¡æ åå­è½å?(è§?esp_heap_caps.h) */
-    int timer_period_ms;        /*!< LVGL å®æ¶å¨å¨æ?(ms) */
+    int task_priority;     /*!< LVGL ä»»å¡ä¼åçº?*/
+    int task_stack;        /*!< LVGL ä»»å¡æ å¤§å°?*/
+    int task_affinity;     /*!< LVGL ä»»å¡æ ¸å¿äº²åæ?(-1 è¡¨ç¤ºæ äº²åæ? */
+    int task_max_sleep_ms; /*!< LVGL ä»»å¡æå¤§ä¼ç æ¶é?*/
+    unsigned task_stack_caps; /*!< LVGL ä»»å¡æ åå­è½å?(è§?esp_heap_caps.h) */
+    int timer_period_ms;      /*!< LVGL å®æ¶å¨å¨æ?(ms) */
 } lvgl_port_cfg_t;
 
 /**
  * @brief LVGL ç«¯å£é»è®¤éç½®
  */
-#define lvgl_PORT_INIT_CONFIG()              \
-    {                                              \
-        .task_priority = 4,                        \
-        .task_stack = 16384,                       \
-        .task_affinity = -1,                       \
-        .task_max_sleep_ms = 500,                  \
-        .task_stack_caps = MALLOC_CAP_INTERNAL | MALLOC_CAP_DEFAULT, \
-        .timer_period_ms = 5,                      \
+#define lvgl_PORT_INIT_CONFIG()                                        \
+    {                                                                  \
+        .task_priority     = 4,                                        \
+        .task_stack        = 16384,                                    \
+        .task_affinity     = -1,                                       \
+        .task_max_sleep_ms = 500,                                      \
+        .task_stack_caps   = MALLOC_CAP_INTERNAL | MALLOC_CAP_DEFAULT, \
+        .timer_period_ms   = 5,                                        \
     }
 
 /**

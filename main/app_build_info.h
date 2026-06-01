@@ -15,4 +15,4 @@
 #define FIRMWARE_BUILD_TIME __DATE__ "_" __TIME__
 #endif
 
-#endif // APP_BUILD_INFO_H
+#endif  // APP_BUILD_INFO_H

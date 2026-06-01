@@ -42,24 +42,22 @@ i2c_bus_handle_t m5tab5_get_sys_i2c_bus()
 {
     if (s_sys_i2c_bus) return s_sys_i2c_bus;
 
-    i2c_config_t bus_cfg = {};
-    bus_cfg.mode          = I2C_MODE_MASTER;
-    bus_cfg.sda_io_num    = M5TAB5_PIN_SYS_I2C_SDA;
-    bus_cfg.scl_io_num    = M5TAB5_PIN_SYS_I2C_SCL;
-    bus_cfg.sda_pullup_en = true;
-    bus_cfg.scl_pullup_en = true;
+    i2c_config_t bus_cfg     = {};
+    bus_cfg.mode             = I2C_MODE_MASTER;
+    bus_cfg.sda_io_num       = M5TAB5_PIN_SYS_I2C_SDA;
+    bus_cfg.scl_io_num       = M5TAB5_PIN_SYS_I2C_SCL;
+    bus_cfg.sda_pullup_en    = true;
+    bus_cfg.scl_pullup_en    = true;
     bus_cfg.master.clk_speed = 400000;
 
     s_sys_i2c_bus = i2c_bus_create((i2c_port_t)M5TAB5_I2C_PORT_SYS, &bus_cfg);
     if (!s_sys_i2c_bus) {
-        ESP_LOGE(TAG, "SYS I2C bus init failed (port %d, SDA=%d SCL=%d)",
-                 (int)M5TAB5_I2C_PORT_SYS,
+        ESP_LOGE(TAG, "SYS I2C bus init failed (port %d, SDA=%d SCL=%d)", (int)M5TAB5_I2C_PORT_SYS,
                  (int)M5TAB5_PIN_SYS_I2C_SDA, (int)M5TAB5_PIN_SYS_I2C_SCL);
         return nullptr;
     }
-    ESP_LOGI(TAG, "SYS I2C bus created (port=%d SDA=%d SCL=%d)",
-             (int)M5TAB5_I2C_PORT_SYS,
-             (int)M5TAB5_PIN_SYS_I2C_SDA, (int)M5TAB5_PIN_SYS_I2C_SCL);
+    ESP_LOGI(TAG, "SYS I2C bus created (port=%d SDA=%d SCL=%d)", (int)M5TAB5_I2C_PORT_SYS, (int)M5TAB5_PIN_SYS_I2C_SDA,
+             (int)M5TAB5_PIN_SYS_I2C_SCL);
     return s_sys_i2c_bus;
 }
 

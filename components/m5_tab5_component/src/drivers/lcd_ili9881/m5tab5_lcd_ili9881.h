@@ -15,11 +15,12 @@ namespace m5::tab5 {
 const m5tab5_display_driver_descriptor_t* m5tab5_get_lcd_ili9881_driver();
 
 /// Handles created by the ILI9881C display driver and stored in runtime->display_handle.
-/// ILI9881C æ¾ç¤ºé©±å¨åå»ºçå¥æï¼ä¿å­å?runtime->display_handle ä¸­ã?
+/// ILI9881C æ¾ç¤ºé©±å¨åå»ºçå¥æï¼ä¿å­å?runtime->display_handle
+/// ä¸­ã?
 struct m5tab5_lcd_ili9881_handles_t {
-    esp_lcd_dsi_bus_handle_t   mipi_dsi_bus = nullptr;
-    esp_lcd_panel_io_handle_t  io           = nullptr;
-    esp_lcd_panel_handle_t     panel        = nullptr;
+    esp_lcd_dsi_bus_handle_t mipi_dsi_bus = nullptr;
+    esp_lcd_panel_io_handle_t io          = nullptr;
+    esp_lcd_panel_handle_t panel          = nullptr;
 };
 
 }  // namespace m5::tab5

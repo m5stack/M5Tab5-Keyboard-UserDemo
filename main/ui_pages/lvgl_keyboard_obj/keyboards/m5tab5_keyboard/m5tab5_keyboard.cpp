@@ -15,12 +15,9 @@ LV_FONT_DECLARE(lv_font_montserrat_24);
 
 static const char* TAG = "M5Tab5Keyboard";
 
-
-
 // --- Global Instance Access ---
 M5Tab5Keyboard* getM5Tab5KeyboardInstance();
 void setM5Tab5KeyboardInstance(M5Tab5Keyboard* instance);
-
 
 // --- Implementation ---
 
@@ -68,7 +65,7 @@ void M5Tab5Keyboard::startFlashTimer()
 {
     if (m_flash_timer == NULL) {
         m_flash_timer = lv_timer_create(flashTimerCbStatic, 200, this);
-        m_flash_on = true;
+        m_flash_on    = true;
     } else {
         lv_timer_resume(m_flash_timer);
     }
@@ -95,9 +92,9 @@ void M5Tab5Keyboard::handleFlashTimer()
     if (m_aa_indicator) {
         lv_color_t color;
         if (m_flash_on) {
-            color = lv_color_hex(0x00FFFF); // Blue ON
+            color = lv_color_hex(0x00FFFF);  // Blue ON
         } else {
-            color = lv_color_hex(0x808080); // Gray OFF
+            color = lv_color_hex(0x808080);  // Gray OFF
         }
         lv_obj_set_style_bg_color(m_aa_indicator, color, 0);
     }
@@ -120,25 +117,25 @@ void M5Tab5Keyboard::updateUiState()
     if (!m_kb_cont) return;
 
     kb_mode_t map_mode = getCurrentMappingMode();
-    uint32_t count = lv_obj_get_child_count(m_kb_cont);
+    uint32_t count     = lv_obj_get_child_count(m_kb_cont);
 
-    for(uint32_t i = 0; i < count; i++) {
+    for (uint32_t i = 0; i < count; i++) {
         if (i >= KEYBOARD_KEY_COUNT) break;
 
-        lv_obj_t * btn = lv_obj_get_child(m_kb_cont, i);
+        lv_obj_t* btn = lv_obj_get_child(m_kb_cont, i);
         if (!btn) continue;
 
-        const tab5_key_t *key = &tab5_key_map[i];
+        const tab5_key_t* key = &tab5_key_map[i];
 
         // 1. Check Disabled
         if (m_key_disabled[i]) {
             lv_obj_set_style_bg_color(btn, lv_color_hex(0xD0D0D0), 0);
-            lv_obj_t * label = lv_obj_get_child(btn, 0);
+            lv_obj_t* label = lv_obj_get_child(btn, 0);
             if (label) lv_label_set_text(label, "");
-            
+
             // Hide indicators
             if (lv_obj_get_child_cnt(btn) > 1) {
-                lv_obj_t * indicator = lv_obj_get_child(btn, 1);
+                lv_obj_t* indicator = lv_obj_get_child(btn, 1);
                 if (indicator) lv_obj_add_flag(indicator, LV_OBJ_FLAG_HIDDEN);
             }
             continue;
@@ -148,14 +145,14 @@ void M5Tab5Keyboard::updateUiState()
         lv_obj_set_style_bg_color(btn, lv_color_hex(key->bg_color), 0);
 
         // 3. Update Label
-        lv_obj_t * label = lv_obj_get_child(btn, 0);
+        lv_obj_t* label = lv_obj_get_child(btn, 0);
         if (label) {
-            const char * text = key->labels[map_mode];
+            const char* text = key->labels[map_mode];
             bool is_fallback = false;
 
             if (map_mode == KB_MODE_2 && text == NULL) {
                 // Fallback: if in upper mode, use Mode 1 (uppercase), otherwise Mode 0 (lowercase)
-                text = isUpperMode() ? key->labels[1] : key->labels[0];
+                text        = isUpperMode() ? key->labels[1] : key->labels[0];
                 is_fallback = true;
             }
 
@@ -171,7 +168,7 @@ void M5Tab5Keyboard::updateUiState()
 
         // 4. Update Sub-Label (Index 2)
         if (lv_obj_get_child_cnt(btn) > 2) {
-            lv_obj_t * sub_label = lv_obj_get_child(btn, 2);
+            lv_obj_t* sub_label = lv_obj_get_child(btn, 2);
             if (sub_label) {
                 if (map_mode == KB_MODE_2) {
                     lv_obj_add_flag(sub_label, LV_OBJ_FLAG_HIDDEN);
@@ -183,26 +180,25 @@ void M5Tab5Keyboard::updateUiState()
 
         // 5. Update Indicator (Index 1)
         if (lv_obj_get_child_cnt(btn) > 1) {
-            lv_obj_t * indicator = lv_obj_get_child(btn, 1);
-            bool is_lockable = (key->id == KEY_ID_SYM || key->id == KEY_ID_AA);
+            lv_obj_t* indicator = lv_obj_get_child(btn, 1);
+            bool is_lockable    = (key->id == KEY_ID_SYM || key->id == KEY_ID_AA);
 
             if (indicator) {
                 if (!is_lockable) {
                     lv_obj_add_flag(indicator, LV_OBJ_FLAG_HIDDEN);
                 } else {
                     lv_obj_clear_flag(indicator, LV_OBJ_FLAG_HIDDEN);
-                    lv_color_t color = lv_color_hex(0x808080); // Gray
+                    lv_color_t color = lv_color_hex(0x808080);  // Gray
 
                     if (key->id == KEY_ID_AA) {
                         if (m_caps_state == CAPS_STATE_LOCKED) {
-                            color = lv_color_hex(0x00FFFF); 
+                            color = lv_color_hex(0x00FFFF);
                         } else if (m_caps_state == CAPS_STATE_HOLDING) {
                             color = lv_color_hex(0x00FFFF);
                         } else if (m_caps_state == CAPS_STATE_SINGLE_PENDING) {
                             color = m_flash_on ? lv_color_hex(0x00FFFF) : lv_color_hex(0x808080);
                         }
-                    } 
-                    else if (key->id == KEY_ID_SYM) {
+                    } else if (key->id == KEY_ID_SYM) {
                         if (m_sym_mode || m_sym_holding) {
                             color = lv_color_hex(0x00FFFF);
                         }
@@ -214,7 +210,7 @@ void M5Tab5Keyboard::updateUiState()
     }
 }
 
-void M5Tab5Keyboard::handleShiftEvent(lv_event_t * e)
+void M5Tab5Keyboard::handleShiftEvent(lv_event_t* e)
 {
     lv_event_code_t code = lv_event_get_code(e);
 
@@ -223,7 +219,7 @@ void M5Tab5Keyboard::handleShiftEvent(lv_event_t * e)
         ESP_LOGI(TAG, "Aa PRESSED: state=%d", m_caps_state);
 
         if (m_caps_state == CAPS_STATE_SINGLE_PENDING) {
-            uint32_t now = lv_tick_get();
+            uint32_t now     = lv_tick_get();
             uint32_t elapsed = now - m_last_aa_click_time;
             ESP_LOGI(TAG, "SINGLE_PENDING detected, elapsed=%lu ms", elapsed);
 
@@ -236,7 +232,7 @@ void M5Tab5Keyboard::handleShiftEvent(lv_event_t * e)
                 m_last_aa_click_time = 0;
                 // Important: Next release should NOT unlock.
                 m_ignore_next_aa_release = true;
-                return; // Must return here to prevent state change
+                return;  // Must return here to prevent state change
             } else {
                 // Timeout exceeded, cancel SINGLE_PENDING
                 ESP_LOGI(TAG, "Timeout exceeded, canceling SINGLE_PENDING");
@@ -244,7 +240,7 @@ void M5Tab5Keyboard::handleShiftEvent(lv_event_t * e)
                 stopFlashTimer();
                 updateUiState();
                 m_last_aa_click_time = 0;
-                return; // Cancel, don't start new click
+                return;  // Cancel, don't start new click
             }
         }
 
@@ -261,8 +257,7 @@ void M5Tab5Keyboard::handleShiftEvent(lv_event_t * e)
             m_caps_state = CAPS_STATE_HOLDING;
             updateUiState();
         }
-    }
-    else if (code == LV_EVENT_RELEASED) {
+    } else if (code == LV_EVENT_RELEASED) {
         uint32_t now = lv_tick_get();
 
         // Debounce: ignore duplicate RELEASED events within 50ms
@@ -285,52 +280,50 @@ void M5Tab5Keyboard::handleShiftEvent(lv_event_t * e)
         ESP_LOGI(TAG, "Press duration: %lu ms", press_duration);
 
         if (m_caps_state == CAPS_STATE_HOLDING) {
-             if (press_duration < 500) {
-                 // Short Click
-                 ESP_LOGI(TAG, "Short click -> SINGLE_PENDING");
-                 m_caps_state = CAPS_STATE_SINGLE_PENDING;
-                 startFlashTimer();
-                 updateUiState();
-                 m_last_aa_click_time = now;
-             } else {
-                 // Long Hold -> Recover to Lower
-                 ESP_LOGI(TAG, "Long hold -> LOWER");
-                 m_caps_state = CAPS_STATE_LOWER;
-                 stopFlashTimer();
-                 updateUiState();
-             }
-        }
-        else if (m_caps_state == CAPS_STATE_LOCKED) {
             if (press_duration < 500) {
-                 ESP_LOGI(TAG, "Unlocking from LOCKED");
-                 m_caps_state = CAPS_STATE_LOWER; // Exit Lock
-                 stopFlashTimer();
-                 updateUiState();
+                // Short Click
+                ESP_LOGI(TAG, "Short click -> SINGLE_PENDING");
+                m_caps_state = CAPS_STATE_SINGLE_PENDING;
+                startFlashTimer();
+                updateUiState();
+                m_last_aa_click_time = now;
+            } else {
+                // Long Hold -> Recover to Lower
+                ESP_LOGI(TAG, "Long hold -> LOWER");
+                m_caps_state = CAPS_STATE_LOWER;
+                stopFlashTimer();
+                updateUiState();
+            }
+        } else if (m_caps_state == CAPS_STATE_LOCKED) {
+            if (press_duration < 500) {
+                ESP_LOGI(TAG, "Unlocking from LOCKED");
+                m_caps_state = CAPS_STATE_LOWER;  // Exit Lock
+                stopFlashTimer();
+                updateUiState();
             }
         }
     }
 }
 
-void M5Tab5Keyboard::handleSymEvent(lv_event_t * e)
+void M5Tab5Keyboard::handleSymEvent(lv_event_t* e)
 {
     lv_event_code_t code = lv_event_get_code(e);
 
     if (code == LV_EVENT_PRESSED) {
         // Press: Show symbols temporarily
         m_sym_press_start_time = lv_tick_get();
-        m_sym_holding = true;
+        m_sym_holding          = true;
         updateUiState();
-    }
-    else if (code == LV_EVENT_RELEASED) {
+    } else if (code == LV_EVENT_RELEASED) {
         // Release: Hide symbols
         m_sym_holding = false;
         updateUiState();
     }
 }
 
-void M5Tab5Keyboard::handleKeyEvent(lv_event_t * e)
+void M5Tab5Keyboard::handleKeyEvent(lv_event_t* e)
 {
-    tab5_key_t * key = (tab5_key_t *)lv_event_get_user_data(e);
+    tab5_key_t* key = (tab5_key_t*)lv_event_get_user_data(e);
     if (!key) return;
 
     lv_event_code_t code = lv_event_get_code(e);
@@ -346,7 +339,7 @@ void M5Tab5Keyboard::handleKeyEvent(lv_event_t * e)
             m_ctrl_pressed = false;
             ESP_LOGD(TAG, "CTRL released");
         }
-        return; // CTRL 键本身不触发其他逻辑
+        return;  // CTRL 键本身不触发其他逻辑
     }
 
     if (key->id == KEY_ID_ALT) {
@@ -357,7 +350,7 @@ void M5Tab5Keyboard::handleKeyEvent(lv_event_t * e)
             m_alt_pressed = false;
             ESP_LOGD(TAG, "ALT released");
         }
-        return; // ALT 键本身不触发其他逻辑
+        return;  // ALT 键本身不触发其他逻辑
     }
 
     // ========================================================================
@@ -366,24 +359,24 @@ void M5Tab5Keyboard::handleKeyEvent(lv_event_t * e)
     // ========================================================================
     if (code == LV_EVENT_PRESSED) {
         // 快速检查：只有修饰键按下或特殊键才触发热键
-        bool has_modifier = m_ctrl_pressed || m_alt_pressed;
+        bool has_modifier   = m_ctrl_pressed || m_alt_pressed;
         bool is_special_key = (key->id == KB_KEY_ESC);
 
         if (has_modifier || is_special_key) {
             hotkey_event_t event;
-            event.key_id = key->id;
-            event.key_label = key->labels[0];
-            event.key_value = key->values[0];
-            event.event = HOTKEY_EVENT_PRESSED;
-            event.ctrl_pressed = m_ctrl_pressed;
-            event.alt_pressed = m_alt_pressed;
+            event.key_id        = key->id;
+            event.key_label     = key->labels[0];
+            event.key_value     = key->values[0];
+            event.event         = HOTKEY_EVENT_PRESSED;
+            event.ctrl_pressed  = m_ctrl_pressed;
+            event.alt_pressed   = m_alt_pressed;
             event.shift_pressed = isUpperMode();
-            event.user_data = nullptr;
+            event.user_data     = nullptr;
 
             // 触发热键回调，如果返回 true 则拦截
             if (triggerHotkey(&event)) {
                 ESP_LOGD(TAG, "Key event intercepted by hotkey: id=%d", key->id);
-                return; // 拦截，不继续处理
+                return;  // 拦截，不继续处理
             }
         }
     }
@@ -392,7 +385,7 @@ void M5Tab5Keyboard::handleKeyEvent(lv_event_t * e)
     // Need key index. Using key pointer arithmetic if possible, or ID search
     // Using ID search for safety
     int key_index = -1;
-    for(int i=0; i<KEYBOARD_KEY_COUNT; ++i) {
+    for (int i = 0; i < KEYBOARD_KEY_COUNT; ++i) {
         if (&tab5_key_map[i] == key) {
             key_index = i;
             break;
@@ -431,8 +424,8 @@ void M5Tab5Keyboard::processKeyInput(const tab5_key_t* key)
     }
 
     // Generate output
-    kb_mode_t mode = getCurrentMappingMode();
-    const char * val = key->values[mode];
+    kb_mode_t mode  = getCurrentMappingMode();
+    const char* val = key->values[mode];
 
     if (mode == KB_MODE_2 && val == NULL) {
         // Fallback: if in upper mode, use Mode 1 (uppercase), otherwise Mode 0 (lowercase)
@@ -444,19 +437,19 @@ void M5Tab5Keyboard::processKeyInput(const tab5_key_t* key)
     // 热键触发 - BEFORE_INPUT 事件
     // ========================================================================
     hotkey_event_t event;
-    event.key_id = key->id;
-    event.key_label = key->labels[mode];
-    event.key_value = val;
-    event.event = HOTKEY_EVENT_BEFORE_INPUT;
-    event.ctrl_pressed = m_ctrl_pressed;
-    event.alt_pressed = m_alt_pressed;
+    event.key_id        = key->id;
+    event.key_label     = key->labels[mode];
+    event.key_value     = val;
+    event.event         = HOTKEY_EVENT_BEFORE_INPUT;
+    event.ctrl_pressed  = m_ctrl_pressed;
+    event.alt_pressed   = m_alt_pressed;
     event.shift_pressed = isUpperMode();
-    event.user_data = nullptr;
+    event.user_data     = nullptr;
 
     // 触发热键回调，如果返回 true 则拦截输入
     if (triggerHotkey(&event)) {
         ESP_LOGD(TAG, "Input intercepted by hotkey: key_id=%d, value=%s", key->id, val);
-        return; // 拦截输入
+        return;  // 拦截输入
     }
 
     // Send to Textarea
@@ -471,53 +464,53 @@ void M5Tab5Keyboard::processKeyInput(const tab5_key_t* key)
     }
 }
 
-void M5Tab5Keyboard::eventHandlerStatic(lv_event_t * e)
+void M5Tab5Keyboard::eventHandlerStatic(lv_event_t* e)
 {
     // Retrieve "this" pointer
     // We attach "this" to the object's parent or pass it as user_data?
     // Wait, lv_obj_add_event_cb accepts user_data, but we passed "key" as user_data!
     // We can't pass BOTH "key" and "this" in user_data easily without a struct.
-    
+
     // Alternative: We know the button is a child of m_kb_cont.
     // We can attach "this" to m_kb_cont as user_data.
-    
-    lv_obj_t* btn = (lv_obj_t*)lv_event_get_target(e);
+
+    lv_obj_t* btn  = (lv_obj_t*)lv_event_get_target(e);
     lv_obj_t* cont = lv_obj_get_parent(btn);
     // Be safer
     if (!cont) return;
     M5Tab5Keyboard* kb = (M5Tab5Keyboard*)lv_obj_get_user_data(cont);
-    
+
     if (kb) {
         kb->handleKeyEvent(e);
     }
 }
 
-lv_obj_t* M5Tab5Keyboard::create(lv_obj_t * parent)
+lv_obj_t* M5Tab5Keyboard::create(lv_obj_t* parent)
 {
     m_kb_cont = lv_obj_create(parent);
-    
+
     // Attach "this" to the container so static handlers can find us
     lv_obj_set_user_data(m_kb_cont, this);
 
     // Calculate Dynamic Size based on Constraints
-    lv_disp_t * disp = lv_obj_get_disp(parent);
+    lv_disp_t* disp = lv_obj_get_disp(parent);
     if (!disp) disp = lv_disp_get_default();
     int32_t screen_w = lv_disp_get_hor_res(disp);
     int32_t screen_h = lv_disp_get_ver_res(disp);
 
     // 1. Determine Target Width (default 98%)
     int32_t target_w = (int32_t)(screen_w * 0.98f);
-    
+
     // 2. Calculate Target Height based on Preferred Aspect Ratio
     float ratio = getPreferredAspectRatio();
-    if (ratio < 0.1f) ratio = 1.0f; // Safety
+    if (ratio < 0.1f) ratio = 1.0f;  // Safety
     int32_t target_h = (int32_t)(target_w / ratio);
 
     // 3. Apply Min/Max Aspect Ratio Clamping
     float min_r = getMinAspectRatio();
     float max_r = getMaxAspectRatio();
-    
-    // Height = Width / Ratio. 
+
+    // Height = Width / Ratio.
     // If Height is too big (Ratio too small), clamp to Min Ratio
     // If Height is too small (Ratio too big), clamp to Max Ratio
     // Actually:
@@ -535,41 +528,35 @@ lv_obj_t* M5Tab5Keyboard::create(lv_obj_t * parent)
         target_h = screen_h_limit;
     }
 
-    lv_obj_set_size(m_kb_cont, target_w, target_h); 
-    lv_obj_align(m_kb_cont, LV_ALIGN_BOTTOM_MID, 0, -5); 
+    lv_obj_set_size(m_kb_cont, target_w, target_h);
+    lv_obj_align(m_kb_cont, LV_ALIGN_BOTTOM_MID, 0, -5);
 
     lv_obj_set_style_bg_color(m_kb_cont, lv_color_hex(0x181818), 0);
     lv_obj_set_style_radius(m_kb_cont, 10, 0);
     lv_obj_set_style_border_width(m_kb_cont, 0, 0);
     lv_obj_set_style_pad_gap(m_kb_cont, 4, 0);
-    lv_obj_clear_flag(m_kb_cont, LV_OBJ_FLAG_GESTURE_BUBBLE); 
+    lv_obj_clear_flag(m_kb_cont, LV_OBJ_FLAG_GESTURE_BUBBLE);
 
     // Grid descriptors
-    static int32_t col_dsc[] = {
-        LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1),
-        LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1),
-        LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1),
-        LV_GRID_TEMPLATE_LAST
-    };
-    static int32_t row_dsc[] = {
-        LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1),
-        LV_GRID_TEMPLATE_LAST
-    };
+    static int32_t col_dsc[] = {LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1),
+                                LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1),
+                                LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
+    static int32_t row_dsc[] = {LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1),
+                                LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
 
     lv_obj_set_layout(m_kb_cont, LV_LAYOUT_GRID);
     lv_obj_set_grid_dsc_array(m_kb_cont, col_dsc, row_dsc);
 
     for (int i = 0; i < KEYBOARD_KEY_COUNT; i++) {
-        const tab5_key_t *key = &tab5_key_map[i];
+        const tab5_key_t* key = &tab5_key_map[i];
 
 #if LVGL_VERSION_MAJOR >= 9
-        lv_obj_t * btn = lv_button_create(m_kb_cont);
+        lv_obj_t* btn = lv_button_create(m_kb_cont);
 #else
-        lv_obj_t * btn = lv_btn_create(m_kb_cont);
+        lv_obj_t* btn = lv_btn_create(m_kb_cont);
 #endif
-        lv_obj_set_grid_cell(btn, LV_GRID_ALIGN_STRETCH, key->col, key->width,
-                                  LV_GRID_ALIGN_STRETCH, key->row, 1);
-        
+        lv_obj_set_grid_cell(btn, LV_GRID_ALIGN_STRETCH, key->col, key->width, LV_GRID_ALIGN_STRETCH, key->row, 1);
+
         lv_obj_set_style_radius(btn, 6, 0);
         lv_obj_set_style_bg_color(btn, lv_color_hex(key->bg_color), 0);
         lv_obj_clear_flag(btn, LV_OBJ_FLAG_GESTURE_BUBBLE);
@@ -579,21 +566,21 @@ lv_obj_t* M5Tab5Keyboard::create(lv_obj_t * parent)
         m_key_buttons[i] = btn;
 
         // Label (Child 0)
-        const char *label_text = key->labels[0] ? key->labels[0] : "";
-        lv_obj_t * label = lv_label_create(btn);
+        const char* label_text = key->labels[0] ? key->labels[0] : "";
+        lv_obj_t* label        = lv_label_create(btn);
         lv_label_set_text(label, label_text);
         lv_obj_set_style_text_color(label, lv_color_hex(key->text_color), 0);
-        lv_obj_set_style_text_font(label, &lv_font_montserrat_24, 0); 
+        lv_obj_set_style_text_font(label, &lv_font_montserrat_24, 0);
         lv_obj_center(label);
-        
+
         // Indicator (Child 1)
-        lv_obj_t * indicator = lv_obj_create(btn);
+        lv_obj_t* indicator = lv_obj_create(btn);
         lv_obj_set_size(indicator, 20, 3);
         lv_obj_align(indicator, LV_ALIGN_BOTTOM_MID, 0, -4);
         lv_obj_set_style_radius(indicator, 2, 0);
-        lv_obj_set_style_bg_color(indicator, lv_color_hex(0x808080), 0); 
+        lv_obj_set_style_bg_color(indicator, lv_color_hex(0x808080), 0);
         lv_obj_set_style_border_width(indicator, 0, 0);
-        
+
         if (key->id == KEY_ID_AA) {
             m_aa_indicator = indicator;
             // Don't use CHECKABLE - it causes color change
@@ -608,11 +595,11 @@ lv_obj_t* M5Tab5Keyboard::create(lv_obj_t * parent)
 
         // Sub-Label (Child 2)
         // Optimized: only create if Mode 2 diff from Mode 0
-        const char *l2 = key->labels[KB_MODE_2];
-        const char *l0 = key->labels[0];
-        
+        const char* l2 = key->labels[KB_MODE_2];
+        const char* l0 = key->labels[0];
+
         if (l2 && l0 && strcmp(l2, l0) != 0 && strlen(l2) > 0) {
-            lv_obj_t * sub_label = lv_label_create(btn);
+            lv_obj_t* sub_label = lv_label_create(btn);
             if (sub_label) {
                 lv_obj_set_style_text_color(sub_label, lv_color_hex(0x4080FF), 0);
                 lv_obj_set_style_text_font(sub_label, &lv_font_montserrat_14, 0);
@@ -625,25 +612,24 @@ lv_obj_t* M5Tab5Keyboard::create(lv_obj_t * parent)
         // We use eventHandlerStatic, which retrieves 'this' from container user_data
         // We PASS 'key' as user_data to the callback
         if (key->id == KEY_ID_AA || key->id == KEY_ID_SYM || key->id == KEY_ID_CTRL || key->id == KEY_ID_ALT) {
-             // Special keys: handle PRESSED and RELEASED for state tracking
-             lv_obj_add_event_cb(btn, eventHandlerStatic, LV_EVENT_PRESSED, (void*)key);
-             lv_obj_add_event_cb(btn, eventHandlerStatic, LV_EVENT_RELEASED, (void*)key);
+            // Special keys: handle PRESSED and RELEASED for state tracking
+            lv_obj_add_event_cb(btn, eventHandlerStatic, LV_EVENT_PRESSED, (void*)key);
+            lv_obj_add_event_cb(btn, eventHandlerStatic, LV_EVENT_RELEASED, (void*)key);
         } else if (key->id == KB_KEY_ESC) {
-             // ESC key: handle PRESSED for hotkey, CLICKED for normal input
-             lv_obj_add_event_cb(btn, eventHandlerStatic, LV_EVENT_PRESSED, (void*)key);
-             lv_obj_add_event_cb(btn, eventHandlerStatic, LV_EVENT_CLICKED, (void*)key);
+            // ESC key: handle PRESSED for hotkey, CLICKED for normal input
+            lv_obj_add_event_cb(btn, eventHandlerStatic, LV_EVENT_PRESSED, (void*)key);
+            lv_obj_add_event_cb(btn, eventHandlerStatic, LV_EVENT_CLICKED, (void*)key);
         } else {
-             // Normal keys: handle PRESSED (for hotkey with modifier), CLICKED and LONG_PRESSED_REPEAT
-             lv_obj_add_event_cb(btn, eventHandlerStatic, LV_EVENT_PRESSED, (void*)key);
-             lv_obj_add_event_cb(btn, eventHandlerStatic, LV_EVENT_CLICKED, (void*)key);
-             lv_obj_add_event_cb(btn, eventHandlerStatic, LV_EVENT_LONG_PRESSED_REPEAT, (void*)key);
+            // Normal keys: handle PRESSED (for hotkey with modifier), CLICKED and LONG_PRESSED_REPEAT
+            lv_obj_add_event_cb(btn, eventHandlerStatic, LV_EVENT_PRESSED, (void*)key);
+            lv_obj_add_event_cb(btn, eventHandlerStatic, LV_EVENT_CLICKED, (void*)key);
+            lv_obj_add_event_cb(btn, eventHandlerStatic, LV_EVENT_LONG_PRESSED_REPEAT, (void*)key);
         }
     }
-    
+
     updateUiState();
     return m_kb_cont;
 }
-
 
 // --- Virtual Keyboard Simulation Implementation ---
 
@@ -652,9 +638,9 @@ void M5Tab5Keyboard::simulateCharacter(const char* key_char)
     if (!key_char) return;
 
     for (int i = 0; i < KEYBOARD_KEY_COUNT; i++) {
-        const tab5_key_t *key = &tab5_key_map[i];
-        const char* val = key->values[0];
-        const char* lbl = key->labels[0];
+        const tab5_key_t* key = &tab5_key_map[i];
+        const char* val       = key->values[0];
+        const char* lbl       = key->labels[0];
 
         // Match against value (e.g. "a") or label
         if ((val && strcmp(val, key_char) == 0) || (lbl && strcmp(lbl, key_char) == 0)) {
@@ -671,21 +657,21 @@ void M5Tab5Keyboard::simulateString(const char* str, uint32_t interval_ms)
     ESP_LOGI(TAG, "Simulating string: %s", str);
 
     for (size_t i = 0; str[i] != '\0'; i++) {
-        char current = str[i];
+        char current    = str[i];
         bool need_shift = false;
-        bool need_sym = false;
+        bool need_sym   = false;
 
         // Check if we need shift for uppercase letters
         if (current >= 'A' && current <= 'Z') {
             need_shift = true;
-            current = current + 32; // Convert to lowercase for key lookup
+            current    = current + 32;  // Convert to lowercase for key lookup
         }
 
         // Check if we need SYM for special characters
         // Comma ',' is at ID 65, Mode 2
         if (current == ',') {
             need_sym = true;
-            current = '.'; // The base key is '.'
+            current  = '.';  // The base key is '.'
         }
 
         // Convert char to string for simulateCharacter
@@ -695,16 +681,15 @@ void M5Tab5Keyboard::simulateString(const char* str, uint32_t interval_ms)
         if (need_shift) {
             // Single click Aa to enter SINGLE_PENDING state
             simulateKeyClick(43, 100);  // Click Aa
-            lv_delay_ms(50);  // Wait for state to update
+            lv_delay_ms(50);            // Wait for state to update
 
             // Then input the lowercase letter, it will be auto-capitalized
             simulateCharacter(key_str);
         }
         // Handle SYM combination
         else if (need_sym) {
-            simulateKeyCombination(42, 65); // Hold SYM, click '.'
-        }
-        else {
+            simulateKeyCombination(42, 65);  // Hold SYM, click '.'
+        } else {
             // Normal character
             simulateCharacter(key_str);
         }
@@ -799,9 +784,9 @@ void M5Tab5Keyboard::simulateKeyRelease(const tab5_key_t* key, bool trigger_clic
     // If requested, also send CLICKED event to trigger character input
     // But skip special keys (Aa/SYM) which might have different logic or not use CLICKED
     if (trigger_click) {
-         if (key->id != KEY_ID_AA && key->id != KEY_ID_SYM) {
-             sendKeyEvent(btn, key, LV_EVENT_CLICKED);
-         }
+        if (key->id != KEY_ID_AA && key->id != KEY_ID_SYM) {
+            sendKeyEvent(btn, key, LV_EVENT_CLICKED);
+        }
     }
 }
 
@@ -853,7 +838,7 @@ void M5Tab5Keyboard::simulateKeySequence(const uint16_t* key_ids, size_t count, 
 void M5Tab5Keyboard::simulateKeyCombination(uint16_t modifier_id, uint16_t key_id, uint32_t hold_ms)
 {
     const tab5_key_t* modifier_key = findKeyById(modifier_id);
-    const tab5_key_t* target_key = findKeyById(key_id);
+    const tab5_key_t* target_key   = findKeyById(key_id);
 
     if (!modifier_key || !target_key) {
         ESP_LOGW(TAG, "Invalid key combination: modifier=%d, key=%d", modifier_id, key_id);
@@ -901,4 +886,3 @@ void setM5Tab5KeyboardInstance(M5Tab5Keyboard* instance)
 {
     g_m5tab5_keyboard_instance = instance;
 }
-

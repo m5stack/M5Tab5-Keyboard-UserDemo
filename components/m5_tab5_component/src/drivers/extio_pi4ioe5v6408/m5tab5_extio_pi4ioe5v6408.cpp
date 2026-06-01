@@ -35,7 +35,7 @@ static esp_err_t pi4io_read_reg(i2c_bus_device_handle_t dev, uint8_t reg, uint8_
 
 static esp_err_t pi4io_modify_bit(i2c_bus_device_handle_t dev, uint8_t reg, uint8_t bit, bool set)
 {
-    uint8_t val = 0;
+    uint8_t val   = 0;
     esp_err_t err = pi4io_read_reg(dev, reg, &val);
     if (err != ESP_OK) return err;
     if (set) {
@@ -59,15 +59,15 @@ esp_err_t m5tab5_extio_pi4ioe5v6408_descriptor_probe(m5tab5_runtime_t* runtime)
         ESP_LOGE(TAG, "probe: SYS I2C bus not available");
         return ESP_ERR_INVALID_STATE;
     }
-    // Create a temporary device to check for ACK at the default address. / 创建一个临时设备句柄，用于检测默认地址是否?ACK 响应?
-    i2c_bus_device_handle_t probe_dev =
-        i2c_bus_device_create(bus, 0x43, 400000);
+    // Create a temporary device to check for ACK at the default address. /
+    // 创建一个临时设备句柄，用于检测默认地址是否?ACK 响应?
+    i2c_bus_device_handle_t probe_dev = i2c_bus_device_create(bus, 0x43, 400000);
     if (!probe_dev) {
         ESP_LOGW(TAG, "probe: i2c_bus_device_create failed");
         return ESP_ERR_NOT_FOUND;
     }
     uint8_t id_reg = 0;
-    esp_err_t err = i2c_bus_read_byte(probe_dev, M5TAB5_PI4IO_REG_DEVICE_ID, &id_reg);
+    esp_err_t err  = i2c_bus_read_byte(probe_dev, M5TAB5_PI4IO_REG_DEVICE_ID, &id_reg);
     i2c_bus_device_delete(&probe_dev);
     if (err != ESP_OK) {
         ESP_LOGW(TAG, "probe: no ACK at 0x43 (%s)", esp_err_to_name(err));
@@ -85,11 +85,11 @@ esp_err_t m5tab5_extio_pi4ioe5v6408_descriptor_init(m5tab5_runtime_t* runtime)
         return ESP_ERR_INVALID_STATE;
     }
     m5tab5_extio_pi4ioe5v6408_config_t cfg = {};
-    cfg.i2c_bus_handle = bus;
-    cfg.i2c_addr       = 0x43;
-    cfg.scl_speed_hz   = 400000;
-    cfg.int_pin        = GPIO_NUM_NC;
-    esp_err_t err = m5tab5_extio_pi4ioe5v6408_init(&cfg, &s_dev_ctx);
+    cfg.i2c_bus_handle                     = bus;
+    cfg.i2c_addr                           = 0x43;
+    cfg.scl_speed_hz                       = 400000;
+    cfg.int_pin                            = GPIO_NUM_NC;
+    esp_err_t err                          = m5tab5_extio_pi4ioe5v6408_init(&cfg, &s_dev_ctx);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "init: m5tab5_extio_pi4ioe5v6408_init failed: %s", esp_err_to_name(err));
         return err;
@@ -121,7 +121,8 @@ esp_err_t m5tab5_extio_pi4ioe5v6408_descriptor_init(m5tab5_runtime_t* runtime)
         ESP_LOGE(TAG, "init: IO_DIR write failed: %s", esp_err_to_name(err));
         return err;
     }
-    // OUT_HI_Z: 1 means Hi-Z. Drive all outputs actively -> 0x00. / OUT_HI_Z ?1 表示高阻态，这里将全部输出脚主动驱动，因此写?0x00?
+    // OUT_HI_Z: 1 means Hi-Z. Drive all outputs actively -> 0x00. / OUT_HI_Z ?1
+    // 表示高阻态，这里将全部输出脚主动驱动，因此写?0x00?
     err = pi4io_write_reg(s_dev_ctx.i2c_dev, M5TAB5_PI4IO_REG_OUT_HI_Z, 0x00);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "init: OUT_HI_Z write failed: %s", esp_err_to_name(err));
@@ -170,11 +171,11 @@ esp_err_t m5tab5_extio_pi4ioe5v6408_descriptor_init(m5tab5_runtime_t* runtime)
     // OUT_STATE: P7=CHG_EN=H, P5=nCHG_QC_EN=H (QC disabled), others LOW -> 0b10100000 = 0xA0.
     // OUT_STATE：P7=CHG_EN=H，P5=nCHG_QC_EN=H（禁?QC），其余保持 LOW，即 0b10100000 = 0xA0?
     m5tab5_extio_pi4ioe5v6408_config_t high_cfg = {};
-    high_cfg.i2c_bus_handle = bus;
-    high_cfg.i2c_addr       = 0x44;
-    high_cfg.scl_speed_hz   = 400000;
-    high_cfg.int_pin        = GPIO_NUM_NC;
-    err = m5tab5_extio_pi4ioe5v6408_init(&high_cfg, &s_dev_ctx_high);
+    high_cfg.i2c_bus_handle                     = bus;
+    high_cfg.i2c_addr                           = 0x44;
+    high_cfg.scl_speed_hz                       = 400000;
+    high_cfg.int_pin                            = GPIO_NUM_NC;
+    err                                         = m5tab5_extio_pi4ioe5v6408_init(&high_cfg, &s_dev_ctx_high);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "init: ADDR_HIGH init failed: %s", esp_err_to_name(err));
         return err;
@@ -201,17 +202,15 @@ const m5tab5_device_driver_descriptor_t k_m5tab5_extio_pi4ioe5v6408_driver = {
 
 // ── Public Driver API / 对外驱动接口 ───────────────────────────────────────
 
-esp_err_t m5tab5_extio_pi4ioe5v6408_init(
-    const m5tab5_extio_pi4ioe5v6408_config_t* config,
-    m5tab5_extio_pi4ioe5v6408_t* dev)
+esp_err_t m5tab5_extio_pi4ioe5v6408_init(const m5tab5_extio_pi4ioe5v6408_config_t* config,
+                                         m5tab5_extio_pi4ioe5v6408_t* dev)
 {
     if (!config || !dev || !config->i2c_bus_handle) {
         return ESP_ERR_INVALID_ARG;
     }
 
     // Add the device to the I2C bus via i2c_bus. / 通过 i2c_bus 将设备加?I2C 总线?
-    dev->i2c_dev = i2c_bus_device_create(
-        config->i2c_bus_handle, config->i2c_addr, config->scl_speed_hz);
+    dev->i2c_dev = i2c_bus_device_create(config->i2c_bus_handle, config->i2c_addr, config->scl_speed_hz);
     if (!dev->i2c_dev) {
         ESP_LOGE(TAG, "i2c_bus_device_create failed (addr=0x%02X)", config->i2c_addr);
         return ESP_FAIL;
@@ -230,17 +229,16 @@ esp_err_t m5tab5_extio_pi4ioe5v6408_init(
 
     // Read the Device-ID register to verify that the chip is responding. / 读取 Device-ID 寄存器，以确认芯片有响应?
     uint8_t id_reg = 0;
-    err = pi4io_read_reg(dev->i2c_dev, M5TAB5_PI4IO_REG_DEVICE_ID, &id_reg);
+    err            = pi4io_read_reg(dev->i2c_dev, M5TAB5_PI4IO_REG_DEVICE_ID, &id_reg);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "device ID read failed: %s", esp_err_to_name(err));
         i2c_bus_device_delete(&dev->i2c_dev);
         return err;
     }
 
-    uint8_t mfr_id  = id_reg >> 5;
-    uint8_t fw_rev  = (id_reg >> 2) & 0x07;
-    ESP_LOGI(TAG, "PI4IOE5V6408[0x%02X] ready: mfr=0x%X fw_rev=0x%X",
-             config->i2c_addr, mfr_id, fw_rev);
+    uint8_t mfr_id = id_reg >> 5;
+    uint8_t fw_rev = (id_reg >> 2) & 0x07;
+    ESP_LOGI(TAG, "PI4IOE5V6408[0x%02X] ready: mfr=0x%X fw_rev=0x%X", config->i2c_addr, mfr_id, fw_rev);
 
     return ESP_OK;
 }
@@ -255,10 +253,8 @@ void m5tab5_extio_pi4ioe5v6408_deinit(m5tab5_extio_pi4ioe5v6408_t* dev)
     dev->i2c_addr = 0;
 }
 
-esp_err_t m5tab5_extio_pi4ioe5v6408_set_pin_mode(
-    m5tab5_extio_pi4ioe5v6408_t* dev,
-    M5TAB5_ExtIo_PI4IOE5V6408_Pin pin,
-    M5TAB5_ExtIo_PI4IOE5V6408_PinMode mode)
+esp_err_t m5tab5_extio_pi4ioe5v6408_set_pin_mode(m5tab5_extio_pi4ioe5v6408_t* dev, M5TAB5_ExtIo_PI4IOE5V6408_Pin pin,
+                                                 M5TAB5_ExtIo_PI4IOE5V6408_PinMode mode)
 {
     if (!dev || !dev->i2c_dev || pin >= M5TAB5_EXTIO_PI4IOE5V6408_PIN_MAX) {
         return ESP_ERR_INVALID_ARG;
@@ -267,49 +263,47 @@ esp_err_t m5tab5_extio_pi4ioe5v6408_set_pin_mode(
     esp_err_t err;
 
     switch (mode) {
-    case M5TAB5_EXTIO_PI4IOE5V6408_PIN_INPUT:
-        err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_IO_DIR, pin, false);
-        if (err != ESP_OK) return err;
-        err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_OUT_HI_Z, pin, true);
-        if (err != ESP_OK) return err;
-        err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_PULL_ENABLE, pin, false);
-        return err;
+        case M5TAB5_EXTIO_PI4IOE5V6408_PIN_INPUT:
+            err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_IO_DIR, pin, false);
+            if (err != ESP_OK) return err;
+            err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_OUT_HI_Z, pin, true);
+            if (err != ESP_OK) return err;
+            err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_PULL_ENABLE, pin, false);
+            return err;
 
-    case M5TAB5_EXTIO_PI4IOE5V6408_PIN_OUTPUT:
-        err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_IO_DIR, pin, true);
-        if (err != ESP_OK) return err;
-        err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_OUT_HI_Z, pin, false);
-        return err;
+        case M5TAB5_EXTIO_PI4IOE5V6408_PIN_OUTPUT:
+            err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_IO_DIR, pin, true);
+            if (err != ESP_OK) return err;
+            err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_OUT_HI_Z, pin, false);
+            return err;
 
-    case M5TAB5_EXTIO_PI4IOE5V6408_PIN_INPUT_PULLUP:
-        err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_IO_DIR, pin, false);
-        if (err != ESP_OK) return err;
-        err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_OUT_HI_Z, pin, true);
-        if (err != ESP_OK) return err;
-        err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_PULL_ENABLE, pin, true);
-        if (err != ESP_OK) return err;
-        err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_PULL_SELECT, pin, true);
-        return err;
+        case M5TAB5_EXTIO_PI4IOE5V6408_PIN_INPUT_PULLUP:
+            err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_IO_DIR, pin, false);
+            if (err != ESP_OK) return err;
+            err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_OUT_HI_Z, pin, true);
+            if (err != ESP_OK) return err;
+            err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_PULL_ENABLE, pin, true);
+            if (err != ESP_OK) return err;
+            err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_PULL_SELECT, pin, true);
+            return err;
 
-    case M5TAB5_EXTIO_PI4IOE5V6408_PIN_INPUT_PULLDOWN:
-        err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_IO_DIR, pin, false);
-        if (err != ESP_OK) return err;
-        err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_OUT_HI_Z, pin, true);
-        if (err != ESP_OK) return err;
-        err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_PULL_ENABLE, pin, true);
-        if (err != ESP_OK) return err;
-        err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_PULL_SELECT, pin, false);
-        return err;
+        case M5TAB5_EXTIO_PI4IOE5V6408_PIN_INPUT_PULLDOWN:
+            err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_IO_DIR, pin, false);
+            if (err != ESP_OK) return err;
+            err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_OUT_HI_Z, pin, true);
+            if (err != ESP_OK) return err;
+            err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_PULL_ENABLE, pin, true);
+            if (err != ESP_OK) return err;
+            err = pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_PULL_SELECT, pin, false);
+            return err;
 
-    default:
-        return ESP_ERR_INVALID_ARG;
+        default:
+            return ESP_ERR_INVALID_ARG;
     }
 }
 
-esp_err_t m5tab5_extio_pi4ioe5v6408_write_pin(
-    m5tab5_extio_pi4ioe5v6408_t* dev,
-    M5TAB5_ExtIo_PI4IOE5V6408_Pin pin,
-    bool level)
+esp_err_t m5tab5_extio_pi4ioe5v6408_write_pin(m5tab5_extio_pi4ioe5v6408_t* dev, M5TAB5_ExtIo_PI4IOE5V6408_Pin pin,
+                                              bool level)
 {
     if (!dev || !dev->i2c_dev || pin >= M5TAB5_EXTIO_PI4IOE5V6408_PIN_MAX) {
         return ESP_ERR_INVALID_ARG;
@@ -317,24 +311,20 @@ esp_err_t m5tab5_extio_pi4ioe5v6408_write_pin(
     return pi4io_modify_bit(dev->i2c_dev, M5TAB5_PI4IO_REG_OUT_STATE, pin, level);
 }
 
-esp_err_t m5tab5_extio_pi4ioe5v6408_read_pin(
-    m5tab5_extio_pi4ioe5v6408_t* dev,
-    M5TAB5_ExtIo_PI4IOE5V6408_Pin pin,
-    bool* level)
+esp_err_t m5tab5_extio_pi4ioe5v6408_read_pin(m5tab5_extio_pi4ioe5v6408_t* dev, M5TAB5_ExtIo_PI4IOE5V6408_Pin pin,
+                                             bool* level)
 {
     if (!dev || !dev->i2c_dev || pin >= M5TAB5_EXTIO_PI4IOE5V6408_PIN_MAX || !level) {
         return ESP_ERR_INVALID_ARG;
     }
-    uint8_t val = 0;
+    uint8_t val   = 0;
     esp_err_t err = pi4io_read_reg(dev->i2c_dev, M5TAB5_PI4IO_REG_IN_STATUS, &val);
     if (err != ESP_OK) return err;
     *level = (val >> pin) & 0x01;
     return ESP_OK;
 }
 
-esp_err_t m5tab5_extio_pi4ioe5v6408_read_all_pins(
-    m5tab5_extio_pi4ioe5v6408_t* dev,
-    uint8_t* out_state)
+esp_err_t m5tab5_extio_pi4ioe5v6408_read_all_pins(m5tab5_extio_pi4ioe5v6408_t* dev, uint8_t* out_state)
 {
     if (!dev || !dev->i2c_dev || !out_state) {
         return ESP_ERR_INVALID_ARG;
@@ -342,9 +332,7 @@ esp_err_t m5tab5_extio_pi4ioe5v6408_read_all_pins(
     return pi4io_read_reg(dev->i2c_dev, M5TAB5_PI4IO_REG_IN_STATUS, out_state);
 }
 
-esp_err_t m5tab5_extio_pi4ioe5v6408_write_all_pins(
-    m5tab5_extio_pi4ioe5v6408_t* dev,
-    uint8_t state)
+esp_err_t m5tab5_extio_pi4ioe5v6408_write_all_pins(m5tab5_extio_pi4ioe5v6408_t* dev, uint8_t state)
 {
     if (!dev || !dev->i2c_dev) {
         return ESP_ERR_INVALID_ARG;
@@ -352,8 +340,7 @@ esp_err_t m5tab5_extio_pi4ioe5v6408_write_all_pins(
     return pi4io_write_reg(dev->i2c_dev, M5TAB5_PI4IO_REG_OUT_STATE, state);
 }
 
-esp_err_t m5tab5_extio_pi4ioe5v6408_soft_reset(
-    m5tab5_extio_pi4ioe5v6408_t* dev)
+esp_err_t m5tab5_extio_pi4ioe5v6408_soft_reset(m5tab5_extio_pi4ioe5v6408_t* dev)
 {
     if (!dev || !dev->i2c_dev) {
         return ESP_ERR_INVALID_ARG;
@@ -364,13 +351,12 @@ esp_err_t m5tab5_extio_pi4ioe5v6408_soft_reset(
     // 这里?0xFF 与参考的 M5Stack Tab5 BSP 保持一致?
     esp_err_t err = pi4io_write_reg(dev->i2c_dev, M5TAB5_PI4IO_REG_DEVICE_ID, 0xFF);
     if (err != ESP_OK) return err;
-    vTaskDelay(pdMS_TO_TICKS(10));   // chip resets in <1 ms; 10 ms is conservative / 芯片小于 1 ms 即可复位完成，这里保守等?10 ms
+    vTaskDelay(pdMS_TO_TICKS(
+        10));  // chip resets in <1 ms; 10 ms is conservative / 芯片小于 1 ms 即可复位完成，这里保守等?10 ms
     return ESP_OK;
 }
 
-esp_err_t m5tab5_extio_pi4ioe5v6408_read_interrupt_status(
-    m5tab5_extio_pi4ioe5v6408_t* dev,
-    uint8_t* status)
+esp_err_t m5tab5_extio_pi4ioe5v6408_read_interrupt_status(m5tab5_extio_pi4ioe5v6408_t* dev, uint8_t* status)
 {
     if (!dev || !dev->i2c_dev || !status) {
         return ESP_ERR_INVALID_ARG;
@@ -378,10 +364,8 @@ esp_err_t m5tab5_extio_pi4ioe5v6408_read_interrupt_status(
     return pi4io_read_reg(dev->i2c_dev, M5TAB5_PI4IO_REG_INT_STATUS, status);
 }
 
-esp_err_t m5tab5_extio_pi4ioe5v6408_set_interrupt_mask(
-    m5tab5_extio_pi4ioe5v6408_t* dev,
-    M5TAB5_ExtIo_PI4IOE5V6408_Pin pin,
-    bool enable)
+esp_err_t m5tab5_extio_pi4ioe5v6408_set_interrupt_mask(m5tab5_extio_pi4ioe5v6408_t* dev,
+                                                       M5TAB5_ExtIo_PI4IOE5V6408_Pin pin, bool enable)
 {
     if (!dev || !dev->i2c_dev || pin >= M5TAB5_EXTIO_PI4IOE5V6408_PIN_MAX) {
         return ESP_ERR_INVALID_ARG;

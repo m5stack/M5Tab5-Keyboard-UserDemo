@@ -22,7 +22,8 @@ inline const char* m5tab5_driver_log_tag()
 }
 
 /// Return the shared SYS I2C bus handle (i2c_bus wrapper, lazily initialized singleton).
-/// è¿åå±äº«ç?SYS I2C æ»çº¿å¥æï¼i2c_bus åè£å±ï¼å»¶è¿åå§åçåä¾ï¼ã?
+/// è¿åå±äº«ç?SYS I2C æ»çº¿å¥æï¼i2c_bus
+/// åè£å±ï¼å»¶è¿åå§åçåä¾ï¼ã?
 i2c_bus_handle_t m5tab5_get_sys_i2c_bus();
 
 /// Return the underlying IDF i2c_master_bus_handle_t for esp_lcd_new_panel_io_i2c.

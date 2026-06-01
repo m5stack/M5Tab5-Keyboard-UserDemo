@@ -15,13 +15,13 @@
 
 #ifdef __cplusplus
 
-/**
- * @brief 正常模式页面
- *
- * 提供完整的QWERTY键盘输入功能
- * 支持大小写切换、符号模式、按键重复等
- */
-class NormalPage : public BasePage {
+    /**
+     * @brief 正常模式页面
+     *
+     * 提供完整的QWERTY键盘输入功能
+     * 支持大小写切换、符号模式、按键重复等
+     */
+    class NormalPage : public BasePage {
 public:
     NormalPage();
     virtual ~NormalPage();
@@ -44,11 +44,14 @@ public:
      * @brief 获取键盘对象
      * @return M5Tab5Keyboard指针
      */
-    M5Tab5Keyboard* getKeyboard() const { return m_keyboard; }
+    M5Tab5Keyboard* getKeyboard() const
+    {
+        return m_keyboard;
+    }
 
 private:
-    lv_obj_t* m_textarea;              ///< 文本输入区域
-    M5Tab5Keyboard* m_keyboard;        ///< M5Tab5键盘对象
+    lv_obj_t* m_textarea;        ///< 文本输入区域
+    M5Tab5Keyboard* m_keyboard;  ///< M5Tab5键盘对象
 
     // 按键重复逻辑
     TimerHandle_t m_repeat_timer;      ///< 重复定时器
@@ -63,9 +66,6 @@ private:
     static void repeatTimerCallback(TimerHandle_t xTimer);
 };
 
-#endif // __cplusplus
+#endif  // __cplusplus
 
-#endif // UI_PAGE_NORMAL_H
-
-
-
+#endif  // UI_PAGE_NORMAL_H

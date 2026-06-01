@@ -24,7 +24,7 @@
 /**
  * @brief 读取单个字节 (Arduino)
  *        Read single byte (Arduino)
- * 
+ *
  * @param wire TwoWire 实例指针 / TwoWire instance pointer
  * @param addr I2C 设备地址 / I2C device address
  * @param reg 寄存器地址 / Register address
@@ -51,12 +51,12 @@ static inline bool TAB5_KB_I2C_READ_BYTE(TwoWire *wire, uint8_t addr, uint8_t re
 /**
  * @brief 读取多个字节 (Arduino)
  *        Read multiple bytes (Arduino)
- * 
+ *
  * @param wire TwoWire 实例指针 / TwoWire instance pointer
  * @param addr I2C 设备地址 / I2C device address
  * @param start_reg 起始寄存器地址 / Start register address
  * @param len 读取长度 / Read length
- * @param[out] data 输出：读取的数据缓冲�?/ Output: read data buffer
+ * @param[out] data 输出：读取的数据缓冲区 / Output: read data buffer
  * @return true 成功 / Success
  * @return false 失败 / Failed
  */
@@ -81,11 +81,11 @@ static inline bool TAB5_KB_I2C_READ_BYTES(TwoWire *wire, uint8_t addr, uint8_t s
 /**
  * @brief 读取 16 位寄存器 (Arduino)
  *        Read 16-bit register (Arduino)
- * 
+ *
  * @param wire TwoWire 实例指针 / TwoWire instance pointer
  * @param addr I2C 设备地址 / I2C device address
  * @param reg 寄存器地址 / Register address
- * @param[out] data 输出�?6 位数据（小端序） / Output: 16-bit data (little-endian)
+ * @param[out] data 输出：16 位数据（小端序） / Output: 16-bit data (little-endian)
  * @return true 成功 / Success
  * @return false 失败 / Failed
  */
@@ -106,7 +106,7 @@ static inline bool TAB5_KB_I2C_READ_REG16(TwoWire *wire, uint8_t addr, uint8_t r
 /**
  * @brief 写入单个字节 (Arduino)
  *        Write single byte (Arduino)
- * 
+ *
  * @param wire TwoWire 实例指针 / TwoWire instance pointer
  * @param addr I2C 设备地址 / I2C device address
  * @param reg 寄存器地址 / Register address
@@ -130,18 +130,18 @@ static inline bool TAB5_KB_I2C_WRITE_BYTE(TwoWire *wire, uint8_t addr, uint8_t r
 /**
  * @brief 写入多个字节 (Arduino)
  *        Write multiple bytes (Arduino)
- * 
+ *
  * @param wire TwoWire 实例指针 / TwoWire instance pointer
  * @param addr I2C 设备地址 / I2C device address
  * @param start_reg 起始寄存器地址 / Start register address
  * @param len 写入长度 / Write length
- * @param data 要写入的数据缓冲�?/ Data buffer to write
+ * @param data 要写入的数据缓冲区 / Data buffer to write
  * @return true 成功 / Success
  * @return false 失败 / Failed
  */
 #ifndef TAB5_KB_I2C_WRITE_BYTES
 static inline bool TAB5_KB_I2C_WRITE_BYTES(TwoWire *wire, uint8_t addr, uint8_t start_reg, size_t len,
-                                                  const uint8_t *data)
+                                           const uint8_t *data)
 {
     wire->beginTransmission(addr);
     wire->write(start_reg);
@@ -158,7 +158,7 @@ static inline bool TAB5_KB_I2C_WRITE_BYTES(TwoWire *wire, uint8_t addr, uint8_t 
 /**
  * @brief 写入 16 位寄存器 (Arduino)
  *        Write 16-bit register (Arduino)
- * 
+ *
  * @param wire TwoWire 实例指针 / TwoWire instance pointer
  * @param addr I2C 设备地址 / I2C device address
  * @param reg 寄存器地址 / Register address
@@ -198,7 +198,7 @@ extern "C" {
  */
 typedef enum {
     M5_TAB5_KB_I2C_DRIVER_NONE = 0,      ///< 未初始化 / Not initialized
-    M5_TAB5_KB_I2C_DRIVER_SELF_CREATED,  ///< 使用 i2c_port_t 自创�?/ Self-created using i2c_port_t
+    M5_TAB5_KB_I2C_DRIVER_SELF_CREATED,  ///< 使用 i2c_port_t 自创建 / Self-created using i2c_port_t
     M5_TAB5_KB_I2C_DRIVER_MASTER,        ///< ESP-IDF 原生 i2c_master 驱动 / ESP-IDF native i2c_master driver
     M5_TAB5_KB_I2C_DRIVER_BUS            ///< esp-idf-lib i2c_bus 组件 / esp-idf-lib i2c_bus component
 } m5_tab5_kb_i2c_driver_t;
@@ -211,12 +211,12 @@ typedef enum {
 /**
  * @brief 读取单个字节 (ESP-IDF i2c_bus)
  *        Read single byte (ESP-IDF i2c_bus)
- * 
+ *
  * @param dev I2C 设备句柄 / I2C device handle
  * @param reg 寄存器地址 / Register address
  * @param[out] data 输出：读取的数据 / Output: read data
  * @return ESP_OK 成功 / Success
- * @return 其他错误�?/ Other error codes
+ * @return 其他错误码 / Other error codes
  */
 #ifndef TAB5_KB_I2C_READ_BYTE
 static inline esp_err_t TAB5_KB_I2C_READ_BYTE(i2c_bus_device_handle_t dev, uint8_t reg, uint8_t *data)
@@ -228,16 +228,17 @@ static inline esp_err_t TAB5_KB_I2C_READ_BYTE(i2c_bus_device_handle_t dev, uint8
 /**
  * @brief 读取多个字节 (ESP-IDF i2c_bus)
  *        Read multiple bytes (ESP-IDF i2c_bus)
- * 
+ *
  * @param dev I2C 设备句柄 / I2C device handle
  * @param start_reg 起始寄存器地址 / Start register address
  * @param len 读取长度 / Read length
- * @param[out] data 输出：读取的数据缓冲�?/ Output: read data buffer
+ * @param[out] data 输出：读取的数据缓冲区 / Output: read data buffer
  * @return ESP_OK 成功 / Success
- * @return 其他错误�?/ Other error codes
+ * @return 其他错误码 / Other error codes
  */
 #ifndef TAB5_KB_I2C_READ_BYTES
-static inline esp_err_t TAB5_KB_I2C_READ_BYTES(i2c_bus_device_handle_t dev, uint8_t start_reg, size_t len, uint8_t *data)
+static inline esp_err_t TAB5_KB_I2C_READ_BYTES(i2c_bus_device_handle_t dev, uint8_t start_reg, size_t len,
+                                               uint8_t *data)
 {
     return i2c_bus_read_bytes(dev, start_reg, len, data);
 }
@@ -246,12 +247,12 @@ static inline esp_err_t TAB5_KB_I2C_READ_BYTES(i2c_bus_device_handle_t dev, uint
 /**
  * @brief 读取 16 位寄存器 (ESP-IDF i2c_bus)
  *        Read 16-bit register (ESP-IDF i2c_bus)
- * 
+ *
  * @param dev I2C 设备句柄 / I2C device handle
  * @param reg 寄存器地址 / Register address
- * @param[out] data 输出�?6 位数据（小端序） / Output: 16-bit data (little-endian)
+ * @param[out] data 输出：16 位数据（小端序） / Output: 16-bit data (little-endian)
  * @return ESP_OK 成功 / Success
- * @return 其他错误�?/ Other error codes
+ * @return 其他错误码 / Other error codes
  */
 #ifndef TAB5_KB_I2C_READ_REG16
 static inline esp_err_t TAB5_KB_I2C_READ_REG16(i2c_bus_device_handle_t dev, uint8_t reg, uint16_t *data)
@@ -270,12 +271,12 @@ static inline esp_err_t TAB5_KB_I2C_READ_REG16(i2c_bus_device_handle_t dev, uint
 /**
  * @brief 写入单个字节 (ESP-IDF i2c_bus)
  *        Write single byte (ESP-IDF i2c_bus)
- * 
+ *
  * @param dev I2C 设备句柄 / I2C device handle
  * @param reg 寄存器地址 / Register address
  * @param data 要写入的数据 / Data to write
  * @return ESP_OK 成功 / Success
- * @return 其他错误�?/ Other error codes
+ * @return 其他错误码 / Other error codes
  */
 #ifndef TAB5_KB_I2C_WRITE_BYTE
 static inline esp_err_t TAB5_KB_I2C_WRITE_BYTE(i2c_bus_device_handle_t dev, uint8_t reg, uint8_t data)
@@ -287,17 +288,17 @@ static inline esp_err_t TAB5_KB_I2C_WRITE_BYTE(i2c_bus_device_handle_t dev, uint
 /**
  * @brief 写入多个字节 (ESP-IDF i2c_bus)
  *        Write multiple bytes (ESP-IDF i2c_bus)
- * 
+ *
  * @param dev I2C 设备句柄 / I2C device handle
  * @param start_reg 起始寄存器地址 / Start register address
  * @param len 写入长度 / Write length
- * @param data 要写入的数据缓冲�?/ Data buffer to write
+ * @param data 要写入的数据缓冲区 / Data buffer to write
  * @return ESP_OK 成功 / Success
- * @return 其他错误�?/ Other error codes
+ * @return 其他错误码 / Other error codes
  */
 #ifndef TAB5_KB_I2C_WRITE_BYTES
 static inline esp_err_t TAB5_KB_I2C_WRITE_BYTES(i2c_bus_device_handle_t dev, uint8_t start_reg, size_t len,
-                                                       const uint8_t *data)
+                                                const uint8_t *data)
 {
     return i2c_bus_write_bytes(dev, start_reg, len, (uint8_t *)data);
 }
@@ -306,12 +307,12 @@ static inline esp_err_t TAB5_KB_I2C_WRITE_BYTES(i2c_bus_device_handle_t dev, uin
 /**
  * @brief 写入 16 位寄存器 (ESP-IDF i2c_bus)
  *        Write 16-bit register (ESP-IDF i2c_bus)
- * 
+ *
  * @param dev I2C 设备句柄 / I2C device handle
  * @param reg 寄存器地址 / Register address
  * @param data 16 位数据（小端序） / 16-bit data (little-endian)
  * @return ESP_OK 成功 / Success
- * @return 其他错误�?/ Other error codes
+ * @return 其他错误码 / Other error codes
  */
 #ifndef TAB5_KB_I2C_WRITE_REG16
 static inline esp_err_t TAB5_KB_I2C_WRITE_REG16(i2c_bus_device_handle_t dev, uint8_t reg, uint16_t data)
@@ -333,12 +334,12 @@ static inline esp_err_t TAB5_KB_I2C_WRITE_REG16(i2c_bus_device_handle_t dev, uin
 /**
  * @brief 读取单个字节 (ESP-IDF i2c_master)
  *        Read single byte (ESP-IDF i2c_master)
- * 
+ *
  * @param dev I2C 设备句柄 / I2C device handle
  * @param reg 寄存器地址 / Register address
  * @param[out] data 输出：读取的数据 / Output: read data
  * @return ESP_OK 成功 / Success
- * @return 其他错误�?/ Other error codes
+ * @return 其他错误码 / Other error codes
  */
 #ifndef TAB5_KB_I2C_MASTER_READ_BYTE
 static inline esp_err_t TAB5_KB_I2C_MASTER_READ_BYTE(i2c_master_dev_handle_t dev, uint8_t reg, uint8_t *data)
@@ -350,17 +351,17 @@ static inline esp_err_t TAB5_KB_I2C_MASTER_READ_BYTE(i2c_master_dev_handle_t dev
 /**
  * @brief 读取多个字节 (ESP-IDF i2c_master)
  *        Read multiple bytes (ESP-IDF i2c_master)
- * 
+ *
  * @param dev I2C 设备句柄 / I2C device handle
  * @param start_reg 起始寄存器地址 / Start register address
  * @param len 读取长度 / Read length
- * @param[out] data 输出：读取的数据缓冲�?/ Output: read data buffer
+ * @param[out] data 输出：读取的数据缓冲区 / Output: read data buffer
  * @return ESP_OK 成功 / Success
- * @return 其他错误�?/ Other error codes
+ * @return 其他错误码 / Other error codes
  */
 #ifndef TAB5_KB_I2C_MASTER_READ_BYTES
 static inline esp_err_t TAB5_KB_I2C_MASTER_READ_BYTES(i2c_master_dev_handle_t dev, uint8_t start_reg, size_t len,
-                                                             uint8_t *data)
+                                                      uint8_t *data)
 {
     return i2c_master_transmit_receive(dev, &start_reg, 1, data, len, -1);
 }
@@ -369,12 +370,12 @@ static inline esp_err_t TAB5_KB_I2C_MASTER_READ_BYTES(i2c_master_dev_handle_t de
 /**
  * @brief 读取 16 位寄存器 (ESP-IDF i2c_master)
  *        Read 16-bit register (ESP-IDF i2c_master)
- * 
+ *
  * @param dev I2C 设备句柄 / I2C device handle
  * @param reg 寄存器地址 / Register address
- * @param[out] data 输出�?6 位数据（小端序） / Output: 16-bit data (little-endian)
+ * @param[out] data 输出：16 位数据（小端序） / Output: 16-bit data (little-endian)
  * @return ESP_OK 成功 / Success
- * @return 其他错误�?/ Other error codes
+ * @return 其他错误码 / Other error codes
  */
 #ifndef TAB5_KB_I2C_MASTER_READ_REG16
 static inline esp_err_t TAB5_KB_I2C_MASTER_READ_REG16(i2c_master_dev_handle_t dev, uint8_t reg, uint16_t *data)
@@ -393,12 +394,12 @@ static inline esp_err_t TAB5_KB_I2C_MASTER_READ_REG16(i2c_master_dev_handle_t de
 /**
  * @brief 写入单个字节 (ESP-IDF i2c_master)
  *        Write single byte (ESP-IDF i2c_master)
- * 
+ *
  * @param dev I2C 设备句柄 / I2C device handle
  * @param reg 寄存器地址 / Register address
  * @param data 要写入的数据 / Data to write
  * @return ESP_OK 成功 / Success
- * @return 其他错误�?/ Other error codes
+ * @return 其他错误码 / Other error codes
  */
 #ifndef TAB5_KB_I2C_MASTER_WRITE_BYTE
 static inline esp_err_t TAB5_KB_I2C_MASTER_WRITE_BYTE(i2c_master_dev_handle_t dev, uint8_t reg, uint8_t data)
@@ -411,18 +412,18 @@ static inline esp_err_t TAB5_KB_I2C_MASTER_WRITE_BYTE(i2c_master_dev_handle_t de
 /**
  * @brief 写入多个字节 (ESP-IDF i2c_master)
  *        Write multiple bytes (ESP-IDF i2c_master)
- * 
+ *
  * @param dev I2C 设备句柄 / I2C device handle
  * @param start_reg 起始寄存器地址 / Start register address
  * @param len 写入长度 / Write length
- * @param data 要写入的数据缓冲�?/ Data buffer to write
+ * @param data 要写入的数据缓冲区 / Data buffer to write
  * @return ESP_OK 成功 / Success
  * @return ESP_ERR_NO_MEM 内存不足 / Out of memory
- * @return 其他错误�?/ Other error codes
+ * @return 其他错误码 / Other error codes
  */
 #ifndef TAB5_KB_I2C_MASTER_WRITE_BYTES
 static inline esp_err_t TAB5_KB_I2C_MASTER_WRITE_BYTES(i2c_master_dev_handle_t dev, uint8_t start_reg, size_t len,
-                                                             const uint8_t *data)
+                                                       const uint8_t *data)
 {
     // 需要在数据前添加寄存器地址
     // Need to prepend register address
@@ -439,12 +440,12 @@ static inline esp_err_t TAB5_KB_I2C_MASTER_WRITE_BYTES(i2c_master_dev_handle_t d
 /**
  * @brief 写入 16 位寄存器 (ESP-IDF i2c_master)
  *        Write 16-bit register (ESP-IDF i2c_master)
- * 
+ *
  * @param dev I2C 设备句柄 / I2C device handle
  * @param reg 寄存器地址 / Register address
  * @param data 16 位数据（小端序） / 16-bit data (little-endian)
  * @return ESP_OK 成功 / Success
- * @return 其他错误�?/ Other error codes
+ * @return 其他错误码 / Other error codes
  */
 #ifndef TAB5_KB_I2C_MASTER_WRITE_REG16
 static inline esp_err_t TAB5_KB_I2C_MASTER_WRITE_REG16(i2c_master_dev_handle_t dev, uint8_t reg, uint16_t data)
@@ -466,4 +467,3 @@ static inline esp_err_t TAB5_KB_I2C_MASTER_WRITE_REG16(i2c_master_dev_handle_t d
 #endif  // ARDUINO
 
 #endif  // __M5_TAB5_KEYBOARD_I2C_COMPAT_H__
-

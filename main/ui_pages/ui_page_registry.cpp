@@ -17,18 +17,18 @@
 // ============================================================
 // 布局常量
 // ============================================================
-#define STARTING_Y   80   // 整体下移 (px)
-#define HEADER_H     50    // 占位按钮条高度
-#define TABLE_Y      (STARTING_Y + HEADER_H + 8) // 表格起始 y
-#define CELL_W       110   // 格子宽度 (进一步加宽，让文字更舒展)
-#define CELL_H       80    // 格子高度 (进一步加高)
-#define CELL_VAL_H   (CELL_H * 0.45) // 值区高度 (45%)
-#define TABLE_INNER_W (16 * CELL_W)    // 1760
-#define TABLE_INNER_H (7 * CELL_H)     // 560 (跳过 0x70~0xEF 的 8 行，将 0xF0~0xFF 移到了第 7 行，总共 7 行
+#define STARTING_Y    80                           // 整体下移 (px)
+#define HEADER_H      50                           // 占位按钮条高度
+#define TABLE_Y       (STARTING_Y + HEADER_H + 8)  // 表格起始 y
+#define CELL_W        110                          // 格子宽度 (进一步加宽，让文字更舒展)
+#define CELL_H        80                           // 格子高度 (进一步加高)
+#define CELL_VAL_H    (CELL_H * 0.45)              // 值区高度 (45%)
+#define TABLE_INNER_W (16 * CELL_W)                // 1760
+#define TABLE_INNER_H (7 * CELL_H)  // 560 (跳过 0x70~0xEF 的 8 行，将 0xF0~0xFF 移到了第 7 行，总共 7 行
 
 // 格子背景色
-#define COL_CELL_RW   0x1C3A2E   // 可读写：深绿
-#define COL_CELL_R    0x1A2D3E   // 只读：深蓝
+#define COL_CELL_RW 0x1C3A2E  // 可读写：深绿
+#define COL_CELL_R  0x1A2D3E  // 只读：深蓝
 
 // ============================================================
 // TEST 压力测试速度
@@ -37,67 +37,67 @@
 //   建议：TEST_REG_DELAY_MS 50~200ms，TEST_ITER_DELAY_MS 0~10ms
 //   注意：过小会导致 I2C 自旋锁竞争触发 Interrupt WDT
 // ============================================================
-#define TEST_REG_DELAY_MS    50
-#define TEST_ITER_DELAY_MS    5
+#define TEST_REG_DELAY_MS  50
+#define TEST_ITER_DELAY_MS 5
 
 // ============================================================
 // TEST 自动启动（进入页面后自动倒计时开始压力测试）
 //   TEST_AUTO_START_ENABLE : 1=启用  0=禁用
 //   TEST_AUTO_START_SEC    : 倒计时秒数
 // ============================================================
-#define TEST_AUTO_START_ENABLE   0
-#define TEST_AUTO_START_SEC      30
+#define TEST_AUTO_START_ENABLE 0
+#define TEST_AUTO_START_SEC    30
 
-// 操作按钮标签
-static const char* k_ph_labels[] = { "CLEAN", "READ", "WRITE", "TEST" };
+    // 操作按钮标签
+    static const char* k_ph_labels[] = {"CLEAN", "READ", "WRITE", "TEST"};
 
 // ============================================================
 // 寄存器定义表
 // ============================================================
 typedef struct {
-    uint8_t    addr;
-    char       name[10];   // 简短名（用于调试）
-    char       rw[3];      // "R" / "W" / "RW"
-    uint32_t   color_hex;  // 格子背景色
+    uint8_t addr;
+    char name[10];       // 简短名（用于调试）
+    char rw[3];          // "R" / "W" / "RW"
+    uint32_t color_hex;  // 格子背景色
 } reg_def_t;
 
 static const reg_def_t k_reg_defs[] = {
     // -- 系统控制 0x00~0x03 --
-    { 0x00, "INT_CFG",  "RW", COL_CELL_RW },
-    { 0x01, "INT_STA",  "RW", COL_CELL_RW },
-    { 0x02, "EVT_NUM",  "RW", COL_CELL_RW },
-    { 0x03, "BRIGHT",   "RW", COL_CELL_RW },
+    {0x00, "INT_CFG", "RW", COL_CELL_RW},
+    {0x01, "INT_STA", "RW", COL_CELL_RW},
+    {0x02, "EVT_NUM", "RW", COL_CELL_RW},
+    {0x03, "BRIGHT", "RW", COL_CELL_RW},
     // -- 配置 0x10~0x11 --
-    { 0x10, "KB_MODE",  "RW", COL_CELL_RW },
-    { 0x11, "RGB_MODE", "RW", COL_CELL_RW },
+    {0x10, "KB_MODE", "RW", COL_CELL_RW},
+    {0x11, "RGB_MODE", "RW", COL_CELL_RW},
     // -- 普通模式事件 0x20 --
-    { 0x20, "KEY_EVT",  "R",  COL_CELL_R  },
+    {0x20, "KEY_EVT", "R", COL_CELL_R},
     // -- HID 模式事件 0x30~0x31 --
-    { 0x30, "HID_MOD",  "R",  COL_CELL_R  },
-    { 0x31, "HID_KEY",  "R",  COL_CELL_R  },
+    {0x30, "HID_MOD", "R", COL_CELL_R},
+    {0x31, "HID_KEY", "R", COL_CELL_R},
     // -- 字符串长度 0x40 --
-    { 0x40, "STR_LEN",  "R",  COL_CELL_R  },
+    {0x40, "STR_LEN", "R", COL_CELL_R},
     // -- 字符串数据 0x50~0x59 --
-    { 0x50, "STR_MOD",  "R",  COL_CELL_R  },
-    { 0x51, "CHAR0",    "R",  COL_CELL_R  },
-    { 0x52, "CHAR1",    "R",  COL_CELL_R  },
-    { 0x53, "CHAR2",    "R",  COL_CELL_R  },
-    { 0x54, "CHAR3",    "R",  COL_CELL_R  },
-    { 0x55, "CHAR4",    "R",  COL_CELL_R  },
-    { 0x56, "CHAR5",    "R",  COL_CELL_R  },
-    { 0x57, "CHAR6",    "R",  COL_CELL_R  },
-    { 0x58, "CHAR7",    "R",  COL_CELL_R  },
-    { 0x59, "CHAR8",    "R",  COL_CELL_R  },
+    {0x50, "STR_MOD", "R", COL_CELL_R},
+    {0x51, "CHAR0", "R", COL_CELL_R},
+    {0x52, "CHAR1", "R", COL_CELL_R},
+    {0x53, "CHAR2", "R", COL_CELL_R},
+    {0x54, "CHAR3", "R", COL_CELL_R},
+    {0x55, "CHAR4", "R", COL_CELL_R},
+    {0x56, "CHAR5", "R", COL_CELL_R},
+    {0x57, "CHAR6", "R", COL_CELL_R},
+    {0x58, "CHAR7", "R", COL_CELL_R},
+    {0x59, "CHAR8", "R", COL_CELL_R},
     // -- RGB 颜色 0x60~0x66 (0x63 保留) --
-    { 0x60, "RGB1_B",   "RW", COL_CELL_RW },
-    { 0x61, "RGB1_G",   "RW", COL_CELL_RW },
-    { 0x62, "RGB1_R",   "RW", COL_CELL_RW },
-    { 0x64, "RGB2_B",   "RW", COL_CELL_RW },
-    { 0x65, "RGB2_G",   "RW", COL_CELL_RW },
-    { 0x66, "RGB2_R",   "RW", COL_CELL_RW },
+    {0x60, "RGB1_B", "RW", COL_CELL_RW},
+    {0x61, "RGB1_G", "RW", COL_CELL_RW},
+    {0x62, "RGB1_R", "RW", COL_CELL_RW},
+    {0x64, "RGB2_B", "RW", COL_CELL_RW},
+    {0x65, "RGB2_G", "RW", COL_CELL_RW},
+    {0x66, "RGB2_R", "RW", COL_CELL_RW},
     // -- 系统信息 0xFE~0xFF --
-    { 0xFE, "VERSION",  "R",  COL_CELL_R  },
-    { 0xFF, "I2C_ADDR", "RW", COL_CELL_RW },
+    {0xFE, "VERSION", "R", COL_CELL_R},
+    {0xFF, "I2C_ADDR", "RW", COL_CELL_RW},
 };
 static constexpr int k_reg_count = (int)(sizeof(k_reg_defs) / sizeof(k_reg_defs[0]));
 
@@ -122,15 +122,15 @@ RegistryPage::RegistryPage()
       m_keyboard(nullptr),
       m_hl_decay_timer(nullptr)
 {
-    memset(m_btn_ph,     0, sizeof(m_btn_ph));
-    memset(m_mode_btns,  0, sizeof(m_mode_btns));
+    memset(m_btn_ph, 0, sizeof(m_btn_ph));
+    memset(m_mode_btns, 0, sizeof(m_mode_btns));
     memset(m_val_labels, 0, sizeof(m_val_labels));
-    memset(m_cell_objs,  0, sizeof(m_cell_objs));
-    memset(m_hl_timers,     0, sizeof(m_hl_timers));
-    memset(m_popups,        0, sizeof(m_popups));
-    memset(m_pop_reg_dd,    0, sizeof(m_pop_reg_dd));
-    memset(m_pop_val_rol,   0, sizeof(m_pop_val_rol));
-    m_active_popup = -1;
+    memset(m_cell_objs, 0, sizeof(m_cell_objs));
+    memset(m_hl_timers, 0, sizeof(m_hl_timers));
+    memset(m_popups, 0, sizeof(m_popups));
+    memset(m_pop_reg_dd, 0, sizeof(m_pop_reg_dd));
+    memset(m_pop_val_rol, 0, sizeof(m_pop_val_rol));
+    m_active_popup      = -1;
     m_test_timer_lbl    = nullptr;
     m_test_read_lbl     = nullptr;
     m_test_write_lbl    = nullptr;
@@ -147,7 +147,7 @@ RegistryPage::RegistryPage()
     m_test_long_fired   = false;
     m_test_auto_timer   = nullptr;
     m_test_auto_sec     = 0;
-    s_instance = this;
+    s_instance          = this;
 }
 
 RegistryPage::~RegistryPage()
@@ -179,7 +179,7 @@ void RegistryPage::onCreate()
     // 1. 右上角占位按钮条
     // ----------------------------------------------------------
     const int btn_w = 80, btn_h = 40, btn_gap = 8;
-    int cont_w = 4 * btn_w + 3 * btn_gap; // 344
+    int cont_w = 4 * btn_w + 3 * btn_gap;  // 344
 
     m_header_cont = lv_obj_create(m_container);
     lv_obj_set_size(m_header_cont, cont_w, HEADER_H);
@@ -214,13 +214,13 @@ void RegistryPage::onCreate()
     // ----------------------------------------------------------
     const int mode_btn_w = 80;
     const int mode_btn_h = 40;
-    int mode_cont_w = 3 * mode_btn_w; // 240
+    int mode_cont_w      = 3 * mode_btn_w;  // 240
 
     m_mode_menu_cont = lv_obj_create(m_container);
     lv_obj_set_size(m_mode_menu_cont, mode_cont_w, mode_btn_h);
     // 放在 m_header_cont 左侧，留出 20px 间距
     lv_obj_align(m_mode_menu_cont, LV_ALIGN_TOP_RIGHT, -10 - cont_w - 20, STARTING_Y + 5);
-    
+
     // 胶囊形状背景
     lv_obj_set_style_radius(m_mode_menu_cont, mode_btn_h / 2, 0);
     lv_obj_set_style_bg_color(m_mode_menu_cont, lv_color_hex(0x303030), 0);
@@ -233,10 +233,10 @@ void RegistryPage::onCreate()
     m_mode_indicator = lv_obj_create(m_mode_menu_cont);
     lv_obj_set_size(m_mode_indicator, mode_btn_w, mode_btn_h);
     lv_obj_set_style_radius(m_mode_indicator, mode_btn_h / 2, 0);
-    lv_obj_set_style_bg_color(m_mode_indicator, lv_color_hex(0x007AFF), 0); // 默认蓝色
+    lv_obj_set_style_bg_color(m_mode_indicator, lv_color_hex(0x007AFF), 0);  // 默认蓝色
     lv_obj_set_style_bg_opa(m_mode_indicator, LV_OPA_COVER, 0);
     lv_obj_set_style_border_width(m_mode_indicator, 0, 0);
-    lv_obj_add_flag(m_mode_indicator, LV_OBJ_FLAG_FLOATING); 
+    lv_obj_add_flag(m_mode_indicator, LV_OBJ_FLAG_FLOATING);
     lv_obj_add_flag(m_mode_indicator, LV_OBJ_FLAG_IGNORE_LAYOUT);
 
 #if LVGL_VERSION_MAJOR >= 8
@@ -248,12 +248,12 @@ void RegistryPage::onCreate()
     lv_obj_set_style_transition(m_mode_indicator, &trans, 0);
 #endif
 
-    const char* mode_labels[] = { "Normal", "HID", "String" };
+    const char* mode_labels[] = {"Normal", "HID", "String"};
     for (int i = 0; i < 3; i++) {
         m_mode_btns[i] = lv_btn_create(m_mode_menu_cont);
         lv_obj_set_size(m_mode_btns[i], mode_btn_w, mode_btn_h);
         lv_obj_set_pos(m_mode_btns[i], i * mode_btn_w, 0);
-        lv_obj_set_style_bg_opa(m_mode_btns[i], LV_OPA_TRANSP, 0); // 透明，露出底部的指示器
+        lv_obj_set_style_bg_opa(m_mode_btns[i], LV_OPA_TRANSP, 0);  // 透明，露出底部的指示器
         lv_obj_set_style_shadow_width(m_mode_btns[i], 0, 0);
         lv_obj_add_event_cb(m_mode_btns[i], onModeBtn, LV_EVENT_CLICKED, (void*)(intptr_t)i);
 
@@ -263,7 +263,7 @@ void RegistryPage::onCreate()
         lv_obj_set_style_text_color(lbl, lv_color_hex(0xFFFFFF), 0);
         lv_obj_center(lbl);
     }
-    
+
     // 初始化指示器位置
     if (m_keyboard) {
         uint8_t current_mode = 0;
@@ -272,11 +272,13 @@ void RegistryPage::onCreate()
         if (m_current_mode > 2) m_current_mode = 0;
     }
     lv_obj_set_x(m_mode_indicator, m_current_mode * mode_btn_w);
-    
+
     // 设置颜色
     lv_color_t color = lv_color_hex(0x007AFF);
-    if (m_current_mode == 1) color = lv_color_hex(0x00C000); // HID: Green
-    else if (m_current_mode == 2) color = lv_color_hex(0xFF69B4); // String: Pink
+    if (m_current_mode == 1)
+        color = lv_color_hex(0x00C000);  // HID: Green
+    else if (m_current_mode == 2)
+        color = lv_color_hex(0xFF69B4);  // String: Pink
     lv_obj_set_style_bg_color(m_mode_indicator, color, 0);
 
     // ----------------------------------------------------------
@@ -315,9 +317,9 @@ void RegistryPage::buildTable()
     // 仅遍历 k_reg_defs 中已定义的 28 个寄存器，在网格坐标位置创建格子
     for (int i = 0; i < k_reg_count; i++) {
         const reg_def_t* def = &k_reg_defs[i];
-        uint8_t addr = def->addr;
-        int row = (addr >> 4) & 0xF;
-        int col = addr & 0xF;
+        uint8_t addr         = def->addr;
+        int row              = (addr >> 4) & 0xF;
+        int col              = addr & 0xF;
 
         // 跳过 0x70 ~ 0xEF 之间的空行，将 0xF0~0xFF 提上来
         int visual_row = row;
@@ -330,8 +332,8 @@ void RegistryPage::buildTable()
             if (addr == 0xFF) visual_col = 9;
         }
 
-        int x   = visual_col * CELL_W + 1;
-        int y   = visual_row * CELL_H + 1;
+        int x = visual_col * CELL_W + 1;
+        int y = visual_row * CELL_H + 1;
 
         lv_obj_t* cell = lv_obj_create(m_table_cont);
         lv_obj_set_pos(cell, x, y);
@@ -340,7 +342,7 @@ void RegistryPage::buildTable()
         lv_obj_set_style_bg_opa(cell, LV_OPA_COVER, 0);
         lv_obj_set_style_border_color(cell, lv_color_hex(0x507060), 0);
         lv_obj_set_style_border_width(cell, 1, 0);
-        lv_obj_set_style_radius(cell, 4, 0);   // 恢复一点小圆角，让格子看起来更精致
+        lv_obj_set_style_radius(cell, 4, 0);  // 恢复一点小圆角，让格子看起来更精致
         lv_obj_set_style_pad_all(cell, 0, 0);
         lv_obj_clear_flag(cell, LV_OBJ_FLAG_SCROLLABLE);
         m_cell_objs[addr] = cell;
@@ -348,11 +350,11 @@ void RegistryPage::buildTable()
         // 值标签 (高 45%，居中，字体放大)
         lv_obj_t* val_lbl = lv_label_create(cell);
         lv_label_set_text(val_lbl, "--");
-        lv_obj_set_style_text_font(val_lbl, &lv_font_montserrat_24, 0); // 使用更大的字体
-        lv_obj_set_style_text_color(val_lbl, lv_color_hex(0xFFFFFF), 0); // 纯白，更醒目
+        lv_obj_set_style_text_font(val_lbl, &lv_font_montserrat_24, 0);   // 使用更大的字体
+        lv_obj_set_style_text_color(val_lbl, lv_color_hex(0xFFFFFF), 0);  // 纯白，更醒目
         lv_obj_set_width(val_lbl, CELL_W - 2);
         lv_obj_set_style_text_align(val_lbl, LV_TEXT_ALIGN_CENTER, 0);
-        lv_obj_set_pos(val_lbl, 0, (CELL_VAL_H - 24) / 2 + 4); // 垂直居中微调
+        lv_obj_set_pos(val_lbl, 0, (CELL_VAL_H - 24) / 2 + 4);  // 垂直居中微调
         m_val_labels[addr] = val_lbl;
 
         // 地址标签（下半部分的上侧，居中）
@@ -361,7 +363,7 @@ void RegistryPage::buildTable()
         snprintf(addr_str, sizeof(addr_str), "0x%02X", addr);
         lv_label_set_text(addr_lbl, addr_str);
         lv_obj_set_style_text_font(addr_lbl, &lv_font_montserrat_14, 0);
-        lv_obj_set_style_text_color(addr_lbl, lv_color_hex(0x88AA88), 0); // 浅绿色
+        lv_obj_set_style_text_color(addr_lbl, lv_color_hex(0x88AA88), 0);  // 浅绿色
         lv_obj_set_width(addr_lbl, CELL_W - 2);
         lv_obj_set_style_text_align(addr_lbl, LV_TEXT_ALIGN_CENTER, 0);
         lv_obj_set_pos(addr_lbl, 0, CELL_VAL_H + 4);
@@ -370,7 +372,7 @@ void RegistryPage::buildTable()
         lv_obj_t* name_lbl = lv_label_create(cell);
         lv_label_set_text(name_lbl, def->name);
         lv_obj_set_style_text_font(name_lbl, &lv_font_montserrat_14, 0);
-        lv_obj_set_style_text_color(name_lbl, lv_color_hex(0xAAAAAA), 0); // 浅灰色
+        lv_obj_set_style_text_color(name_lbl, lv_color_hex(0xAAAAAA), 0);  // 浅灰色
         lv_obj_set_width(name_lbl, CELL_W - 2);
         lv_obj_set_style_text_align(name_lbl, LV_TEXT_ALIGN_CENTER, 0);
         lv_obj_set_pos(name_lbl, 0, CELL_VAL_H + 20);
@@ -379,14 +381,13 @@ void RegistryPage::buildTable()
         lv_obj_t* rw_lbl = lv_label_create(cell);
         lv_label_set_text(rw_lbl, def->rw);
         lv_obj_set_style_text_font(rw_lbl, &lv_font_montserrat_14, 0);
-        uint32_t rw_color = (strcmp(def->rw, "RW") == 0) ? 0x90C040 :
-                            (strcmp(def->rw, "R")  == 0) ? 0x40A0C0 : 0xE07020;
+        uint32_t rw_color = (strcmp(def->rw, "RW") == 0) ? 0x90C040 : (strcmp(def->rw, "R") == 0) ? 0x40A0C0 : 0xE07020;
         lv_obj_set_style_text_color(rw_lbl, lv_color_hex(rw_color), 0);
         lv_obj_align(rw_lbl, LV_ALIGN_TOP_RIGHT, -4, 4);
     }
 
     // 强制表格内容尺寸（保证可滚动到完整 16×16 网格区域）
-    lv_obj_set_content_width(m_table_cont,  TABLE_INNER_W + 4);
+    lv_obj_set_content_width(m_table_cont, TABLE_INNER_W + 4);
     lv_obj_set_content_height(m_table_cont, TABLE_INNER_H + 4);
 }
 
@@ -406,11 +407,7 @@ void RegistryPage::onShow()
 
     if (m_keyboard) {
         // 主动读取安全（非破坏性）寄存器以初始化显示（在 LVGL 任务上下文中，无需加锁）
-        static const uint8_t k_safe_regs[] = {
-            0x00, 0x03, 0x10, 0x11,
-            0x60, 0x61, 0x62, 0x64, 0x65, 0x66,
-            0xFE, 0xFF
-        };
+        static const uint8_t k_safe_regs[] = {0x00, 0x03, 0x10, 0x11, 0x60, 0x61, 0x62, 0x64, 0x65, 0x66, 0xFE, 0xFF};
         for (uint8_t r : k_safe_regs) {
             uint8_t val = 0;
             if (m_keyboard->readRegByte(r, &val) == M5_TAB5_KB_OK && m_val_labels[r]) {
@@ -422,8 +419,10 @@ void RegistryPage::onShow()
                     m_current_mode = val;
                     lv_obj_set_x(m_mode_indicator, val * 80);
                     lv_color_t col = lv_color_hex(0x007AFF);
-                    if (val == 1) col = lv_color_hex(0x00C000);
-                    else if (val == 2) col = lv_color_hex(0xFF69B4);
+                    if (val == 1)
+                        col = lv_color_hex(0x00C000);
+                    else if (val == 2)
+                        col = lv_color_hex(0xFF69B4);
                     lv_obj_set_style_bg_color(m_mode_indicator, col, 0);
                 }
             }
@@ -443,8 +442,7 @@ void RegistryPage::onShow()
     // 自动启动倒计时：TEST_AUTO_START_SEC 秒后打开 TEST 弹窗并开始压力测试
     if (m_test_state == 0) {
         m_test_auto_sec = TEST_AUTO_START_SEC;
-        if (!m_test_auto_timer)
-            m_test_auto_timer = lv_timer_create(autoStartTimerCb, 1000, this);
+        if (!m_test_auto_timer) m_test_auto_timer = lv_timer_create(autoStartTimerCb, 1000, this);
         ESP_LOGI(TAG, "onShow: auto-start countdown %ds", TEST_AUTO_START_SEC);
     }
 #endif
@@ -499,8 +497,7 @@ void RegistryPage::onHide()
 // onRegAccess: 被 m5::M5Tab5Keyboard 在每次 I2C 读写成功后调用
 //   运行在 _pollTaskFunc 这个 FreeRTOS 任务上下文中，必须持有 LVGL lock
 // ============================================================
-void RegistryPage::onRegAccess(uint8_t reg, uint8_t value,
-                                m5_tab5_reg_access_type_t type, void* user_data)
+void RegistryPage::onRegAccess(uint8_t reg, uint8_t value, m5_tab5_reg_access_type_t type, void* user_data)
 {
     RegistryPage* self = static_cast<RegistryPage*>(user_data);
     if (!self || !self->m_val_labels[reg]) return;
@@ -513,9 +510,7 @@ void RegistryPage::onRegAccess(uint8_t reg, uint8_t value,
 
     // 写操作高亮金色 + 5 tick；读操作高亮白色 + 2 tick
     self->m_hl_timers[reg] = (type == M5_TAB5_REG_ACCESS_WRITE) ? 5 : 2;
-    lv_color_t text_color = (type == M5_TAB5_REG_ACCESS_WRITE)
-                            ? lv_color_hex(0xFFD700)
-                            : lv_color_hex(0xFFFFFF);
+    lv_color_t text_color  = (type == M5_TAB5_REG_ACCESS_WRITE) ? lv_color_hex(0xFFD700) : lv_color_hex(0xFFFFFF);
     lv_obj_set_style_text_color(self->m_val_labels[reg], text_color, 0);
     if (self->m_cell_objs[reg]) {
         lv_obj_set_style_bg_color(self->m_cell_objs[reg], lv_color_hex(0x4A6A5E), 0);
@@ -528,8 +523,10 @@ void RegistryPage::onRegAccess(uint8_t reg, uint8_t value,
             self->m_current_mode = new_mode;
             lv_obj_set_x(self->m_mode_indicator, new_mode * 80);
             lv_color_t color = lv_color_hex(0x007AFF);
-            if (new_mode == 1) color = lv_color_hex(0x00C000);
-            else if (new_mode == 2) color = lv_color_hex(0xFF69B4);
+            if (new_mode == 1)
+                color = lv_color_hex(0x00C000);
+            else if (new_mode == 2)
+                color = lv_color_hex(0xFF69B4);
             lv_obj_set_style_bg_color(self->m_mode_indicator, color, 0);
         }
     }
@@ -557,8 +554,7 @@ void RegistryPage::hlDecayTimerCb(lv_timer_t* timer)
                 lv_obj_set_style_text_color(self->m_val_labels[reg], lv_color_hex(0xFFFFFF), 0);
             }
             if (self->m_cell_objs[reg]) {
-                lv_obj_set_style_bg_color(self->m_cell_objs[reg],
-                                          lv_color_hex(k_reg_defs[i].color_hex), 0);
+                lv_obj_set_style_bg_color(self->m_cell_objs[reg], lv_color_hex(k_reg_defs[i].color_hex), 0);
             }
         }
     }
@@ -571,15 +567,20 @@ void RegistryPage::onPhBtn(lv_event_t* e)
 {
     int idx = (int)(intptr_t)lv_event_get_user_data(e);
     ESP_LOGI(TAG, "onPhBtn idx=%d active=%d", idx, s_instance ? s_instance->m_active_popup : -99);
-    if (!s_instance) { ESP_LOGW(TAG, "onPhBtn: s_instance null"); return; }
-    if (!s_instance->m_popups[idx]) { ESP_LOGW(TAG, "onPhBtn: popup[%d] null", idx); return; }
+    if (!s_instance) {
+        ESP_LOGW(TAG, "onPhBtn: s_instance null");
+        return;
+    }
+    if (!s_instance->m_popups[idx]) {
+        ESP_LOGW(TAG, "onPhBtn: popup[%d] null", idx);
+        return;
+    }
 
     int prev = s_instance->m_active_popup;
 
     // 先关闭所有弹窗和下拉列表
     for (int i = 0; i < 4; i++) {
-        if (s_instance->m_popups[i])
-            lv_obj_add_flag(s_instance->m_popups[i], LV_OBJ_FLAG_HIDDEN);
+        if (s_instance->m_popups[i]) lv_obj_add_flag(s_instance->m_popups[i], LV_OBJ_FLAG_HIDDEN);
     }
     for (int i = 0; i < 3; i++) {
         if (s_instance->m_pop_reg_dd[i]) lv_dropdown_close(s_instance->m_pop_reg_dd[i]);
@@ -610,15 +611,17 @@ void RegistryPage::onModeBtn(lv_event_t* e)
         // 确保 _handleInterrupt() 以正确模式读取事件数据
         // setMode() writes hw reg AND updates _currentMode so _handleInterrupt() reads correct registers
         s_instance->m_keyboard->setMode((m5_tab5_kb_mode_t)idx);
-        
+
         // 更新指示器位置
         if (s_instance->m_mode_indicator) {
-            lv_obj_set_x(s_instance->m_mode_indicator, idx * 80); // mode_btn_w = 80
-            
+            lv_obj_set_x(s_instance->m_mode_indicator, idx * 80);  // mode_btn_w = 80
+
             // 更新颜色
-            lv_color_t color = lv_color_hex(0x007AFF); // Normal: Blue
-            if (idx == 1) color = lv_color_hex(0x00C000); // HID: Green
-            else if (idx == 2) color = lv_color_hex(0xFF69B4); // String: Pink
+            lv_color_t color = lv_color_hex(0x007AFF);  // Normal: Blue
+            if (idx == 1)
+                color = lv_color_hex(0x00C000);  // HID: Green
+            else if (idx == 2)
+                color = lv_color_hex(0xFF69B4);  // String: Pink
             lv_obj_set_style_bg_color(s_instance->m_mode_indicator, color, 0);
         }
         ESP_LOGI(TAG, "Keyboard mode switched to %d", idx);
@@ -637,11 +640,11 @@ void RegistryPage::buildPopups()
     int scr_w = lv_obj_get_width(m_container);
     ESP_LOGI(TAG, "buildPopups: scr_w=%d", scr_w);
 
-    static const int PW      = 340;   // 弹窗宽度
-    static const int TITLE_H = 34;    // 标题栏高度
-    static const int PAD     = 10;    // 内边距
-    int PX = scr_w - 10 - PW;        // 右对齐，与操作按钮条对齐
-    static const int PY = STARTING_Y + HEADER_H + 12;  // 紧贴按钮下方
+    static const int PW      = 340;                         // 弹窗宽度
+    static const int TITLE_H = 34;                          // 标题栏高度
+    static const int PAD     = 10;                          // 内边距
+    int PX                   = scr_w - 10 - PW;             // 右对齐，与操作按钮条对齐
+    static const int PY      = STARTING_Y + HEADER_H + 12;  // 紧贴按钮下方
 
     // 构建下拉框选项字符串（static 保证生命周期覆盖整个页面）
     static char s_dd_all[620];    // ALL + 所有寄存器
@@ -649,25 +652,25 @@ void RegistryPage::buildPopups()
     {
         int pos = snprintf(s_dd_all, sizeof(s_dd_all), "ALL");
         for (int i = 0; i < k_reg_count; i++) {
-            pos += snprintf(s_dd_all + pos, sizeof(s_dd_all) - pos,
-                            "\n0x%02X %s", k_reg_defs[i].addr, k_reg_defs[i].name);
+            pos +=
+                snprintf(s_dd_all + pos, sizeof(s_dd_all) - pos, "\n0x%02X %s", k_reg_defs[i].addr, k_reg_defs[i].name);
         }
     }
     {
         int pos = 0;
         for (int i = 0; i < k_reg_count; i++) {
             if (i > 0) s_dd_noall[pos++] = '\n';
-            pos += snprintf(s_dd_noall + pos, sizeof(s_dd_noall) - pos,
-                            "0x%02X %s", k_reg_defs[i].addr, k_reg_defs[i].name);
+            pos += snprintf(s_dd_noall + pos, sizeof(s_dd_noall) - pos, "0x%02X %s", k_reg_defs[i].addr,
+                            k_reg_defs[i].name);
         }
     }
 
     // WRITE 值滚轮选项 (0-F)
     static const char* K_ROL = "0\n1\n2\n3\n4\n5\n6\n7\n8\n9\nA\nB\nC\nD\nE\nF";
 
-    static const char* k_titles[]  = { "CLEAN", "READ", "WRITE", "TEST" };
+    static const char* k_titles[] = {"CLEAN", "READ", "WRITE", "TEST"};
     // 弹窗高度：CLEAN=165, READ=165, WRITE=262, TEST=80
-    static const int   k_heights[] = {  165,     165,    262,    220    };
+    static const int k_heights[] = {165, 165, 262, 220};
 
     for (int pi = 0; pi < 4; pi++) {
         // ---- 弹窗面板 ----
@@ -781,10 +784,10 @@ void RegistryPage::buildPopups()
             lv_obj_set_style_text_color(hint, lv_color_hex(0x445566), 0);
             lv_obj_set_pos(hint, PAD, cy + 156);
 
-            lv_obj_add_event_cb(btn, onTestBtn, LV_EVENT_PRESSED,    nullptr);
-            lv_obj_add_event_cb(btn, onTestBtn, LV_EVENT_PRESSING,   nullptr);
-            lv_obj_add_event_cb(btn, onTestBtn, LV_EVENT_RELEASED,   nullptr);
-            lv_obj_add_event_cb(btn, onTestBtn, LV_EVENT_CLICKED,    nullptr);
+            lv_obj_add_event_cb(btn, onTestBtn, LV_EVENT_PRESSED, nullptr);
+            lv_obj_add_event_cb(btn, onTestBtn, LV_EVENT_PRESSING, nullptr);
+            lv_obj_add_event_cb(btn, onTestBtn, LV_EVENT_RELEASED, nullptr);
+            lv_obj_add_event_cb(btn, onTestBtn, LV_EVENT_CLICKED, nullptr);
             lv_obj_add_event_cb(btn, onTestBtn, LV_EVENT_PRESS_LOST, nullptr);
             continue;
         }
@@ -817,12 +820,11 @@ void RegistryPage::buildPopups()
 
         if (pi == 0 || pi == 1) {
             // CLEAN / READ：下拉框 + 执行按钮
-            int btn_y = cy + 18 + 38 + 14;
+            int btn_y         = cy + 18 + 38 + 14;
             lv_obj_t* btn_act = lv_btn_create(pop);
             lv_obj_set_size(btn_act, 130, 40);
             lv_obj_set_pos(btn_act, (PW - 130) / 2, btn_y);
-            lv_obj_set_style_bg_color(btn_act,
-                (pi == 0) ? lv_color_hex(0x5A2828) : lv_color_hex(0x1A4A2A), 0);
+            lv_obj_set_style_bg_color(btn_act, (pi == 0) ? lv_color_hex(0x5A2828) : lv_color_hex(0x1A4A2A), 0);
             lv_obj_set_style_radius(btn_act, 6, 0);
             lv_obj_set_style_shadow_width(btn_act, 0, 0);
             lv_obj_t* lbl_act = lv_label_create(btn_act);
@@ -830,8 +832,10 @@ void RegistryPage::buildPopups()
             lv_obj_set_style_text_font(lbl_act, &lv_font_montserrat_16, 0);
             lv_obj_set_style_text_color(lbl_act, lv_color_hex(0xFFFFFF), 0);
             lv_obj_center(lbl_act);
-            if (pi == 0) lv_obj_add_event_cb(btn_act, onCleanExec, LV_EVENT_CLICKED, nullptr);
-            else         lv_obj_add_event_cb(btn_act, onReadExec,  LV_EVENT_CLICKED, nullptr);
+            if (pi == 0)
+                lv_obj_add_event_cb(btn_act, onCleanExec, LV_EVENT_CLICKED, nullptr);
+            else
+                lv_obj_add_event_cb(btn_act, onReadExec, LV_EVENT_CLICKED, nullptr);
 
         } else {
             // WRITE：下拉框 + 高低 nibble 滚轮 + WRITE 按钮
@@ -886,13 +890,11 @@ void RegistryPage::onPopupClose(lv_event_t* e)
 {
     int pi = (int)(intptr_t)lv_event_get_user_data(e);
     if (!s_instance) return;
-    if (s_instance->m_popups[pi])
-        lv_obj_add_flag(s_instance->m_popups[pi], LV_OBJ_FLAG_HIDDEN);
+    if (s_instance->m_popups[pi]) lv_obj_add_flag(s_instance->m_popups[pi], LV_OBJ_FLAG_HIDDEN);
     s_instance->m_active_popup = -1;
     // 关闭该弹窗对应的下拉框（前 pi<3 有下拉框）
     int di = (pi <= 1) ? pi : (pi == 2 ? 2 : -1);
-    if (di >= 0 && s_instance->m_pop_reg_dd[di])
-        lv_dropdown_close(s_instance->m_pop_reg_dd[di]);
+    if (di >= 0 && s_instance->m_pop_reg_dd[di]) lv_dropdown_close(s_instance->m_pop_reg_dd[di]);
 }
 
 // ============================================================
@@ -907,15 +909,13 @@ void RegistryPage::onCleanExec(lv_event_t* e)
     auto reset_one = [](uint8_t reg) {
         if (s_instance->m_val_labels[reg]) {
             lv_label_set_text(s_instance->m_val_labels[reg], "--");
-            lv_obj_set_style_text_color(s_instance->m_val_labels[reg],
-                                        lv_color_hex(0xFFFFFF), 0);
+            lv_obj_set_style_text_color(s_instance->m_val_labels[reg], lv_color_hex(0xFFFFFF), 0);
         }
         s_instance->m_hl_timers[reg] = 0;
         if (s_instance->m_cell_objs[reg]) {
             for (int j = 0; j < k_reg_count; j++) {
                 if (k_reg_defs[j].addr == reg) {
-                    lv_obj_set_style_bg_color(s_instance->m_cell_objs[reg],
-                                              lv_color_hex(k_reg_defs[j].color_hex), 0);
+                    lv_obj_set_style_bg_color(s_instance->m_cell_objs[reg], lv_color_hex(k_reg_defs[j].color_hex), 0);
                     break;
                 }
             }
@@ -950,11 +950,9 @@ void RegistryPage::onReadExec(lv_event_t* e)
         snprintf(buf, sizeof(buf), "%02X", val);
         lv_label_set_text(s_instance->m_val_labels[reg], buf);
         s_instance->m_hl_timers[reg] = 3;
-        lv_obj_set_style_text_color(s_instance->m_val_labels[reg],
-                                    lv_color_hex(0xAADDFF), 0);  // 蓝白：主色 READ
+        lv_obj_set_style_text_color(s_instance->m_val_labels[reg], lv_color_hex(0xAADDFF), 0);  // 蓝白：主色 READ
         if (s_instance->m_cell_objs[reg]) {
-            lv_obj_set_style_bg_color(s_instance->m_cell_objs[reg],
-                                      lv_color_hex(0x2A4A5A), 0);
+            lv_obj_set_style_bg_color(s_instance->m_cell_objs[reg], lv_color_hex(0x2A4A5A), 0);
         }
     };
 
@@ -975,8 +973,7 @@ void RegistryPage::onReadExec(lv_event_t* e)
 void RegistryPage::onWriteExec(lv_event_t* e)
 {
     if (!s_instance || !s_instance->m_keyboard) return;
-    if (!s_instance->m_pop_reg_dd[2] ||
-        !s_instance->m_pop_val_rol[0] || !s_instance->m_pop_val_rol[1]) return;
+    if (!s_instance->m_pop_reg_dd[2] || !s_instance->m_pop_val_rol[0] || !s_instance->m_pop_val_rol[1]) return;
 
     uint16_t reg_idx = lv_dropdown_get_selected(s_instance->m_pop_reg_dd[2]);
     if (reg_idx >= (uint16_t)k_reg_count) return;
@@ -984,7 +981,7 @@ void RegistryPage::onWriteExec(lv_event_t* e)
 
     uint16_t hi = lv_roller_get_selected(s_instance->m_pop_val_rol[0]);  // nibble 0-F
     uint16_t lo = lv_roller_get_selected(s_instance->m_pop_val_rol[1]);  // nibble 0-F
-    uint8_t  val = (uint8_t)((hi << 4) | lo);
+    uint8_t val = (uint8_t)((hi << 4) | lo);
 
     // 临时禁用拦截回调，在 LVGL 上下文中直接更新 UI
     s_instance->m_keyboard->clearRegAccessCallback();
@@ -995,19 +992,19 @@ void RegistryPage::onWriteExec(lv_event_t* e)
         snprintf(buf, sizeof(buf), "%02X", val);
         lv_label_set_text(s_instance->m_val_labels[reg], buf);
         s_instance->m_hl_timers[reg] = 5;
-        lv_obj_set_style_text_color(s_instance->m_val_labels[reg],
-                                    lv_color_hex(0xFFD700), 0);
+        lv_obj_set_style_text_color(s_instance->m_val_labels[reg], lv_color_hex(0xFFD700), 0);
         if (s_instance->m_cell_objs[reg]) {
-            lv_obj_set_style_bg_color(s_instance->m_cell_objs[reg],
-                                      lv_color_hex(0x4A6A5E), 0);
+            lv_obj_set_style_bg_color(s_instance->m_cell_objs[reg], lv_color_hex(0x4A6A5E), 0);
         }
         // KB_MODE 写操作同步模式滑块
         if (reg == 0x10 && val <= 2 && s_instance->m_mode_indicator) {
             s_instance->m_current_mode = val;
             lv_obj_set_x(s_instance->m_mode_indicator, val * 80);
             lv_color_t col = lv_color_hex(0x007AFF);
-            if (val == 1) col = lv_color_hex(0x00C000);
-            else if (val == 2) col = lv_color_hex(0xFF69B4);
+            if (val == 1)
+                col = lv_color_hex(0x00C000);
+            else if (val == 2)
+                col = lv_color_hex(0xFF69B4);
             lv_obj_set_style_bg_color(s_instance->m_mode_indicator, col, 0);
         }
     }
@@ -1024,10 +1021,10 @@ void RegistryPage::testTimerCb(lv_timer_t* t)
     RegistryPage* self = (RegistryPage*)lv_timer_get_user_data(t);
     if (!self || self->m_test_state != 1) return;
 
-    uint32_t cur = self->m_test_elapsed + 1;
+    uint32_t cur         = self->m_test_elapsed + 1;
     self->m_test_elapsed = cur;
-    uint32_t rc = self->m_test_read_cnt;
-    uint32_t wc = self->m_test_write_cnt;
+    uint32_t rc          = self->m_test_read_cnt;
+    uint32_t wc          = self->m_test_write_cnt;
 
     char buf[32];
     if (self->m_test_timer_lbl) {
@@ -1052,37 +1049,39 @@ void RegistryPage::testTimerCb(lv_timer_t* t)
 // ============================================================
 void RegistryPage::testTaskFunc(void* arg)
 {
-    RegistryPage* self = (RegistryPage*)arg;
+    RegistryPage* self     = (RegistryPage*)arg;
     m5::M5Tab5Keyboard* kb = self->m_keyboard;
 
     // 预建地址类型查找表：0=未定义 1=只读 2=可读写
     static uint8_t s_type[256];
     // 写后不校验的寄存器（硬件自锁位，写入值不会原样保留）
-    static const uint8_t k_no_verify[] = { 0x00, 0x01, 0x02, 0x03, 0x10, 0x11 };
+    static const uint8_t k_no_verify[] = {0x00, 0x01, 0x02, 0x03, 0x10, 0x11};
     static bool s_no_verify[256];
     static bool s_inited = false;
     if (!s_inited) {
-        memset(s_type,     0, sizeof(s_type));
+        memset(s_type, 0, sizeof(s_type));
         memset(s_no_verify, 0, sizeof(s_no_verify));
         for (int i = 0; i < k_reg_count; i++) {
             uint8_t a = k_reg_defs[i].addr;
-            bool rw = (k_reg_defs[i].rw[0] == 'R' && k_reg_defs[i].rw[1] == 'W');
+            bool rw   = (k_reg_defs[i].rw[0] == 'R' && k_reg_defs[i].rw[1] == 'W');
             s_type[a] = (uint8_t)((rw && a != 0xFF) ? 2 : 1);
         }
-        for (int i = 0; i < (int)(sizeof(k_no_verify)); i++)
-            s_no_verify[k_no_verify[i]] = true;
+        for (int i = 0; i < (int)(sizeof(k_no_verify)); i++) s_no_verify[k_no_verify[i]] = true;
         s_inited = true;
     }
 
     uint8_t val;
-    uint8_t wval = 0x01;   // 写值游标：0x01~0xFF 循环，体现整体递增规律
+    uint8_t wval = 0x01;  // 写值游标：0x01~0xFF 循环，体现整体递增规律
 
     while (true) {
         if (self->m_test_state != 1) {
             vTaskDelay(pdMS_TO_TICKS(10));
             continue;
         }
-        if (!kb) { vTaskDelay(pdMS_TO_TICKS(50)); continue; }
+        if (!kb) {
+            vTaskDelay(pdMS_TO_TICKS(50));
+            continue;
+        }
 
         // 0x00 ~ 0xFF 顺序遍历
         for (int addr = 0x00; addr <= 0xFF; addr++) {
@@ -1091,26 +1090,22 @@ void RegistryPage::testTaskFunc(void* arg)
             uint8_t tp  = s_type[reg];
             if (tp == 0) continue;  // 未定义，跳过
 
-            if (tp == 2) {  // RW：先写后读再校验
-                uint8_t sent = wval;                                          // 记录本次实际值
-                bool w_ok = (kb->writeRegByte(reg, sent) == M5_TAB5_KB_OK);
-                wval = (wval >= 0xFF) ? 0x01 : (wval + 1);  // 写值递增，0x01~0xFF 循环
-                if (w_ok)
-                    self->m_test_write_cnt = self->m_test_write_cnt + 1;
+            if (tp == 2) {            // RW：先写后读再校验
+                uint8_t sent = wval;  // 记录本次实际值
+                bool w_ok    = (kb->writeRegByte(reg, sent) == M5_TAB5_KB_OK);
+                wval         = (wval >= 0xFF) ? 0x01 : (wval + 1);  // 写值递增，0x01~0xFF 循环
+                if (w_ok) self->m_test_write_cnt = self->m_test_write_cnt + 1;
                 // 写和读之间主动 yield，避免连续占用 I2C 自旋锁
                 vTaskDelay(pdMS_TO_TICKS(5));
                 // 写成功后读回校验（跳过硬件自锁寄存器）
                 if (w_ok && !s_no_verify[reg] && kb->readRegByte(reg, &val) == M5_TAB5_KB_OK) {
                     self->m_test_read_cnt = self->m_test_read_cnt + 1;
-                    if (val != sent)
-                        ESP_LOGW(TAG, "VERIFY FAIL reg=0x%02X wrote=0x%02X read=0x%02X",
-                                 reg, sent, val);
+                    if (val != sent) ESP_LOGW(TAG, "VERIFY FAIL reg=0x%02X wrote=0x%02X read=0x%02X", reg, sent, val);
                 } else if (w_ok && s_no_verify[reg] && kb->readRegByte(reg, &val) == M5_TAB5_KB_OK) {
                     self->m_test_read_cnt = self->m_test_read_cnt + 1;  // 仍计读次数，不比较
                 }
             } else {  // R-only：直接读
-                if (kb->readRegByte(reg, &val) == M5_TAB5_KB_OK)
-                    self->m_test_read_cnt = self->m_test_read_cnt + 1;
+                if (kb->readRegByte(reg, &val) == M5_TAB5_KB_OK) self->m_test_read_cnt = self->m_test_read_cnt + 1;
             }
             // 每个寄存器操作后固定间隔，防止 I2C 总线加速后连续爆读
             vTaskDelay(pdMS_TO_TICKS(TEST_REG_DELAY_MS));
@@ -1129,26 +1124,32 @@ void RegistryPage::testTaskFunc(void* arg)
 void RegistryPage::onTestBtn(lv_event_t* e)
 {
     if (!s_instance) return;
-    RegistryPage* self = s_instance;
+    RegistryPage* self   = s_instance;
     lv_event_code_t code = lv_event_get_code(e);
-    lv_event_stop_bubbling(e);   // 阻断冒泡，防止父容器二次触发
+    lv_event_stop_bubbling(e);  // 阻断冒泡，防止父容器二次触发
 
     ESP_LOGI(TAG, "onTestBtn code=%d state=%d", (int)code, self->m_test_state);
 
     // STOP 内联逻辑（lambda 可访问私有成员）
     auto do_stop = [self, &code]() {
         self->m_test_state = 0;
-        if (self->m_test_lv_timer) { lv_timer_del(self->m_test_lv_timer); self->m_test_lv_timer = nullptr; }
-        if (self->m_test_task_hdl) { vTaskDelete(self->m_test_task_hdl);  self->m_test_task_hdl = nullptr; }
+        if (self->m_test_lv_timer) {
+            lv_timer_del(self->m_test_lv_timer);
+            self->m_test_lv_timer = nullptr;
+        }
+        if (self->m_test_task_hdl) {
+            vTaskDelete(self->m_test_task_hdl);
+            self->m_test_task_hdl = nullptr;
+        }
         self->m_test_elapsed   = 0;
         self->m_test_read_cnt  = 0;
         self->m_test_write_cnt = 0;
         if (self->m_test_timer_lbl) lv_label_set_text(self->m_test_timer_lbl, "0000:00");
-        if (self->m_test_read_lbl)  lv_label_set_text(self->m_test_read_lbl,  "Read:  0");
+        if (self->m_test_read_lbl) lv_label_set_text(self->m_test_read_lbl, "Read:  0");
         if (self->m_test_write_lbl) lv_label_set_text(self->m_test_write_lbl, "Write: 0");
-        if (self->m_test_btn)       lv_obj_set_style_bg_color(self->m_test_btn, lv_color_hex(0x1A4A2A), 0);
-        if (self->m_test_btn_lbl)   lv_label_set_text(self->m_test_btn_lbl, "START");
-        if (self->m_test_stop_bar)  lv_obj_add_flag(self->m_test_stop_bar, LV_OBJ_FLAG_HIDDEN);
+        if (self->m_test_btn) lv_obj_set_style_bg_color(self->m_test_btn, lv_color_hex(0x1A4A2A), 0);
+        if (self->m_test_btn_lbl) lv_label_set_text(self->m_test_btn_lbl, "START");
+        if (self->m_test_stop_bar) lv_obj_add_flag(self->m_test_stop_bar, LV_OBJ_FLAG_HIDDEN);
         ESP_LOGI(TAG, "Pressure test STOPPED");
     };
 
@@ -1163,8 +1164,7 @@ void RegistryPage::onTestBtn(lv_event_t* e)
     } else if (code == LV_EVENT_PRESSING) {
         if (self->m_test_long_fired || self->m_test_state == 0) return;
         uint32_t elapsed = lv_tick_elaps(self->m_test_btn_press_ms);
-        if (self->m_test_stop_bar)
-            lv_bar_set_value(self->m_test_stop_bar, (int32_t)elapsed, LV_ANIM_OFF);
+        if (self->m_test_stop_bar) lv_bar_set_value(self->m_test_stop_bar, (int32_t)elapsed, LV_ANIM_OFF);
         if (elapsed >= 3000 && !self->m_test_long_fired) {
             self->m_test_long_fired = true;
             do_stop();
@@ -1186,15 +1186,13 @@ void RegistryPage::onTestBtn(lv_event_t* e)
             self->m_test_elapsed   = 0;
             self->m_test_read_cnt  = 0;
             self->m_test_write_cnt = 0;
-            self->m_test_state = 1;
+            self->m_test_state     = 1;
             if (self->m_test_timer_lbl) lv_label_set_text(self->m_test_timer_lbl, "0000:00");
-            if (self->m_test_read_lbl)  lv_label_set_text(self->m_test_read_lbl,  "Read:  0");
+            if (self->m_test_read_lbl) lv_label_set_text(self->m_test_read_lbl, "Read:  0");
             if (self->m_test_write_lbl) lv_label_set_text(self->m_test_write_lbl, "Write: 0");
-            if (!self->m_test_lv_timer)
-                self->m_test_lv_timer = lv_timer_create(testTimerCb, 1000, self);
-            if (!self->m_test_task_hdl)
-                xTaskCreate(testTaskFunc, "press_test", 4096, self, 1, &self->m_test_task_hdl);
-            if (self->m_test_btn)     lv_obj_set_style_bg_color(self->m_test_btn, lv_color_hex(0x1A7A2A), 0);
+            if (!self->m_test_lv_timer) self->m_test_lv_timer = lv_timer_create(testTimerCb, 1000, self);
+            if (!self->m_test_task_hdl) xTaskCreate(testTaskFunc, "press_test", 4096, self, 1, &self->m_test_task_hdl);
+            if (self->m_test_btn) lv_obj_set_style_bg_color(self->m_test_btn, lv_color_hex(0x1A7A2A), 0);
             if (self->m_test_btn_lbl) lv_label_set_text(self->m_test_btn_lbl, "PAUSE");
             ESP_LOGI(TAG, "Pressure test STARTED");
 
@@ -1202,16 +1200,16 @@ void RegistryPage::onTestBtn(lv_event_t* e)
             // --- PAUSE ---
             self->m_test_state = 2;
             if (self->m_test_lv_timer) lv_timer_pause(self->m_test_lv_timer);
-            if (self->m_test_btn)     lv_obj_set_style_bg_color(self->m_test_btn, lv_color_hex(0x5A4A1A), 0);
+            if (self->m_test_btn) lv_obj_set_style_bg_color(self->m_test_btn, lv_color_hex(0x5A4A1A), 0);
             if (self->m_test_btn_lbl) lv_label_set_text(self->m_test_btn_lbl, "RESUME");
-            ESP_LOGI(TAG, "Pressure test PAUSED R=%" PRIu32 " W=%" PRIu32,
-                     self->m_test_read_cnt, self->m_test_write_cnt);
+            ESP_LOGI(TAG, "Pressure test PAUSED R=%" PRIu32 " W=%" PRIu32, self->m_test_read_cnt,
+                     self->m_test_write_cnt);
 
         } else if (self->m_test_state == 2) {
             // --- RESUME ---
             self->m_test_state = 1;
             if (self->m_test_lv_timer) lv_timer_resume(self->m_test_lv_timer);
-            if (self->m_test_btn)     lv_obj_set_style_bg_color(self->m_test_btn, lv_color_hex(0x1A7A2A), 0);
+            if (self->m_test_btn) lv_obj_set_style_bg_color(self->m_test_btn, lv_color_hex(0x1A7A2A), 0);
             if (self->m_test_btn_lbl) lv_label_set_text(self->m_test_btn_lbl, "PAUSE");
             ESP_LOGI(TAG, "Pressure test RESUMED");
         }
@@ -1255,20 +1253,14 @@ void RegistryPage::autoStartTimerCb(lv_timer_t* t)
     self->m_test_write_cnt = 0;
     self->m_test_state     = 1;
     if (self->m_test_timer_lbl) lv_label_set_text(self->m_test_timer_lbl, "0000:00");
-    if (self->m_test_read_lbl)  lv_label_set_text(self->m_test_read_lbl,  "Read:  0");
+    if (self->m_test_read_lbl) lv_label_set_text(self->m_test_read_lbl, "Read:  0");
     if (self->m_test_write_lbl) lv_label_set_text(self->m_test_write_lbl, "Write: 0");
-    if (!self->m_test_lv_timer)
-        self->m_test_lv_timer = lv_timer_create(testTimerCb, 1000, self);
-    if (!self->m_test_task_hdl)
-        xTaskCreate(testTaskFunc, "press_test", 4096, self, 5, &self->m_test_task_hdl);
-    if (self->m_test_btn)     lv_obj_set_style_bg_color(self->m_test_btn, lv_color_hex(0x1A7A2A), 0);
+    if (!self->m_test_lv_timer) self->m_test_lv_timer = lv_timer_create(testTimerCb, 1000, self);
+    if (!self->m_test_task_hdl) xTaskCreate(testTaskFunc, "press_test", 4096, self, 5, &self->m_test_task_hdl);
+    if (self->m_test_btn) lv_obj_set_style_bg_color(self->m_test_btn, lv_color_hex(0x1A7A2A), 0);
     if (self->m_test_btn_lbl) lv_label_set_text(self->m_test_btn_lbl, "PAUSE");
     ESP_LOGI(TAG, "Auto-start: Pressure test STARTED");
 #else
     (void)t;
 #endif
 }
-
-
-
-

@@ -25,26 +25,26 @@
 // Error Codes
 // ============================
 typedef enum {
-    M5_TAB5_KB_OK = 0,
-    M5_TAB5_KB_FAIL = -1,
-    M5_TAB5_KB_ERR_I2C_CONFIG = -2,
-    M5_TAB5_KB_ERR_INVALID_ARG = -3,
-    M5_TAB5_KB_ERR_TIMEOUT = -4,
+    M5_TAB5_KB_OK                = 0,
+    M5_TAB5_KB_FAIL              = -1,
+    M5_TAB5_KB_ERR_I2C_CONFIG    = -2,
+    M5_TAB5_KB_ERR_INVALID_ARG   = -3,
+    M5_TAB5_KB_ERR_TIMEOUT       = -4,
     M5_TAB5_KB_ERR_NOT_SUPPORTED = -5,
-    M5_TAB5_KB_ERR_I2C_COMM = -6,
-    M5_TAB5_KB_ERR_NOT_INIT = -7,
-    M5_TAB5_KB_ERR_INTERNAL = -8,
+    M5_TAB5_KB_ERR_I2C_COMM      = -6,
+    M5_TAB5_KB_ERR_NOT_INIT      = -7,
+    M5_TAB5_KB_ERR_INTERNAL      = -8,
 } m5_tab5_kb_err_t;
 
 // ============================
 // Device Constants
 // ============================
-#define M5_TAB5_KB_DEFAULT_ADDR     0x6D
-#define M5_TAB5_KB_I2C_RETRY_COUNT  2
+#define M5_TAB5_KB_DEFAULT_ADDR    0x6D
+#define M5_TAB5_KB_I2C_RETRY_COUNT 2
 
-#define M5_TAB5_KB_DEFAULT_SDA      0
-#define M5_TAB5_KB_DEFAULT_SCL      1
-#define M5_TAB5_KB_DEFAULT_INT      50
+#define M5_TAB5_KB_DEFAULT_SDA 0
+#define M5_TAB5_KB_DEFAULT_SCL 1
+#define M5_TAB5_KB_DEFAULT_INT 50
 
 // ============================
 // I2C Frequency Constants
@@ -56,23 +56,23 @@ typedef enum {
 // ============================
 // Register Addresses
 // ============================
-#define M5_TAB5_KB_REG_INT_CFG      0x00
-#define M5_TAB5_KB_REG_INT_STA      0x01
-#define M5_TAB5_KB_REG_EVENT_NUM    0x02
-#define M5_TAB5_KB_REG_BRIGHTNESS   0x03
+#define M5_TAB5_KB_REG_INT_CFG    0x00
+#define M5_TAB5_KB_REG_INT_STA    0x01
+#define M5_TAB5_KB_REG_EVENT_NUM  0x02
+#define M5_TAB5_KB_REG_BRIGHTNESS 0x03
 
 #define M5_TAB5_KB_REG_KEYBOARD_MODE 0x10
-#define M5_TAB5_KB_REG_RGB_MODE     0x11
+#define M5_TAB5_KB_REG_RGB_MODE      0x11
 
-#define M5_TAB5_KB_REG_KEY_EVENT    0x20
-#define M5_TAB5_KB_REG_HID_EVENT    0x30
+#define M5_TAB5_KB_REG_KEY_EVENT 0x20
+#define M5_TAB5_KB_REG_HID_EVENT 0x30
 
 #define M5_TAB5_KB_REG_CHAR_EVENT_LEN  0x40
 #define M5_TAB5_KB_REG_CHAR_EVENT_BASE 0x50
 
 #define M5_TAB5_KB_REG_RGB_COLOR_BASE 0x60
-#define M5_TAB5_KB_REG_VERSION      0xFE
-#define M5_TAB5_KB_REG_I2C_ADDR     0xFF
+#define M5_TAB5_KB_REG_VERSION        0xFE
+#define M5_TAB5_KB_REG_I2C_ADDR       0xFF
 
 // ============================
 // Log Level Definitions
@@ -114,10 +114,7 @@ typedef enum {
 // ============================
 // RGB Working Mode
 // ============================
-typedef enum {
-    M5_TAB5_KB_RGB_MODE_BINDING = 0,
-    M5_TAB5_KB_RGB_MODE_CUSTOM  = 1
-} m5_tab5_kb_rgb_mode_t;
+typedef enum { M5_TAB5_KB_RGB_MODE_BINDING = 0, M5_TAB5_KB_RGB_MODE_CUSTOM = 1 } m5_tab5_kb_rgb_mode_t;
 
 // ============================
 // Key Event Structure
@@ -151,9 +148,7 @@ typedef enum {
     M5_TAB5_REG_ACCESS_WRITE = 1,
 } m5_tab5_reg_access_type_t;
 
-typedef void (*m5_tab5_reg_access_cb_t)(
-    uint8_t reg, uint8_t value,
-    m5_tab5_reg_access_type_t type, void* user_data);
+typedef void (*m5_tab5_reg_access_cb_t)(uint8_t reg, uint8_t value, m5_tab5_reg_access_type_t type, void* user_data);
 
 // ============================
 // M5Tab5Keyboard Driver Class
@@ -170,26 +165,30 @@ public:
     // ========================
 #ifdef ARDUINO
     m5_tab5_kb_err_t begin(TwoWire* wire, uint8_t addr = M5_TAB5_KB_DEFAULT_ADDR, uint8_t sda = -1, uint8_t scl = -1,
-                               uint32_t speed = 100000, int8_t intPin = -1,
-                               m5_tab5_kb_int_mode_t intMode = M5_TAB5_KB_INT_MODE_POLLING);
+                           uint32_t speed = 100000, int8_t intPin = -1,
+                           m5_tab5_kb_int_mode_t intMode = M5_TAB5_KB_INT_MODE_POLLING);
 #else  // ESP-IDF
-    m5_tab5_kb_err_t begin(i2c_port_t port = I2C_NUM_0, uint8_t addr = M5_TAB5_KB_DEFAULT_ADDR, int sda = M5_TAB5_KB_DEFAULT_SDA, int scl = M5_TAB5_KB_DEFAULT_SCL,
-                               uint32_t speed = M5_TAB5_KB_I2C_FREQ_100K, m5_tab5_kb_int_mode_t intMode = M5_TAB5_KB_INT_MODE_POLLING);
+    m5_tab5_kb_err_t begin(i2c_port_t port = I2C_NUM_0, uint8_t addr = M5_TAB5_KB_DEFAULT_ADDR,
+                           int sda = M5_TAB5_KB_DEFAULT_SDA, int scl = M5_TAB5_KB_DEFAULT_SCL,
+                           uint32_t speed                = M5_TAB5_KB_I2C_FREQ_100K,
+                           m5_tab5_kb_int_mode_t intMode = M5_TAB5_KB_INT_MODE_POLLING);
 
     m5_tab5_kb_err_t begin(i2c_port_t port, uint8_t addr, int sda, int scl, uint32_t speed, int intPin,
-                               m5_tab5_kb_int_mode_t intMode = M5_TAB5_KB_INT_MODE_HARDWARE);
+                           m5_tab5_kb_int_mode_t intMode = M5_TAB5_KB_INT_MODE_HARDWARE);
 
     m5_tab5_kb_err_t begin(i2c_master_bus_handle_t bus, uint8_t addr = M5_TAB5_KB_DEFAULT_ADDR,
-                               uint32_t speed = M5_TAB5_KB_I2C_FREQ_100K, m5_tab5_kb_int_mode_t intMode = M5_TAB5_KB_INT_MODE_POLLING);
+                           uint32_t speed                = M5_TAB5_KB_I2C_FREQ_100K,
+                           m5_tab5_kb_int_mode_t intMode = M5_TAB5_KB_INT_MODE_POLLING);
 
     m5_tab5_kb_err_t begin(i2c_master_bus_handle_t bus, uint8_t addr, uint32_t speed, int intPin,
-                               m5_tab5_kb_int_mode_t intMode = M5_TAB5_KB_INT_MODE_HARDWARE);
+                           m5_tab5_kb_int_mode_t intMode = M5_TAB5_KB_INT_MODE_HARDWARE);
 
-    m5_tab5_kb_err_t begin(i2c_bus_handle_t bus, uint8_t addr = M5_TAB5_KB_DEFAULT_ADDR, uint32_t speed = M5_TAB5_KB_I2C_FREQ_100K,
-                               m5_tab5_kb_int_mode_t intMode = M5_TAB5_KB_INT_MODE_POLLING);
+    m5_tab5_kb_err_t begin(i2c_bus_handle_t bus, uint8_t addr = M5_TAB5_KB_DEFAULT_ADDR,
+                           uint32_t speed                = M5_TAB5_KB_I2C_FREQ_100K,
+                           m5_tab5_kb_int_mode_t intMode = M5_TAB5_KB_INT_MODE_POLLING);
 
     m5_tab5_kb_err_t begin(i2c_bus_handle_t bus, uint8_t addr, uint32_t speed, int intPin,
-                               m5_tab5_kb_int_mode_t intMode = M5_TAB5_KB_INT_MODE_HARDWARE);
+                           m5_tab5_kb_int_mode_t intMode = M5_TAB5_KB_INT_MODE_HARDWARE);
 #endif
 
     void end();
@@ -210,8 +209,7 @@ public:
     m5_tab5_kb_err_t setRGBMode(uint8_t mode);
 
     m5_tab5_kb_err_t getRGB(uint8_t index, uint8_t* r, uint8_t* g, uint8_t* b);
-    m5_tab5_kb_err_t getBothRGB(uint8_t* r1, uint8_t* g1, uint8_t* b1,
-                                   uint8_t* r2, uint8_t* g2, uint8_t* b2);
+    m5_tab5_kb_err_t getBothRGB(uint8_t* r1, uint8_t* g1, uint8_t* b1, uint8_t* r2, uint8_t* g2, uint8_t* b2);
 
     m5_tab5_kb_err_t setRGB(uint8_t index, uint8_t r, uint8_t g, uint8_t b);
     m5_tab5_kb_err_t setBothRGB(uint8_t r, uint8_t g, uint8_t b);
@@ -334,7 +332,7 @@ private:
 #endif
 
     m5_tab5_reg_access_cb_t _reg_access_cb;
-    void*                   _reg_access_cb_data;
+    void* _reg_access_cb_data;
 };
 
 }  // namespace m5

@@ -101,10 +101,10 @@ esp_err_t lvgl_port_init(const lvgl_port_cfg_t *cfg)
     timer_period_ms = cfg->timer_period_ms;
 
     const esp_timer_create_args_t timer_args = {
-        .callback = lvgl_tick_cb,
-        .arg = &timer_period_ms,
-        .dispatch_method = ESP_TIMER_TASK,
-        .name = "lvgl_tick",
+        .callback              = lvgl_tick_cb,
+        .arg                   = &timer_period_ms,
+        .dispatch_method       = ESP_TIMER_TASK,
+        .name                  = "lvgl_tick",
         .skip_unhandled_events = false,
     };
 
@@ -141,16 +141,9 @@ esp_err_t lvgl_port_init(const lvgl_port_cfg_t *cfg)
     }
 
     static StaticTask_t task_buffer;
-    s_port_ctx.task_handle = xTaskCreateStaticPinnedToCore(
-        lvgl_task,
-        "lvgl_task",
-        cfg->task_stack / sizeof(StackType_t),
-        NULL,
-        cfg->task_priority,
-        stack,
-        &task_buffer,
-        cfg->task_affinity
-    );
+    s_port_ctx.task_handle =
+        xTaskCreateStaticPinnedToCore(lvgl_task, "lvgl_task", cfg->task_stack / sizeof(StackType_t), NULL,
+                                      cfg->task_priority, stack, &task_buffer, cfg->task_affinity);
 
     if (s_port_ctx.task_handle == NULL) {
         ESP_LOGE(TAG, "Failed to create LVGL task");

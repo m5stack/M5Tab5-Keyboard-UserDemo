@@ -8,11 +8,7 @@
 
 static const char* TAG = "BasePage";
 
-BasePage::BasePage(const char* name)
-    : m_container(nullptr),
-      m_name(name),
-      m_created(false),
-      m_visible(false)
+BasePage::BasePage(const char* name) : m_container(nullptr), m_name(name), m_created(false), m_visible(false)
 {
     ESP_LOGI(TAG, "Page '%s' constructed", m_name);
 }

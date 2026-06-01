@@ -26,7 +26,8 @@ extern "C" {
  * @note  The I2C communication must be initialized before this function is used.
  * @note  è°ç¨è¯¥å½æ°åå¿é¡»åå®æ?I2C éä¿¡åå§åã?
  * @note  ST7123 is a TDDI panel, so the LCD must be initialized before touch can work.
- * @note  ST7123 å±äº TDDI é¢æ¿ï¼å æ­¤å¿é¡»ååå§å?LCDï¼è§¦æ¸åè½æè½æ­£å¸¸å·¥ä½ã?
+ * @note  ST7123 å±äº TDDI
+ * é¢æ¿ï¼å æ­¤å¿é¡»ååå§å?LCDï¼è§¦æ¸åè½æè½æ­£å¸¸å·¥ä½ã?
  *
  * @param[in]  io     LCD panel IO handle, created by esp_lcd_new_panel_io_i2c()
  * @param[in]  config Touch panel configuration
@@ -42,29 +43,24 @@ extern "C" {
  *      - ESP_ERR_INVALID_ARG åæ°æ æ
  *      - ESP_ERR_NO_MEM åå­ä¸è¶³
  */
-esp_err_t esp_lcd_touch_new_i2c_st7123(const esp_lcd_panel_io_handle_t io,
-                                        const esp_lcd_touch_config_t *config,
-                                        esp_lcd_touch_handle_t *tp);
+esp_err_t esp_lcd_touch_new_i2c_st7123(const esp_lcd_panel_io_handle_t io, const esp_lcd_touch_config_t *config,
+                                       esp_lcd_touch_handle_t *tp);
 
 /**
  * @brief I2C address of the ST7123 touch controller.
  *        ST7123 è§¦æ¸æ§å¶å¨ç I2C å°åã?
  */
-#define ESP_LCD_TOUCH_IO_I2C_ST7123_ADDRESS     (0x55)
+#define ESP_LCD_TOUCH_IO_I2C_ST7123_ADDRESS (0x55)
 
 /**
  * @brief Touch IO configuration macro for ST7123.
  *        ST7123 çè§¦æ?IO éç½®å®ã?
  */
-#define ESP_LCD_TOUCH_IO_I2C_ST7123_CONFIG()                \
-    {                                                       \
-        .dev_addr = ESP_LCD_TOUCH_IO_I2C_ST7123_ADDRESS,    \
-        .control_phase_bytes = 1,                           \
-        .lcd_cmd_bits = 16,                                 \
-        .flags =                                            \
-        {                                                   \
-            .disable_control_phase = 1,                     \
-        }                                                   \
+#define ESP_LCD_TOUCH_IO_I2C_ST7123_CONFIG()                                                                      \
+    {                                                                                                             \
+        .dev_addr = ESP_LCD_TOUCH_IO_I2C_ST7123_ADDRESS, .control_phase_bytes = 1, .lcd_cmd_bits = 16, .flags = { \
+            .disable_control_phase = 1,                                                                           \
+        }                                                                                                         \
     }
 
 #ifdef __cplusplus

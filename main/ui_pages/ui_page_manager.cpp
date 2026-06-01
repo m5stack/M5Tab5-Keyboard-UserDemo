@@ -15,11 +15,7 @@ static const char* TAG = "PageManager";
 PageManager* PageManager::s_instance = nullptr;
 
 PageManager::PageManager()
-    : m_current_page(nullptr),
-      m_current_page_id(-1),
-      m_parent(nullptr),
-      m_global_menu(nullptr),
-      m_global_log(nullptr)
+    : m_current_page(nullptr), m_current_page_id(-1), m_parent(nullptr), m_global_menu(nullptr), m_global_log(nullptr)
 {
     // 初始化页面数据
     for (int i = 0; i < PAGE_ID_MAX; i++) {
@@ -132,7 +128,7 @@ bool PageManager::switchToPage(int page_id)
     target_page->show();
 
     // 5. 更新当前页面指针
-    m_current_page = target_page;
+    m_current_page    = target_page;
     m_current_page_id = page_id;
 
     // 6. 确保全局组件在最前面

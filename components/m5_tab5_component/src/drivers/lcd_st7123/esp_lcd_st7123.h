@@ -24,28 +24,31 @@
 extern "C" {
 #endif
 
-/* ---- ST7123P BOE 4.98" Panel Parameters / ST7123P BOE 4.98 è±å¯¸é¢æ¿åæ°ï¼?20Ã1280ï¼? éé DSIï¼?---- */
-#define ST7123_H_RES                720
-#define ST7123_V_RES                1280
-#define ST7123_HSYNC_PULSE_WIDTH    2
-#define ST7123_HSYNC_BACK_PORCH     40
-#define ST7123_HSYNC_FRONT_PORCH    40
-#define ST7123_VSYNC_PULSE_WIDTH    2
-#define ST7123_VSYNC_BACK_PORCH     8
-#define ST7123_VSYNC_FRONT_PORCH    220
-#define ST7123_DPI_CLK_MHZ          80
-#define ST7123_LANE_NUM             2
-#define ST7123_LANE_BITRATE_MBPS    1040
+/* ---- ST7123P BOE 4.98" Panel Parameters / ST7123P BOE 4.98 è±å¯¸é¢æ¿åæ°ï¼?20Ã1280ï¼? éé
+ * DSIï¼?---- */
+#define ST7123_H_RES             720
+#define ST7123_V_RES             1280
+#define ST7123_HSYNC_PULSE_WIDTH 2
+#define ST7123_HSYNC_BACK_PORCH  40
+#define ST7123_HSYNC_FRONT_PORCH 40
+#define ST7123_VSYNC_PULSE_WIDTH 2
+#define ST7123_VSYNC_BACK_PORCH  8
+#define ST7123_VSYNC_FRONT_PORCH 220
+#define ST7123_DPI_CLK_MHZ       80
+#define ST7123_LANE_NUM          2
+#define ST7123_LANE_BITRATE_MBPS 1040
 
 /**
  * @brief LCD panel initialization commands.
  *        LCD é¢æ¿åå§åå½ä»¤ã?
  */
 typedef struct {
-    int cmd;                /*<! The specific LCD command / å·ä½ç?LCD å½ä»¤ */
-    const void *data;       /*<! Buffer that holds the command specific data / å­æ¾è¯¥å½ä»¤æ°æ®çç¼å²å?*/
-    size_t data_bytes;      /*<! Size of `data` in memory, in bytes / `data` çåå­å­èæ° */
-    unsigned int delay_ms;  /*<! Delay in milliseconds after this command / æ§è¡è¯¥å½ä»¤åçå»¶æ¶ï¼æ¯«ç§ï¼?*/
+    int cmd;               /*<! The specific LCD command / å·ä½ç?LCD å½ä»¤ */
+    const void *data;      /*<! Buffer that holds the command specific data /
+                              å­æ¾è¯¥å½ä»¤æ°æ®çç¼å²å?*/
+    size_t data_bytes;     /*<! Size of `data` in memory, in bytes / `data` çåå­å­èæ° */
+    unsigned int delay_ms; /*<! Delay in milliseconds after this command /
+                              æ§è¡è¯¥å½ä»¤åçå»¶æ¶ï¼æ¯«ç§ï¼?*/
 } st7123_lcd_init_cmd_t;
 
 /**
@@ -55,12 +58,16 @@ typedef struct {
  * @note  è¯¥ç»æéè¦ä¼ ç»?`esp_lcd_panel_dev_config_t::vendor_config`ã?
  */
 typedef struct {
-    const st7123_lcd_init_cmd_t *init_cmds;     /*!< Pointer to the initialization command array. NULL uses the built-in default. / åå§åå½ä»¤æ°ç»æéï¼NULL è¡¨ç¤ºä½¿ç¨åç½®é»è®¤åºåã?*/
-    uint16_t init_cmds_size;                    /*!< Number of commands in the array above / ä¸è¿°æ°ç»ä¸­çå½ä»¤æ°é */
+    const st7123_lcd_init_cmd_t *init_cmds; /*!< Pointer to the initialization command array. NULL uses the built-in
+                                               default. / åå§åå½ä»¤æ°ç»æéï¼NULL
+                                               è¡¨ç¤ºä½¿ç¨åç½®é»è®¤åºåã?*/
+    uint16_t init_cmds_size; /*!< Number of commands in the array above / ä¸è¿°æ°ç»ä¸­çå½ä»¤æ°é
+                              */
     struct {
-        esp_lcd_dsi_bus_handle_t dsi_bus;               /*!< MIPI-DSI bus handle / MIPI-DSI æ»çº¿å¥æ */
-        const esp_lcd_dpi_panel_config_t *dpi_config;   /*!< MIPI-DPI panel configuration / MIPI-DPI é¢æ¿éç½® */
-        uint8_t lane_num;                               /*!< Number of MIPI-DSI data lanes / MIPI-DSI æ°æ®ééæ°é */
+        esp_lcd_dsi_bus_handle_t dsi_bus; /*!< MIPI-DSI bus handle / MIPI-DSI æ»çº¿å¥æ */
+        const esp_lcd_dpi_panel_config_t
+            *dpi_config;  /*!< MIPI-DPI panel configuration / MIPI-DPI é¢æ¿éç½® */
+        uint8_t lane_num; /*!< Number of MIPI-DSI data lanes / MIPI-DSI æ°æ®ééæ°é */
     } mipi_config;
 } st7123_vendor_config_t;
 
@@ -83,52 +90,53 @@ typedef struct {
  *      - ESP_OK                æå
  */
 esp_err_t esp_lcd_new_panel_st7123(const esp_lcd_panel_io_handle_t io,
-                                    const esp_lcd_panel_dev_config_t *panel_dev_config,
-                                    esp_lcd_panel_handle_t *ret_panel);
+                                   const esp_lcd_panel_dev_config_t *panel_dev_config,
+                                   esp_lcd_panel_handle_t *ret_panel);
 
 /* ---- Helper Macros for Quick Configuration / å¿«ééç½®è¾å©å® ---- */
 
-#define ST7123_PANEL_BUS_DSI_2CH_CONFIG()              \
-    {                                                    \
-        .bus_id = 0,                                     \
-        .num_data_lanes = ST7123_LANE_NUM,               \
-        .phy_clk_src = MIPI_DSI_PHY_CLK_SRC_DEFAULT,    \
-        .lane_bit_rate_mbps = ST7123_LANE_BITRATE_MBPS,  \
+#define ST7123_PANEL_BUS_DSI_2CH_CONFIG()                   \
+    {                                                       \
+        .bus_id             = 0,                            \
+        .num_data_lanes     = ST7123_LANE_NUM,              \
+        .phy_clk_src        = MIPI_DSI_PHY_CLK_SRC_DEFAULT, \
+        .lane_bit_rate_mbps = ST7123_LANE_BITRATE_MBPS,     \
     }
 
-#define ST7123_PANEL_IO_DBI_CONFIG()  \
-    {                                   \
-        .virtual_channel = 0,           \
-        .lcd_cmd_bits = 8,              \
-        .lcd_param_bits = 8,            \
+#define ST7123_PANEL_IO_DBI_CONFIG() \
+    {                                \
+        .virtual_channel = 0,        \
+        .lcd_cmd_bits    = 8,        \
+        .lcd_param_bits  = 8,        \
     }
 
 /**
  * @note  refresh_rate â?80 MHz / 802 / 1510 â?66 Hz
  * @note  å·æ°ççº¦ä¸?80 MHz / 802 / 1510 â?66 Hz
  */
-#define ST7123_720_1280_PANEL_66HZ_DPI_CONFIG(px_format) \
-    {                                                      \
-        .virtual_channel = 0,                              \
-        .dpi_clk_src = MIPI_DSI_DPI_CLK_SRC_DEFAULT,      \
-        .dpi_clock_freq_mhz = ST7123_DPI_CLK_MHZ,         \
-        .in_color_format = (px_format),                    \
-        .out_color_format = (px_format),                   \
-        .num_fbs = 2,                                      \
-        .video_timing = {                                  \
-            .h_size = ST7123_H_RES,                        \
-            .v_size = ST7123_V_RES,                        \
-            .hsync_pulse_width = ST7123_HSYNC_PULSE_WIDTH, \
-            .hsync_back_porch = ST7123_HSYNC_BACK_PORCH,   \
-            .hsync_front_porch = ST7123_HSYNC_FRONT_PORCH, \
-            .vsync_pulse_width = ST7123_VSYNC_PULSE_WIDTH, \
-            .vsync_back_porch = ST7123_VSYNC_BACK_PORCH,   \
-            .vsync_front_porch = ST7123_VSYNC_FRONT_PORCH, \
-        },                                                 \
+#define ST7123_720_1280_PANEL_66HZ_DPI_CONFIG(px_format)       \
+    {                                                          \
+        .virtual_channel    = 0,                               \
+        .dpi_clk_src        = MIPI_DSI_DPI_CLK_SRC_DEFAULT,    \
+        .dpi_clock_freq_mhz = ST7123_DPI_CLK_MHZ,              \
+        .in_color_format    = (px_format),                     \
+        .out_color_format   = (px_format),                     \
+        .num_fbs            = 2,                               \
+        .video_timing =                                        \
+            {                                                  \
+                .h_size            = ST7123_H_RES,             \
+                .v_size            = ST7123_V_RES,             \
+                .hsync_pulse_width = ST7123_HSYNC_PULSE_WIDTH, \
+                .hsync_back_porch  = ST7123_HSYNC_BACK_PORCH,  \
+                .hsync_front_porch = ST7123_HSYNC_FRONT_PORCH, \
+                .vsync_pulse_width = ST7123_VSYNC_PULSE_WIDTH, \
+                .vsync_back_porch  = ST7123_VSYNC_BACK_PORCH,  \
+                .vsync_front_porch = ST7123_VSYNC_FRONT_PORCH, \
+            },                                                 \
     }
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // SOC_MIPI_DSI_SUPPORTED
+#endif  // SOC_MIPI_DSI_SUPPORTED

@@ -165,20 +165,28 @@ public:
 
     /// Return the LVGL display handle registered by lvgl_init(), or nullptr.
     /// 返回?lvgl_init() 注册?LVGL 显示句柄；若不存在则返回 nullptr?
-    lv_display_t* lv_display() const { return lv_display_; }
+    lv_display_t* lv_display() const
+    {
+        return lv_display_;
+    }
 
     /// Return the LVGL touch input device registered by lvgl_init(), or nullptr.
     /// 返回?lvgl_init() 注册?LVGL 触摸输入设备句柄；若不存在则返回 nullptr?
-    lv_indev_t*   lv_touch_indev() const { return lv_touch_indev_; }
+    lv_indev_t* lv_touch_indev() const
+    {
+        return lv_touch_indev_;
+    }
 
 private:
     m5tab5_component_config_t active_config_{};
     m5tab5_runtime_t runtime_{};
     const m5tab5_variant_descriptor_t* active_variant_ = nullptr;
-    lv_display_t* lv_display_ = nullptr;
-    lv_indev_t*   lv_touch_indev_ = nullptr;
-    void* rtc_handle_   = nullptr;  ///< Opaque m5tab5_rtc_rx8130_t*, allocated in rtc_init() / 不透明?m5tab5_rtc_rx8130_t*，在 rtc_init() 中分?
-    void* ina226_handle_ = nullptr;  ///< Opaque m5tab5_ina226_t*, allocated in ina226_init() / 不透明?m5tab5_ina226_t*，在 ina226_init() 中分?
+    lv_display_t* lv_display_                          = nullptr;
+    lv_indev_t* lv_touch_indev_                        = nullptr;
+    void* rtc_handle_ = nullptr;     ///< Opaque m5tab5_rtc_rx8130_t*, allocated in rtc_init() /
+                                     ///< 不透明?m5tab5_rtc_rx8130_t*，在 rtc_init() 中分?
+    void* ina226_handle_ = nullptr;  ///< Opaque m5tab5_ina226_t*, allocated in ina226_init() /
+                                     ///< 不透明?m5tab5_ina226_t*，在 ina226_init() 中分?
 };
 
 }  // namespace m5::tab5

@@ -28,11 +28,11 @@ extern "C" {
  * @brief è§¦æ¸éç½®ç»æ
  */
 typedef struct {
-    lv_display_t *disp;               /*!< LVGL æ¾ç¤ºå¥æ */
-    esp_lcd_touch_handle_t handle;    /*!< LCD è§¦æ¸å¥æ */
+    lv_display_t *disp;            /*!< LVGL æ¾ç¤ºå¥æ */
+    esp_lcd_touch_handle_t handle; /*!< LCD è§¦æ¸å¥æ */
     struct {
-        float x;                      /*!< X è½´ç¼©æ¾æ¯ä¾?*/
-        float y;                      /*!< Y è½´ç¼©æ¾æ¯ä¾?*/
+        float x; /*!< X è½´ç¼©æ¾æ¯ä¾?*/
+        float y; /*!< Y è½´ç¼©æ¾æ¯ä¾?*/
     } scale;
 } lvgl_touch_cfg_t;
 
@@ -40,7 +40,8 @@ typedef struct {
  * @brief æ·»å  LCD è§¦æ¸ä½ä¸ºè¾å¥è®¾å¤
  *
  * @param touch_cfg è§¦æ¸éç½®ç»æ
- * @return lv_indev_t* æåè¿å LVGL è¾å¥è®¾å¤å¥æï¼å¤±è´¥è¿å?NULL
+ * @return lv_indev_t* æåè¿å LVGL
+ * è¾å¥è®¾å¤å¥æï¼å¤±è´¥è¿å?NULL
  */
 lv_indev_t *lvgl_port_add_touch(const lvgl_touch_cfg_t *touch_cfg);
 
@@ -55,7 +56,8 @@ esp_err_t lvgl_port_remove_touch(lv_indev_t *touch);
 /**
  * @brief è®¾ç½®è§¦æ¸æè½¬è§åº¦
  *
- * å½ä½¿ç?PPA ç¡¬ä»¶æè½¬æ¶ï¼LVGL ç?display rotation ä¸ä¼è¢«è®¾ç½®ï¼
+ * å½ä½¿ç?PPA ç¡¬ä»¶æè½¬æ¶ï¼LVGL ç?display rotation
+ * ä¸ä¼è¢«è®¾ç½®ï¼
  * éè¦åç¬è®¾ç½®è§¦æ¸çæè½¬è§åº¦æ¥å¹éæ¾ç¤ºæè½¬ã?
  *
  * @param touch è¾å¥è®¾å¤å¥æ

@@ -13,7 +13,7 @@ extern "C" {
 
 /**
  * @brief 运行键盘 I2C 地址寄存器测试
- * 
+ *
  * 测试 M5_TAB5_KB_REG_I2C_ADDR 寄存器功能，
  * 最终将寄存器配置回默认地址 0x6D
  */
@@ -23,4 +23,4 @@ void run_keyboard_i2c_address_test(void);
 }
 #endif
 
-#endif // TOOLS_H
+#endif  // TOOLS_H

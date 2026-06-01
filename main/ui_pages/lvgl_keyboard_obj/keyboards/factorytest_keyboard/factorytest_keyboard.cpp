@@ -16,11 +16,11 @@ LV_FONT_DECLARE(lv_font_montserrat_16);
 static const char* TAG = "FactoryTestKeyboard";
 
 // 颜色定义
-#define FT_COLOR_BG_NORMAL       0xD0D0D0  // 未按键 - 浅灰
-#define FT_COLOR_BG_SHORT_PRESS  0x404040  // 短按按下 - 深灰
-#define FT_COLOR_BG_LONG_PRESS   0x003800  // 长按按下 - 深绿
-#define FT_COLOR_TXT_NORMAL      0x000000  // 文字颜色(黑色)
-#define FT_COLOR_TXT_WHITE       0xFFFFFF  // 白色文字
+#define FT_COLOR_BG_NORMAL      0xD0D0D0  // 未按键 - 浅灰
+#define FT_COLOR_BG_SHORT_PRESS 0x404040  // 短按按下 - 深灰
+#define FT_COLOR_BG_LONG_PRESS  0x003800  // 长按按下 - 深绿
+#define FT_COLOR_TXT_NORMAL     0x000000  // 文字颜色(黑色)
+#define FT_COLOR_TXT_WHITE      0xFFFFFF  // 白色文字
 
 FactoryTestKeyboard::FactoryTestKeyboard(uint8_t rows, uint8_t cols)
     : m_rows(rows),
@@ -37,29 +37,29 @@ FactoryTestKeyboard::FactoryTestKeyboard(uint8_t rows, uint8_t cols)
       m_row_dsc(nullptr)
 {
     // 分配按下中状态数组
-    m_key_pressing      = (bool*)calloc(m_key_count, sizeof(bool));
+    m_key_pressing = (bool*)calloc(m_key_count, sizeof(bool));
 
     // 分配长按进行中状态数组（已达门槛但未松手）
     m_key_long_pressing = (bool*)calloc(m_key_count, sizeof(bool));
 
     // 分配短按完成状态数组
-    m_key_pressed       = (bool*)calloc(m_key_count, sizeof(bool));
+    m_key_pressed = (bool*)calloc(m_key_count, sizeof(bool));
 
     // 分配长按完成状态数组
-    m_key_hold_pressed  = (bool*)calloc(m_key_count, sizeof(bool));
+    m_key_hold_pressed = (bool*)calloc(m_key_count, sizeof(bool));
 
     // 分配按键按钮对象数组
-    m_key_buttons       = (lv_obj_t**)calloc(m_key_count, sizeof(lv_obj_t*));
+    m_key_buttons = (lv_obj_t**)calloc(m_key_count, sizeof(lv_obj_t*));
 
     // 分配次标签对象数组
-    m_key_hold_labels   = (lv_obj_t**)calloc(m_key_count, sizeof(lv_obj_t*));
+    m_key_hold_labels = (lv_obj_t**)calloc(m_key_count, sizeof(lv_obj_t*));
 
     // 分配网格描述符数组 (需要持久化)
     m_col_dsc = (int32_t*)malloc((m_cols + 1) * sizeof(int32_t));
     m_row_dsc = (int32_t*)malloc((m_rows + 1) * sizeof(int32_t));
 
-    if (!m_key_pressing || !m_key_long_pressing || !m_key_pressed || !m_key_hold_pressed
-        || !m_key_buttons || !m_key_hold_labels || !m_col_dsc || !m_row_dsc) {
+    if (!m_key_pressing || !m_key_long_pressing || !m_key_pressed || !m_key_hold_pressed || !m_key_buttons ||
+        !m_key_hold_labels || !m_col_dsc || !m_row_dsc) {
         ESP_LOGE(TAG, "Failed to allocate memory for keyboard arrays");
     }
 }
@@ -127,10 +127,10 @@ void FactoryTestKeyboard::resetAllKeys()
     if (!m_key_pressed) return;
 
     for (uint16_t i = 0; i < m_key_count; i++) {
-        if (m_key_pressing)      m_key_pressing[i]      = false;
+        if (m_key_pressing) m_key_pressing[i] = false;
         if (m_key_long_pressing) m_key_long_pressing[i] = false;
         m_key_pressed[i] = false;
-        if (m_key_hold_pressed)  m_key_hold_pressed[i]  = false;
+        if (m_key_hold_pressed) m_key_hold_pressed[i] = false;
         updateKeyColor(i);
     }
 
@@ -143,7 +143,7 @@ void FactoryTestKeyboard::cancelPressingKeys()
 
     for (uint16_t i = 0; i < m_key_count; i++) {
         if (m_key_pressing[i] || (m_key_long_pressing && m_key_long_pressing[i])) {
-            m_key_pressing[i]      = false;
+            m_key_pressing[i] = false;
             if (m_key_long_pressing) m_key_long_pressing[i] = false;
             // 已完成的状态（m_key_pressed / m_key_hold_pressed）保持不变
             updateKeyColor(i);
@@ -157,7 +157,7 @@ void FactoryTestKeyboard::updateKeyColor(uint16_t key_id)
         return;
     }
 
-    lv_obj_t* btn = m_key_buttons[key_id];
+    lv_obj_t* btn        = m_key_buttons[key_id];
     lv_obj_t* label_ok   = lv_obj_get_child(btn, 0);
     lv_obj_t* label_hold = (m_key_hold_labels) ? m_key_hold_labels[key_id] : nullptr;
 
@@ -227,10 +227,10 @@ void FactoryTestKeyboard::simulatePhysicalKeyDown(uint16_t key_id)
 
     // 任何状态（IDLE/SHORT_CLICK/LONG_PRESS）都可重新进入 PRESSING
     // 清除旧状态，设置 pressing
-    m_key_pressed[key_id]      = false;
-    if (m_key_hold_pressed)      m_key_hold_pressed[key_id]  = false;
-    if (m_key_long_pressing)     m_key_long_pressing[key_id] = false;
-    m_key_pressing[key_id]     = true;
+    m_key_pressed[key_id] = false;
+    if (m_key_hold_pressed) m_key_hold_pressed[key_id] = false;
+    if (m_key_long_pressing) m_key_long_pressing[key_id] = false;
+    m_key_pressing[key_id] = true;
     updateKeyColor(key_id);
 
     ESP_LOGI(TAG, "Key %d pressing (dark gray + click)", key_id);
@@ -250,8 +250,8 @@ void FactoryTestKeyboard::simulatePhysicalKeyShortRelease(uint16_t key_id)
     }
 
     // PRESSING -> SHORT_CLICK: 深绿 + OK，隐藏 long
-    m_key_pressing[key_id]  = false;
-    m_key_pressed[key_id]   = true;
+    m_key_pressing[key_id] = false;
+    m_key_pressed[key_id]  = true;
     if (m_key_hold_pressed) m_key_hold_pressed[key_id] = false;
     updateKeyColor(key_id);
 
@@ -291,8 +291,8 @@ void FactoryTestKeyboard::simulatePhysicalKeyLongRelease(uint16_t key_id)
     }
 
     // PRESSING -> LONG_PRESS: 深绿 + OK + long
-    m_key_pressing[key_id]    = false;
-    m_key_pressed[key_id]     = true;
+    m_key_pressing[key_id]     = false;
+    m_key_pressed[key_id]      = true;
     m_key_hold_pressed[key_id] = true;
     updateKeyColor(key_id);
 
@@ -329,7 +329,7 @@ void FactoryTestKeyboard::handleKeyEvent(lv_event_t* e)
 
 void FactoryTestKeyboard::eventHandlerStatic(lv_event_t* e)
 {
-    lv_obj_t* btn = (lv_obj_t*)lv_event_get_target(e);
+    lv_obj_t* btn  = (lv_obj_t*)lv_event_get_target(e);
     lv_obj_t* cont = lv_obj_get_parent(btn);
 
     if (!cont) return;
@@ -362,8 +362,8 @@ lv_obj_t* FactoryTestKeyboard::create(lv_obj_t* parent)
     int32_t target_h = (int32_t)(target_w / ratio);
 
     // 应用最小/最大宽高比限制
-    float min_r = getMinAspectRatio();
-    float max_r = getMaxAspectRatio();
+    float min_r           = getMinAspectRatio();
+    float max_r           = getMaxAspectRatio();
     int32_t h_allowed_max = (int32_t)(target_w / min_r);
     int32_t h_allowed_min = (int32_t)(target_w / max_r);
 
@@ -411,8 +411,7 @@ lv_obj_t* FactoryTestKeyboard::create(lv_obj_t* parent)
         lv_obj_t* btn = lv_btn_create(m_kb_cont);
 #endif
 
-        lv_obj_set_grid_cell(btn, LV_GRID_ALIGN_STRETCH, col, 1,
-                                  LV_GRID_ALIGN_STRETCH, row, 1);
+        lv_obj_set_grid_cell(btn, LV_GRID_ALIGN_STRETCH, col, 1, LV_GRID_ALIGN_STRETCH, row, 1);
 
         lv_obj_set_style_radius(btn, 6, 0);
         lv_obj_set_style_bg_color(btn, lv_color_hex(FT_COLOR_BG_NORMAL), 0);
@@ -431,7 +430,7 @@ lv_obj_t* FactoryTestKeyboard::create(lv_obj_t* parent)
         lv_obj_set_flex_flow(btn, LV_FLEX_FLOW_COLUMN);
         lv_obj_set_flex_align(btn, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
         lv_obj_set_style_pad_all(btn, 2, 0);
-        lv_obj_set_style_pad_gap(btn, 1, 0);   // OK 与 hold 之间的间距
+        lv_obj_set_style_pad_gap(btn, 1, 0);  // OK 与 hold 之间的间距
 
         // 创建主标签（初始显示编号，按下后显示 OK）
         char label_text[8];
@@ -463,8 +462,8 @@ lv_obj_t* FactoryTestKeyboard::create(lv_obj_t* parent)
         }
     }
 
-    ESP_LOGI(TAG, "Factory test keyboard created: %dx%d (%d keys), touch %s",
-             m_rows, m_cols, m_key_count, m_touch_enabled ? "enabled" : "disabled");
+    ESP_LOGI(TAG, "Factory test keyboard created: %dx%d (%d keys), touch %s", m_rows, m_cols, m_key_count,
+             m_touch_enabled ? "enabled" : "disabled");
 
     return m_kb_cont;
 }

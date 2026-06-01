@@ -22,10 +22,10 @@
 
 static const char* TAG = "USB_HID";
 
-static bool s_usb_mounted = false;
-static bool s_usb_initialized = false;
+static bool s_usb_mounted            = false;
+static bool s_usb_initialized        = false;
 static bool s_tab5_usbc_route_active = false;
-static usb_hid_log_cb_t s_log_cb = NULL;
+static usb_hid_log_cb_t s_log_cb     = NULL;
 
 void usb_hid_set_log_cb(usb_hid_log_cb_t cb)
 {
@@ -69,50 +69,44 @@ static void tab5_restore_default_otg_fs_route(void)
 }
 
 // HID Keyboard Report Descriptor (Standard Keyboard)
-static const uint8_t hid_report_descriptor[] = {
-    TUD_HID_REPORT_DESC_KEYBOARD()
-};
+static const uint8_t hid_report_descriptor[] = {TUD_HID_REPORT_DESC_KEYBOARD()};
 
 #define HID_DESC_TOTAL_LEN (TUD_CONFIG_DESC_LEN + TUD_HID_DESC_LEN)
 
 static const tusb_desc_device_t hid_device_descriptor = {
-    .bLength = sizeof(tusb_desc_device_t),
-    .bDescriptorType = TUSB_DESC_DEVICE,
-    .bcdUSB = 0x0200,
-    .bDeviceClass = TUSB_CLASS_UNSPECIFIED,
-    .bDeviceSubClass = 0x00,
-    .bDeviceProtocol = 0x00,
-    .bMaxPacketSize0 = CFG_TUD_ENDPOINT0_SIZE,
-    .idVendor = 0x303A,
-    .idProduct = 0x4004,
-    .bcdDevice = 0x0100,
-    .iManufacturer = 0x01,
-    .iProduct = 0x02,
-    .iSerialNumber = 0x03,
+    .bLength            = sizeof(tusb_desc_device_t),
+    .bDescriptorType    = TUSB_DESC_DEVICE,
+    .bcdUSB             = 0x0200,
+    .bDeviceClass       = TUSB_CLASS_UNSPECIFIED,
+    .bDeviceSubClass    = 0x00,
+    .bDeviceProtocol    = 0x00,
+    .bMaxPacketSize0    = CFG_TUD_ENDPOINT0_SIZE,
+    .idVendor           = 0x303A,
+    .idProduct          = 0x4004,
+    .bcdDevice          = 0x0100,
+    .iManufacturer      = 0x01,
+    .iProduct           = 0x02,
+    .iSerialNumber      = 0x03,
     .bNumConfigurations = 0x01,
 };
 
 #if TUD_OPT_HIGH_SPEED
 static const tusb_desc_device_qualifier_t hid_device_qualifier = {
-    .bLength = sizeof(tusb_desc_device_qualifier_t),
-    .bDescriptorType = TUSB_DESC_DEVICE_QUALIFIER,
-    .bcdUSB = 0x0200,
-    .bDeviceClass = TUSB_CLASS_UNSPECIFIED,
-    .bDeviceSubClass = 0x00,
-    .bDeviceProtocol = 0x00,
-    .bMaxPacketSize0 = CFG_TUD_ENDPOINT0_SIZE,
+    .bLength            = sizeof(tusb_desc_device_qualifier_t),
+    .bDescriptorType    = TUSB_DESC_DEVICE_QUALIFIER,
+    .bcdUSB             = 0x0200,
+    .bDeviceClass       = TUSB_CLASS_UNSPECIFIED,
+    .bDeviceSubClass    = 0x00,
+    .bDeviceProtocol    = 0x00,
+    .bMaxPacketSize0    = CFG_TUD_ENDPOINT0_SIZE,
     .bNumConfigurations = 0x01,
-    .bReserved = 0x00,
+    .bReserved          = 0x00,
 };
 #endif
 
-static const char hid_langid_descriptor[] = {0x09, 0x04};
+static const char hid_langid_descriptor[]  = {0x09, 0x04};
 static const char* hid_string_descriptor[] = {
-    hid_langid_descriptor,
-    "M5Stack",
-    "Tab5 Keyboard",
-    "123456",
-    "HID Keyboard",
+    hid_langid_descriptor, "M5Stack", "Tab5 Keyboard", "123456", "HID Keyboard",
 };
 
 // TinyUSB Configuration Descriptor
@@ -121,13 +115,9 @@ static const uint8_t hid_configuration_descriptor[] = {
     TUD_CONFIG_DESCRIPTOR(1, 1, 0, HID_DESC_TOTAL_LEN, TUSB_DESC_CONFIG_ATT_REMOTE_WAKEUP, 100),
 
     // Interface number, string index, boot protocol, report descriptor len, EP In address, size, polling interval
-    TUD_HID_DESCRIPTOR(0, 4, HID_ITF_PROTOCOL_KEYBOARD, sizeof(hid_report_descriptor), 0x81, 16, 10)
-};
+    TUD_HID_DESCRIPTOR(0, 4, HID_ITF_PROTOCOL_KEYBOARD, sizeof(hid_report_descriptor), 0x81, 16, 10)};
 
-uint16_t tud_hid_get_report_cb(uint8_t instance,
-                               uint8_t report_id,
-                               hid_report_type_t report_type,
-                               uint8_t* buffer,
+uint16_t tud_hid_get_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t* buffer,
                                uint16_t reqlen)
 {
     (void)instance;
@@ -139,10 +129,7 @@ uint16_t tud_hid_get_report_cb(uint8_t instance,
     return 0;
 }
 
-void tud_hid_set_report_cb(uint8_t instance,
-                           uint8_t report_id,
-                           hid_report_type_t report_type,
-                           uint8_t const* buffer,
+void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t const* buffer,
                            uint16_t bufsize)
 {
     (void)instance;
@@ -151,9 +138,7 @@ void tud_hid_set_report_cb(uint8_t instance,
 
     if (bufsize >= 1) {
         uint8_t leds = buffer[0];
-        usb_log(0x00FFFF, "RX LED: Caps=%d Num=%d Scr=%d",
-                (leds & 0x02) ? 1 : 0,
-                (leds & 0x01) ? 1 : 0,
+        usb_log(0x00FFFF, "RX LED: Caps=%d Num=%d Scr=%d", (leds & 0x02) ? 1 : 0, (leds & 0x01) ? 1 : 0,
                 (leds & 0x04) ? 1 : 0);
     }
 }
@@ -163,26 +148,26 @@ static void tusb_event_handler(tinyusb_event_t* event, void* arg)
     (void)arg;
 
     switch (event->id) {
-    case TINYUSB_EVENT_ATTACHED:
-        s_usb_mounted = true;
-        usb_log(0x00FF00, "USB Device Mounted on rhport %d", event->rhport);
-        break;
-    case TINYUSB_EVENT_DETACHED:
-        s_usb_mounted = false;
-        usb_log(0xFFA500, "USB Device Unmounted from rhport %d", event->rhport);
-        break;
+        case TINYUSB_EVENT_ATTACHED:
+            s_usb_mounted = true;
+            usb_log(0x00FF00, "USB Device Mounted on rhport %d", event->rhport);
+            break;
+        case TINYUSB_EVENT_DETACHED:
+            s_usb_mounted = false;
+            usb_log(0xFFA500, "USB Device Unmounted from rhport %d", event->rhport);
+            break;
 #ifdef CONFIG_TINYUSB_SUSPEND_CALLBACK
-    case TINYUSB_EVENT_SUSPENDED:
-        usb_log(0xFFFF00, "USB Suspended");
-        break;
+        case TINYUSB_EVENT_SUSPENDED:
+            usb_log(0xFFFF00, "USB Suspended");
+            break;
 #endif
 #ifdef CONFIG_TINYUSB_RESUME_CALLBACK
-    case TINYUSB_EVENT_RESUMED:
-        usb_log(0x00FFFF, "USB Resumed");
-        break;
+        case TINYUSB_EVENT_RESUMED:
+            usb_log(0x00FFFF, "USB Resumed");
+            break;
 #endif
-    default:
-        break;
+        default:
+            break;
     }
 }
 
@@ -216,29 +201,32 @@ esp_err_t usb_hid_keyboard_init(usb_port_t port)
 
     const tinyusb_config_t tusb_cfg = {
         .port = tusb_port,
-        .phy = {
-            .skip_setup = false,
-            .self_powered = false,
-            .vbus_monitor_io = -1,
-        },
-        .task = {
-            .size = 4096,
-            .priority = 5,
-            .xCoreID = 0,
-        },
-        .descriptor = {
-            .device = &hid_device_descriptor,
+        .phy =
+            {
+                .skip_setup      = false,
+                .self_powered    = false,
+                .vbus_monitor_io = -1,
+            },
+        .task =
+            {
+                .size     = 4096,
+                .priority = 5,
+                .xCoreID  = 0,
+            },
+        .descriptor =
+            {
+                .device = &hid_device_descriptor,
 #if TUD_OPT_HIGH_SPEED
-            .qualifier = &hid_device_qualifier,
+                .qualifier = &hid_device_qualifier,
 #else
-            .qualifier = NULL,
+                .qualifier = NULL,
 #endif
-            .string = hid_string_descriptor,
-            .string_count = sizeof(hid_string_descriptor) / sizeof(hid_string_descriptor[0]),
-            .full_speed_config = hid_configuration_descriptor,
-            .high_speed_config = hid_configuration_descriptor,
-        },
-        .event_cb = tusb_event_handler,
+                .string            = hid_string_descriptor,
+                .string_count      = sizeof(hid_string_descriptor) / sizeof(hid_string_descriptor[0]),
+                .full_speed_config = hid_configuration_descriptor,
+                .high_speed_config = hid_configuration_descriptor,
+            },
+        .event_cb  = tusb_event_handler,
         .event_arg = NULL,
     };
 
@@ -250,7 +238,7 @@ esp_err_t usb_hid_keyboard_init(usb_port_t port)
     }
 
     s_usb_initialized = true;
-    s_usb_mounted = tud_mounted();
+    s_usb_mounted     = tud_mounted();
     usb_log(0x00FF00, "USB HID Keyboard initialized on port %d.", tusb_port);
 
     return ESP_OK;
@@ -273,7 +261,7 @@ esp_err_t usb_hid_keyboard_deinit(void)
         usb_log(0xFF0000, "Failed to uninstall TinyUSB driver: %s", esp_err_to_name(ret));
     }
 
-    s_usb_mounted = false;
+    s_usb_mounted     = false;
     s_usb_initialized = false;
     tab5_restore_default_otg_fs_route();
 
@@ -291,7 +279,7 @@ esp_err_t usb_hid_send_report(uint8_t modifier, uint8_t keycode)
 
     if (!tud_mounted()) {
         static int64_t last_log = 0;
-        int64_t now = esp_timer_get_time();
+        int64_t now             = esp_timer_get_time();
         if (now - last_log > 5000000) {
             ESP_LOGW(TAG, "USB not mounted (tud_mounted=false), cannot send report");
             last_log = now;
@@ -305,7 +293,7 @@ esp_err_t usb_hid_send_report(uint8_t modifier, uint8_t keycode)
     }
 
     uint8_t keycodes[6] = {0};
-    keycodes[0] = keycode;
+    keycodes[0]         = keycode;
 
     bool sent = tud_hid_keyboard_report(0, modifier, keycodes);
     if (!sent) {
@@ -333,7 +321,7 @@ esp_err_t usb_hid_send_release(void)
     }
 
     uint8_t keycodes[6] = {0};
-    bool sent = tud_hid_keyboard_report(0, 0, keycodes);
+    bool sent           = tud_hid_keyboard_report(0, 0, keycodes);
     if (!sent) {
         ESP_LOGE(TAG, "Failed to send release report");
         return ESP_FAIL;

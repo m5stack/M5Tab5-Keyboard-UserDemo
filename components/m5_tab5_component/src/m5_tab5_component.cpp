@@ -92,36 +92,20 @@ esp_err_t m5tab5_pulse_display_reset(m5tab5_runtime_t* runtime)
     gpio_reset_pin(M5TAB5_PIN_LCD_TOUCH_INT);
 
     ESP_LOGI(TAG, "reset pulse: LCD_RST and TP_RST before display init");
-    ESP_RETURN_ON_ERROR(
-        m5tab5_extio_pi4ioe5v6408_write_pin(
-            dev,
-            static_cast<M5TAB5_ExtIo_PI4IOE5V6408_Pin>(M5TAB5_EXTIO_ADDR_LOW_LCD_RST),
-            false),
-        TAG,
-        "drive LCD_RST low failed");
-    ESP_RETURN_ON_ERROR(
-        m5tab5_extio_pi4ioe5v6408_write_pin(
-            dev,
-            static_cast<M5TAB5_ExtIo_PI4IOE5V6408_Pin>(M5TAB5_EXTIO_ADDR_LOW_TP_RST),
-            false),
-        TAG,
-        "drive TP_RST low failed");
+    ESP_RETURN_ON_ERROR(m5tab5_extio_pi4ioe5v6408_write_pin(
+                            dev, static_cast<M5TAB5_ExtIo_PI4IOE5V6408_Pin>(M5TAB5_EXTIO_ADDR_LOW_LCD_RST), false),
+                        TAG, "drive LCD_RST low failed");
+    ESP_RETURN_ON_ERROR(m5tab5_extio_pi4ioe5v6408_write_pin(
+                            dev, static_cast<M5TAB5_ExtIo_PI4IOE5V6408_Pin>(M5TAB5_EXTIO_ADDR_LOW_TP_RST), false),
+                        TAG, "drive TP_RST low failed");
     vTaskDelay(pdMS_TO_TICKS(100));
 
-    ESP_RETURN_ON_ERROR(
-        m5tab5_extio_pi4ioe5v6408_write_pin(
-            dev,
-            static_cast<M5TAB5_ExtIo_PI4IOE5V6408_Pin>(M5TAB5_EXTIO_ADDR_LOW_LCD_RST),
-            true),
-        TAG,
-        "drive LCD_RST high failed");
-    ESP_RETURN_ON_ERROR(
-        m5tab5_extio_pi4ioe5v6408_write_pin(
-            dev,
-            static_cast<M5TAB5_ExtIo_PI4IOE5V6408_Pin>(M5TAB5_EXTIO_ADDR_LOW_TP_RST),
-            true),
-        TAG,
-        "drive TP_RST high failed");
+    ESP_RETURN_ON_ERROR(m5tab5_extio_pi4ioe5v6408_write_pin(
+                            dev, static_cast<M5TAB5_ExtIo_PI4IOE5V6408_Pin>(M5TAB5_EXTIO_ADDR_LOW_LCD_RST), true),
+                        TAG, "drive LCD_RST high failed");
+    ESP_RETURN_ON_ERROR(m5tab5_extio_pi4ioe5v6408_write_pin(
+                            dev, static_cast<M5TAB5_ExtIo_PI4IOE5V6408_Pin>(M5TAB5_EXTIO_ADDR_LOW_TP_RST), true),
+                        TAG, "drive TP_RST high failed");
     vTaskDelay(pdMS_TO_TICKS(100));
 
     return ESP_OK;
@@ -131,8 +115,8 @@ esp_err_t m5tab5_pulse_display_reset(m5tab5_runtime_t* runtime)
 
 esp_err_t m5tab5_component::begin(const m5tab5_component_config_t& config)
 {
-    active_config_ = config;
-    runtime_ = {};
+    active_config_  = config;
+    runtime_        = {};
     active_variant_ = m5tab5_resolve_variant(config);
     if (active_variant_ == nullptr) {
         return ESP_ERR_NOT_FOUND;
@@ -206,14 +190,14 @@ esp_lcd_panel_handle_t m5tab5_component::lcd_panel() const
     }
 
     switch (active_variant_->variant_id) {
-    case M5TAB5_VARIANT_TAB5_LCD_ILI9881_TOUCH_GT911:
-        return static_cast<const m5tab5_lcd_ili9881_handles_t*>(runtime_.display_handle)->panel;
-    case M5TAB5_VARIANT_TAB5_LCD_ST7121_TOUCH_ST7121:
-        return static_cast<const m5tab5_lcd_st7121_handles_t*>(runtime_.display_handle)->panel;
-    case M5TAB5_VARIANT_TAB5_LCD_ST7123_TOUCH_ST7123:
-        return static_cast<const m5tab5_lcd_st7123_handles_t*>(runtime_.display_handle)->panel;
-    default:
-        return nullptr;
+        case M5TAB5_VARIANT_TAB5_LCD_ILI9881_TOUCH_GT911:
+            return static_cast<const m5tab5_lcd_ili9881_handles_t*>(runtime_.display_handle)->panel;
+        case M5TAB5_VARIANT_TAB5_LCD_ST7121_TOUCH_ST7121:
+            return static_cast<const m5tab5_lcd_st7121_handles_t*>(runtime_.display_handle)->panel;
+        case M5TAB5_VARIANT_TAB5_LCD_ST7123_TOUCH_ST7123:
+            return static_cast<const m5tab5_lcd_st7123_handles_t*>(runtime_.display_handle)->panel;
+        default:
+            return nullptr;
     }
 }
 
@@ -224,14 +208,14 @@ esp_lcd_touch_handle_t m5tab5_component::touch_panel() const
     }
 
     switch (active_variant_->variant_id) {
-    case M5TAB5_VARIANT_TAB5_LCD_ILI9881_TOUCH_GT911:
-        return static_cast<const m5tab5_touch_gt911_handles_t*>(runtime_.touch_handle)->tp;
-    case M5TAB5_VARIANT_TAB5_LCD_ST7121_TOUCH_ST7121:
-        return static_cast<const m5tab5_touch_st7121_handles_t*>(runtime_.touch_handle)->tp;
-    case M5TAB5_VARIANT_TAB5_LCD_ST7123_TOUCH_ST7123:
-        return static_cast<const m5tab5_touch_st7123_handles_t*>(runtime_.touch_handle)->tp;
-    default:
-        return nullptr;
+        case M5TAB5_VARIANT_TAB5_LCD_ILI9881_TOUCH_GT911:
+            return static_cast<const m5tab5_touch_gt911_handles_t*>(runtime_.touch_handle)->tp;
+        case M5TAB5_VARIANT_TAB5_LCD_ST7121_TOUCH_ST7121:
+            return static_cast<const m5tab5_touch_st7121_handles_t*>(runtime_.touch_handle)->tp;
+        case M5TAB5_VARIANT_TAB5_LCD_ST7123_TOUCH_ST7123:
+            return static_cast<const m5tab5_touch_st7123_handles_t*>(runtime_.touch_handle)->tp;
+        default:
+            return nullptr;
     }
 }
 
@@ -245,8 +229,6 @@ esp_err_t m5tab5_component::lvgl_init()
     return m5tab5_lvgl_init(runtime_, &lv_display_, &lv_touch_indev_);
 }
 
-
-
 esp_err_t m5tab5_component::wlan_power(bool enable)
 {
     static const char* TAG = "m5tab5.wlan";
@@ -256,10 +238,9 @@ esp_err_t m5tab5_component::wlan_power(bool enable)
         return ESP_ERR_INVALID_STATE;
     }
 
-    auto* dev = static_cast<m5tab5_extio_pi4ioe5v6408_t*>(runtime_.ioexpander_high_handle);
+    auto* dev     = static_cast<m5tab5_extio_pi4ioe5v6408_t*>(runtime_.ioexpander_high_handle);
     esp_err_t ret = m5tab5_extio_pi4ioe5v6408_set_pin_mode(
-        dev,
-        static_cast<M5TAB5_ExtIo_PI4IOE5V6408_Pin>(M5TAB5_EXTIO_ADDR_HIGH_WLAN_PWR_EN),
+        dev, static_cast<M5TAB5_ExtIo_PI4IOE5V6408_Pin>(M5TAB5_EXTIO_ADDR_HIGH_WLAN_PWR_EN),
         M5TAB5_EXTIO_PI4IOE5V6408_PIN_OUTPUT);
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "set_pin_mode WLAN_PWR_EN failed: %s", esp_err_to_name(ret));
@@ -267,9 +248,7 @@ esp_err_t m5tab5_component::wlan_power(bool enable)
     }
 
     ret = m5tab5_extio_pi4ioe5v6408_write_pin(
-        dev,
-        static_cast<M5TAB5_ExtIo_PI4IOE5V6408_Pin>(M5TAB5_EXTIO_ADDR_HIGH_WLAN_PWR_EN),
-        enable);
+        dev, static_cast<M5TAB5_ExtIo_PI4IOE5V6408_Pin>(M5TAB5_EXTIO_ADDR_HIGH_WLAN_PWR_EN), enable);
     if (ret == ESP_OK) {
         ESP_LOGI(TAG, "WLAN_PWR_EN -> %s", enable ? "ON" : "OFF");
     }
@@ -284,13 +263,10 @@ esp_err_t m5tab5_component::ext5v_enable(bool enable)
         ESP_LOGE(TAG, "ioexpander_handle not available -- call begin() with enable_optional_drivers=true first");
         return ESP_ERR_INVALID_STATE;
     }
-    auto* dev = static_cast<m5tab5_extio_pi4ioe5v6408_t*>(runtime_.ioexpander_handle);
+    auto* dev     = static_cast<m5tab5_extio_pi4ioe5v6408_t*>(runtime_.ioexpander_handle);
     esp_err_t ret = m5tab5_extio_pi4ioe5v6408_write_pin(
-        dev,
-        static_cast<M5TAB5_ExtIo_PI4IOE5V6408_Pin>(M5TAB5_EXTIO_ADDR_LOW_EXT5V_EN),
-        enable);
-    if (ret == ESP_OK)
-        ESP_LOGI(TAG, "EXT5V (Grove 5V rail) -> %s", enable ? "ON" : "OFF");
+        dev, static_cast<M5TAB5_ExtIo_PI4IOE5V6408_Pin>(M5TAB5_EXTIO_ADDR_LOW_EXT5V_EN), enable);
+    if (ret == ESP_OK) ESP_LOGI(TAG, "EXT5V (Grove 5V rail) -> %s", enable ? "ON" : "OFF");
     return ret;
 }
 
@@ -302,13 +278,10 @@ esp_err_t m5tab5_component::usb5v_enable(bool enable)
         ESP_LOGE(TAG, "ioexpander_high_handle not available -- call begin() first");
         return ESP_ERR_INVALID_STATE;
     }
-    auto* dev = static_cast<m5tab5_extio_pi4ioe5v6408_t*>(runtime_.ioexpander_high_handle);
+    auto* dev     = static_cast<m5tab5_extio_pi4ioe5v6408_t*>(runtime_.ioexpander_high_handle);
     esp_err_t ret = m5tab5_extio_pi4ioe5v6408_write_pin(
-        dev,
-        static_cast<M5TAB5_ExtIo_PI4IOE5V6408_Pin>(M5TAB5_EXTIO_ADDR_HIGH_USB5V_EN),
-        enable);
-    if (ret == ESP_OK)
-        ESP_LOGI(TAG, "USB5V_EN -> %s", enable ? "ON" : "OFF");
+        dev, static_cast<M5TAB5_ExtIo_PI4IOE5V6408_Pin>(M5TAB5_EXTIO_ADDR_HIGH_USB5V_EN), enable);
+    if (ret == ESP_OK) ESP_LOGI(TAG, "USB5V_EN -> %s", enable ? "ON" : "OFF");
     return ret;
 }
 
@@ -324,25 +297,20 @@ esp_err_t m5tab5_component::set_charge_fast(bool fast)
     // nCHG_QC_EN is active LOW: LOW means fast charging (QC), HIGH means slow or standard charging.
     // nCHG_QC_EN 为低电平有效：LOW 表示快速充电（QC），HIGH 表示慢速或标准充电?
     esp_err_t ret = m5tab5_extio_pi4ioe5v6408_write_pin(
-        dev,
-        static_cast<M5TAB5_ExtIo_PI4IOE5V6408_Pin>(M5TAB5_EXTIO_ADDR_HIGH_NCHG_QC_EN),
+        dev, static_cast<M5TAB5_ExtIo_PI4IOE5V6408_Pin>(M5TAB5_EXTIO_ADDR_HIGH_NCHG_QC_EN),
         !fast);  // fast=true -> pin LOW; fast=false -> pin HIGH / fast=true 时输?LOW，fast=false 时输?HIGH
-    if (ret == ESP_OK)
-        ESP_LOGI(TAG, "charge mode -> %s", fast ? "FAST (QC)" : "SLOW (standard)");
+    if (ret == ESP_OK) ESP_LOGI(TAG, "charge mode -> %s", fast ? "FAST (QC)" : "SLOW (standard)");
     return ret;
 }
 
 esp_err_t m5tab5_component::set_rf_antenna(m5tab5_rf_antenna_t ant)
 {
     if (runtime_.ioexpander_handle == nullptr) return ESP_ERR_INVALID_STATE;
-    auto* dev = static_cast<m5tab5_extio_pi4ioe5v6408_t*>(runtime_.ioexpander_handle);
-    bool high = (ant == M5TAB5_RF_ANTENNA_EXTERNAL);
+    auto* dev     = static_cast<m5tab5_extio_pi4ioe5v6408_t*>(runtime_.ioexpander_handle);
+    bool high     = (ant == M5TAB5_RF_ANTENNA_EXTERNAL);
     esp_err_t ret = m5tab5_extio_pi4ioe5v6408_write_pin(
-        dev,
-        static_cast<M5TAB5_ExtIo_PI4IOE5V6408_Pin>(M5TAB5_EXTIO_ADDR_LOW_RF_PTH_L_INT_H_EXT),
-        high);
-    if (ret == ESP_OK)
-        ESP_LOGI("m5tab5.rf", "RF antenna -> %s", high ? "EXTERNAL" : "INTERNAL");
+        dev, static_cast<M5TAB5_ExtIo_PI4IOE5V6408_Pin>(M5TAB5_EXTIO_ADDR_LOW_RF_PTH_L_INT_H_EXT), high);
+    if (ret == ESP_OK) ESP_LOGI("m5tab5.rf", "RF antenna -> %s", high ? "EXTERNAL" : "INTERNAL");
     return ret;
 }
 
@@ -379,22 +347,19 @@ esp_err_t m5tab5_component::rtc_init()
 esp_err_t m5tab5_component::rtc_get_datetime(m5tab5_rtc_datetime_t* out) const
 {
     if (!rtc_handle_) return ESP_ERR_INVALID_STATE;
-    return m5tab5_rtc_rx8130_get_datetime(
-        static_cast<const m5tab5_rtc_rx8130_t*>(rtc_handle_), out);
+    return m5tab5_rtc_rx8130_get_datetime(static_cast<const m5tab5_rtc_rx8130_t*>(rtc_handle_), out);
 }
 
 esp_err_t m5tab5_component::rtc_set_datetime(const m5tab5_rtc_datetime_t* dt)
 {
     if (!rtc_handle_) return ESP_ERR_INVALID_STATE;
-    return m5tab5_rtc_rx8130_set_datetime(
-        static_cast<m5tab5_rtc_rx8130_t*>(rtc_handle_), dt);
+    return m5tab5_rtc_rx8130_set_datetime(static_cast<m5tab5_rtc_rx8130_t*>(rtc_handle_), dt);
 }
 
 bool m5tab5_component::rtc_volt_low() const
 {
     if (!rtc_handle_) return false;
-    return m5tab5_rtc_rx8130_volt_low(
-        static_cast<const m5tab5_rtc_rx8130_t*>(rtc_handle_));
+    return m5tab5_rtc_rx8130_volt_low(static_cast<const m5tab5_rtc_rx8130_t*>(rtc_handle_));
 }
 // ── Power Management / 电源管理 ─────────────────────────────────────────────
 
@@ -408,8 +373,7 @@ void m5tab5_component::power_off()
         auto* dev = static_cast<m5tab5_extio_pi4ioe5v6408_t*>(runtime_.ioexpander_high_handle);
         for (int i = 0; i < 10; ++i) {
             m5tab5_extio_pi4ioe5v6408_write_pin(
-                dev,
-                static_cast<M5TAB5_ExtIo_PI4IOE5V6408_Pin>(M5TAB5_EXTIO_ADDR_HIGH_PWROFF_PLUSE),
+                dev, static_cast<M5TAB5_ExtIo_PI4IOE5V6408_Pin>(M5TAB5_EXTIO_ADDR_HIGH_PWROFF_PLUSE),
                 static_cast<bool>(i & 1));
             vTaskDelay(pdMS_TO_TICKS(50));
         }
@@ -463,15 +427,15 @@ esp_err_t m5tab5_component::ina226_init()
     if (!ctx) return ESP_ERR_NO_MEM;
 
     m5tab5_ina226_config_t cfg = {};
-    cfg.bus         = bus;
-    cfg.i2c_addr    = INA226_I2C_ADDR_TAB5;
-    cfg.freq_hz     = 400000;
-    cfg.shunt_ohms  = 0.005f;
-    cfg.max_current_a = 2.0f;
-    cfg.averaging   = Ina226Avg::AVG_16;
-    cfg.bus_ct      = Ina226ConvTime::MS_1_1;
-    cfg.shunt_ct    = Ina226ConvTime::MS_1_1;
-    cfg.mode        = Ina226Mode::SHUNT_BUS_CONT;
+    cfg.bus                    = bus;
+    cfg.i2c_addr               = INA226_I2C_ADDR_TAB5;
+    cfg.freq_hz                = 400000;
+    cfg.shunt_ohms             = 0.005f;
+    cfg.max_current_a          = 2.0f;
+    cfg.averaging              = Ina226Avg::AVG_16;
+    cfg.bus_ct                 = Ina226ConvTime::MS_1_1;
+    cfg.shunt_ct               = Ina226ConvTime::MS_1_1;
+    cfg.mode                   = Ina226Mode::SHUNT_BUS_CONT;
 
     esp_err_t err = m5tab5_ina226_init(&cfg, ctx);
     if (err != ESP_OK) {

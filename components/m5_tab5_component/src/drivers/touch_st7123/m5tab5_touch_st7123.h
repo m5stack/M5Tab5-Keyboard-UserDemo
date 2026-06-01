@@ -14,10 +14,11 @@ namespace m5::tab5 {
 const m5tab5_device_driver_descriptor_t* m5tab5_get_touch_st7123_driver();
 
 /// Handles created by the ST7123 touch driver and stored in runtime->touch_handle.
-/// ST7123 è§¦æ¸é©±å¨åå»ºçå¥æï¼ä¿å­å?runtime->touch_handle ä¸­ã?
+/// ST7123 è§¦æ¸é©±å¨åå»ºçå¥æï¼ä¿å­å?runtime->touch_handle
+/// ä¸­ã?
 struct m5tab5_touch_st7123_handles_t {
-    esp_lcd_panel_io_handle_t tp_io    = nullptr;
-    esp_lcd_touch_handle_t    tp       = nullptr;
+    esp_lcd_panel_io_handle_t tp_io = nullptr;
+    esp_lcd_touch_handle_t tp       = nullptr;
 };
 
 }  // namespace m5::tab5

@@ -22,10 +22,10 @@
 namespace m5::tab5 {
 namespace {
 
-constexpr int MIPI_DSI_PHY_PWR_LDO_CHAN       = 3;
-constexpr int MIPI_DSI_PHY_PWR_LDO_VOLTAGE_MV = 2500;
+constexpr int MIPI_DSI_PHY_PWR_LDO_CHAN        = 3;
+constexpr int MIPI_DSI_PHY_PWR_LDO_VOLTAGE_MV  = 2500;
 constexpr ledc_channel_t LCD_BACKLIGHT_LEDC_CH = LEDC_CHANNEL_1;
-constexpr uint32_t LCD_BACKLIGHT_DUTY_ON = (1U << 12) - 1;
+constexpr uint32_t LCD_BACKLIGHT_DUTY_ON       = (1U << 12) - 1;
 
 static m5tab5_lcd_ili9881_handles_t s_handles;
 
@@ -35,7 +35,7 @@ esp_err_t enable_dsi_phy_power()
     if (phy_pwr_chan) return ESP_OK;
 
     esp_ldo_channel_config_t ldo_cfg = {
-        .chan_id = MIPI_DSI_PHY_PWR_LDO_CHAN,
+        .chan_id    = MIPI_DSI_PHY_PWR_LDO_CHAN,
         .voltage_mv = MIPI_DSI_PHY_PWR_LDO_VOLTAGE_MV,
     };
     return esp_ldo_acquire_channel(&ldo_cfg, &phy_pwr_chan);
@@ -83,29 +83,34 @@ esp_err_t m5tab5_lcd_ili9881_init(m5tab5_runtime_t* runtime)
 
     // 4. Create DBI panel IO / åå»º DBI é¢æ¿ IO
     esp_lcd_dbi_io_config_t dbi_cfg = ILI9881C_PANEL_IO_DBI_CONFIG();
-    ESP_RETURN_ON_ERROR(esp_lcd_new_panel_io_dbi(s_handles.mipi_dsi_bus, &dbi_cfg, &s_handles.io), TAG, "new panel IO failed");
+    ESP_RETURN_ON_ERROR(esp_lcd_new_panel_io_dbi(s_handles.mipi_dsi_bus, &dbi_cfg, &s_handles.io), TAG,
+                        "new panel IO failed");
 
     // 5. Create the ILI9881C panel / åå»º ILI9881C é¢æ¿
     esp_lcd_dpi_panel_config_t dpi_cfg = ILI9881C_720_1280_PANEL_60HZ_DPI_CONFIG(LCD_COLOR_FMT_RGB565);
 
     ili9881c_vendor_config_t vendor_cfg = {
-        .init_cmds = nullptr,  // use built-in default / ä½¿ç¨åç½®é»è®¤åå§ååºå?
+        .init_cmds =
+            nullptr,  // use built-in default / ä½¿ç¨åç½®é»è®¤åå§ååºå?
         .init_cmds_size = 0,
-        .mipi_config = {
-            .dsi_bus    = s_handles.mipi_dsi_bus,
-            .dpi_config = &dpi_cfg,
-            .lane_num   = ILI9881C_LANE_NUM,
-        },
+        .mipi_config =
+            {
+                .dsi_bus    = s_handles.mipi_dsi_bus,
+                .dpi_config = &dpi_cfg,
+                .lane_num   = ILI9881C_LANE_NUM,
+            },
     };
 
     esp_lcd_panel_dev_config_t panel_cfg = {
-        .reset_gpio_num = GPIO_NUM_NC,  // LCD_RST controlled via IO expander / LCD_RST ç?IO æ©å±å¨æ§å?
+        .reset_gpio_num =
+            GPIO_NUM_NC,  // LCD_RST controlled via IO expander / LCD_RST ç?IO æ©å±å¨æ§å?
         .rgb_ele_order  = LCD_RGB_ELEMENT_ORDER_RGB,
         .data_endian    = LCD_RGB_DATA_ENDIAN_BIG,
         .bits_per_pixel = 16,
         .vendor_config  = &vendor_cfg,
     };
-    ESP_RETURN_ON_ERROR(esp_lcd_new_panel_ili9881c(s_handles.io, &panel_cfg, &s_handles.panel), TAG, "new ili9881c panel failed");
+    ESP_RETURN_ON_ERROR(esp_lcd_new_panel_ili9881c(s_handles.io, &panel_cfg, &s_handles.panel), TAG,
+                        "new ili9881c panel failed");
 
     // 6. Reset -> Init -> Display ON / å¤ä½ -> åå§å?-> æå¼æ¾ç¤º
     ESP_RETURN_ON_ERROR(esp_lcd_panel_reset(s_handles.panel), TAG, "panel reset failed");
@@ -119,7 +124,7 @@ esp_err_t m5tab5_lcd_ili9881_init(m5tab5_runtime_t* runtime)
 }
 
 const m5tab5_display_driver_descriptor_t k_m5tab5_lcd_ili9881_driver = {
-    .id = "m5tab5.lcd.ili9881",
+    .id   = "m5tab5.lcd.ili9881",
     .init = m5tab5_lcd_ili9881_init,
 };
 

@@ -9,7 +9,7 @@
 #include "lvgl_port.h"
 #include <string.h>
 
-LV_FONT_DECLARE(lv_font_montserrat_24);
+    LV_FONT_DECLARE(lv_font_montserrat_24);
 
 static const char* TAG = "NormalPage";
 
@@ -99,7 +99,7 @@ static bool hotkeyCallback(const hotkey_event_t* event, void* user_data)
     ESP_LOGI(TAG, "Hotkey triggered: %s", message);
     showHotkeyToast(parent, message);
 
-    return true; // 拦截事件
+    return true;  // 拦截事件
 }
 
 NormalPage::NormalPage()
@@ -161,13 +161,16 @@ void NormalPage::onCreate()
     lv_obj_set_style_anim_time(m_textarea, 400, LV_PART_CURSOR);
 
     // 保持焦点
-    lv_obj_add_event_cb(m_textarea, [](lv_event_t * e){
-        lv_event_code_t code = lv_event_get_code(e);
-        lv_obj_t * t = (lv_obj_t *)lv_event_get_target(e);
-        if(code == LV_EVENT_DEFOCUSED) {
-            lv_obj_add_state(t, LV_STATE_FOCUSED);
-        }
-    }, LV_EVENT_DEFOCUSED, NULL);
+    lv_obj_add_event_cb(
+        m_textarea,
+        [](lv_event_t* e) {
+            lv_event_code_t code = lv_event_get_code(e);
+            lv_obj_t* t          = (lv_obj_t*)lv_event_get_target(e);
+            if (code == LV_EVENT_DEFOCUSED) {
+                lv_obj_add_state(t, LV_STATE_FOCUSED);
+            }
+        },
+        LV_EVENT_DEFOCUSED, NULL);
 
     // 初始焦点
     lv_obj_add_state(m_textarea, LV_STATE_FOCUSED);
@@ -192,19 +195,24 @@ void NormalPage::onCreate()
         ESP_LOGI(TAG, "Registering hotkeys...");
 
         // 示例1: Ctrl+C - 复制操作
-        m_keyboard->registerHotkey(KB_KEY_C, HOTKEY_EVENT_PRESSED, hotkeyCallback, m_textarea, true, false, false, true, false);
+        m_keyboard->registerHotkey(KB_KEY_C, HOTKEY_EVENT_PRESSED, hotkeyCallback, m_textarea, true, false, false, true,
+                                   false);
 
         // 示例2: Ctrl+V - 粘贴操作
-        m_keyboard->registerHotkey(KB_KEY_V, HOTKEY_EVENT_PRESSED, hotkeyCallback, m_textarea, true, false, false, true, false);
+        m_keyboard->registerHotkey(KB_KEY_V, HOTKEY_EVENT_PRESSED, hotkeyCallback, m_textarea, true, false, false, true,
+                                   false);
 
         // 示例3: Ctrl+S - 保存操作
-        m_keyboard->registerHotkey(KB_KEY_S, HOTKEY_EVENT_PRESSED, hotkeyCallback, m_textarea, true, false, false, true, false);
+        m_keyboard->registerHotkey(KB_KEY_S, HOTKEY_EVENT_PRESSED, hotkeyCallback, m_textarea, true, false, false, true,
+                                   false);
 
         // 示例4: Alt+F - 文件菜单
-        m_keyboard->registerHotkey(KB_KEY_F, HOTKEY_EVENT_PRESSED, hotkeyCallback, m_textarea, false, true, false, false, true);
+        m_keyboard->registerHotkey(KB_KEY_F, HOTKEY_EVENT_PRESSED, hotkeyCallback, m_textarea, false, true, false,
+                                   false, true);
 
         // 示例5: Ctrl+Alt+D - 调试模式
-        m_keyboard->registerHotkey(KB_KEY_D, HOTKEY_EVENT_PRESSED, hotkeyCallback, m_textarea, true, true, false, false, false);
+        m_keyboard->registerHotkey(KB_KEY_D, HOTKEY_EVENT_PRESSED, hotkeyCallback, m_textarea, true, true, false, false,
+                                   false);
 
         // 临时禁用触摸
         // uint32_t child_cnt = lv_obj_get_child_cnt(kb_obj);
@@ -214,7 +222,8 @@ void NormalPage::onCreate()
         // }
 
         // 示例6: ESC - 退出 / 取消操作
-        m_keyboard->registerHotkey(KB_KEY_ESC, HOTKEY_EVENT_PRESSED, hotkeyCallback, m_textarea, false, false, false, false, false);
+        m_keyboard->registerHotkey(KB_KEY_ESC, HOTKEY_EVENT_PRESSED, hotkeyCallback, m_textarea, false, false, false,
+                                   false, false);
 
         ESP_LOGI(TAG, "Hotkeys registered successfully");
         ESP_LOGI(TAG, "M5Tab5 keyboard created");
@@ -273,11 +282,11 @@ void NormalPage::handlePhysicalKey(uint16_t key_id, bool pressed)
         xTimerStop(m_repeat_timer, 0);
 
         if (m_repeat_mutex && xSemaphoreTake(m_repeat_mutex, portMAX_DELAY) == pdTRUE) {
-            m_repeat_key_id = key_id;
+            m_repeat_key_id     = key_id;
             m_repeat_first_wait = true;
             xSemaphoreGive(m_repeat_mutex);
         } else {
-            m_repeat_key_id = key_id;
+            m_repeat_key_id     = key_id;
             m_repeat_first_wait = true;
         }
 
@@ -314,21 +323,21 @@ void NormalPage::repeatTimerCallback(TimerHandle_t xTimer)
         return;
     }
 
-    bool first_wait = false;
+    bool first_wait        = false;
     uint16_t repeat_key_id = 0;
 
     if (page->m_repeat_mutex) {
         if (xSemaphoreTake(page->m_repeat_mutex, 0) != pdTRUE) {
             return;
         }
-        first_wait = page->m_repeat_first_wait;
+        first_wait    = page->m_repeat_first_wait;
         repeat_key_id = page->m_repeat_key_id;
         if (first_wait) {
             page->m_repeat_first_wait = false;
         }
         xSemaphoreGive(page->m_repeat_mutex);
     } else {
-        first_wait = page->m_repeat_first_wait;
+        first_wait    = page->m_repeat_first_wait;
         repeat_key_id = page->m_repeat_key_id;
         if (first_wait) {
             page->m_repeat_first_wait = false;
@@ -347,5 +356,3 @@ void NormalPage::repeatTimerCallback(TimerHandle_t xTimer)
         lvgl_port_unlock();
     }
 }
-
-

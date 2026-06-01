@@ -13,8 +13,11 @@
 
 #ifdef __cplusplus
 
-// 前向声明
-namespace m5 { class M5Tab5Keyboard; }
+    // 前向声明
+    namespace m5
+{
+    class M5Tab5Keyboard;
+}
 
 /**
  * @brief HID模式页面
@@ -33,12 +36,12 @@ public:
 
     // 设置键盘实例
     void setKeyboard(m5::M5Tab5Keyboard* kb);
-    
+
     // 处理HID输入 (Called by ui_app)
     void handleHIDInput(uint8_t modifier, uint8_t key_code);
 
 private:
-    lv_obj_t* m_label;           ///< 状态标签
+    lv_obj_t* m_label;  ///< 状态标签
     // Removed: m_status_label, m_count_label
 
     lv_obj_t* m_ctrl_container;  ///< 控制区域容器
@@ -48,12 +51,12 @@ private:
     lv_obj_t* m_ta_log;          ///< 日志文本框
 
     m5::M5Tab5Keyboard* m_keyboard;  ///< 硬件键盘实例
-    TaskHandle_t m_hid_task;        ///< HID按键读取任务句柄
-    bool m_task_running;            ///< 任务运行标志
-    uint32_t m_key_count;           ///< 按键发送计数]
-    bool m_is_usb_active;           ///< USB是否已激活
-    
-    static HIDPage* s_instance;     ///< 单例指针，用于回调
+    TaskHandle_t m_hid_task;         ///< HID按键读取任务句柄
+    bool m_task_running;             ///< 任务运行标志
+    uint32_t m_key_count;            ///< 按键发送计数]
+    bool m_is_usb_active;            ///< USB是否已激活
+
+    static HIDPage* s_instance;  ///< 单例指针，用于回调
 
     // 静态任务函数
     static void hidTaskFunction(void* param);
@@ -66,9 +69,6 @@ private:
     void appendLog(const char* msg, uint32_t color);
 };
 
-#endif // __cplusplus
+#endif  // __cplusplus
 
-#endif // UI_PAGE_HID_H
-
-
-
+#endif  // UI_PAGE_HID_H

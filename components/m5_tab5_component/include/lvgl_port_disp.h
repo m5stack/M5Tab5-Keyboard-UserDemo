@@ -34,38 +34,41 @@ extern "C" {
  * @brief æè½¬éç½®
  */
 typedef struct {
-    bool swap_xy;   /*!< LCD å±å¹ X/Y äº¤æ¢ (å?esp_lcd é©±å¨ä¸? */
-    bool mirror_x;  /*!< LCD å±å¹ X éå (å?esp_lcd é©±å¨ä¸? */
-    bool mirror_y;  /*!< LCD å±å¹ Y éå (å?esp_lcd é©±å¨ä¸? */
+    bool swap_xy;  /*!< LCD å±å¹ X/Y äº¤æ¢ (å?esp_lcd é©±å¨ä¸? */
+    bool mirror_x; /*!< LCD å±å¹ X éå (å?esp_lcd é©±å¨ä¸? */
+    bool mirror_y; /*!< LCD å±å¹ Y éå (å?esp_lcd é©±å¨ä¸? */
 } lvgl_rotation_cfg_t;
 
 /**
  * @brief æ¾ç¤ºéç½®ç»æ (éç¨)
  */
 typedef struct {
-    esp_lcd_panel_io_handle_t io_handle;      /*!< LCD é¢æ¿ IO å¥æ */
-    esp_lcd_panel_handle_t panel_handle;      /*!< LCD é¢æ¿å¥æ */
-    esp_lcd_panel_handle_t control_handle;    /*!< LCD é¢æ¿æ§å¶å¥æ (å¯é? */
+    esp_lcd_panel_io_handle_t io_handle;   /*!< LCD é¢æ¿ IO å¥æ */
+    esp_lcd_panel_handle_t panel_handle;   /*!< LCD é¢æ¿å¥æ */
+    esp_lcd_panel_handle_t control_handle; /*!< LCD é¢æ¿æ§å¶å¥æ (å¯é? */
 
-    uint32_t buffer_size;     /*!< å±å¹ç¼å²åºå¤§å°?(åç´ æ? */
-    bool     double_buffer;   /*!< æ¯å¦åéåç¼å?*/
-    uint32_t trans_size;      /*!< ä¼ è¾ç¼å²åºå¤§å°?(å¯é? ç¨äº SRAM ä¸­è½¬) */
+    uint32_t buffer_size; /*!< å±å¹ç¼å²åºå¤§å°?(åç´ æ? */
+    bool double_buffer;   /*!< æ¯å¦åéåç¼å?*/
+    uint32_t trans_size;  /*!< ä¼ è¾ç¼å²åºå¤§å°?(å¯é? ç¨äº SRAM ä¸­è½¬) */
 
-    uint32_t hres;            /*!< LCD æ°´å¹³åè¾¨ç?*/
-    uint32_t vres;            /*!< LCD åç´åè¾¨ç?*/
+    uint32_t hres; /*!< LCD æ°´å¹³åè¾¨ç?*/
+    uint32_t vres; /*!< LCD åç´åè¾¨ç?*/
 
-    bool monochrome;          /*!< æ¯å¦ä¸ºåè²æ¾ç¤?(1bit/pixel) */
+    bool monochrome; /*!< æ¯å¦ä¸ºåè²æ¾ç¤?(1bit/pixel) */
 
-    lvgl_rotation_cfg_t rotation;       /*!< å±å¹æè½¬éç½® (ä»ç¡¬ä»¶ç¶æ? */
-    lv_color_format_t color_format;           /*!< é¢è²æ ¼å¼ */
+    lvgl_rotation_cfg_t rotation;   /*!< å±å¹æè½¬éç½® (ä»ç¡¬ä»¶ç¶æ? */
+    lv_color_format_t color_format; /*!< é¢è²æ ¼å¼ */
 
     struct {
-        unsigned int buff_dma: 1;       /*!< LVGL ç¼å²åºä½¿ç?DMA åå­ */
-        unsigned int buff_spiram: 1;    /*!< LVGL ç¼å²åºä½¿ç?PSRAM */
-        unsigned int sw_rotate: 1;      /*!< ä½¿ç¨è½¯ä»¶æè½¬ (è¾æ¢) æ?PPA (å¦æå¯ç¨) */
-        unsigned int swap_bytes: 1;     /*!< RGB565 å­èäº¤æ¢ */
-        unsigned int full_refresh: 1;   /*!< å§ç»å¨å±å·æ° */
-        unsigned int direct_mode: 1;    /*!< ä½¿ç¨å¨å±ç¼å²åºï¼ç´æ¥ç»å¶å°ç»å¯¹åæ ?*/
+        unsigned int buff_dma : 1;    /*!< LVGL ç¼å²åºä½¿ç?DMA åå­ */
+        unsigned int buff_spiram : 1; /*!< LVGL ç¼å²åºä½¿ç?PSRAM */
+        unsigned int sw_rotate : 1; /*!< ä½¿ç¨è½¯ä»¶æè½¬ (è¾æ¢) æ?PPA (å¦æå¯ç¨)
+                                     */
+        unsigned int swap_bytes : 1;   /*!< RGB565 å­èäº¤æ¢ */
+        unsigned int full_refresh : 1; /*!< å§ç»å¨å±å·æ° */
+        unsigned int
+            direct_mode : 1; /*!<
+                                ä½¿ç¨å¨å±ç¼å²åºï¼ç´æ¥ç»å¶å°ç»å¯¹åæ ?*/
     } flags;
 } lvgl_disp_cfg_t;
 
@@ -74,8 +77,9 @@ typedef struct {
  */
 typedef struct {
     struct {
-        unsigned int bb_mode: 1;        /*!< ä½¿ç¨ bounce buffer æ¨¡å¼ */
-        unsigned int avoid_tearing: 1;  /*!< ä½¿ç¨åé¨ RGB ç¼å²åºä½ä¸?LVGL ç»å¾ç¼å²åºä»¥é¿åæè£ */
+        unsigned int bb_mode : 1;       /*!< ä½¿ç¨ bounce buffer æ¨¡å¼ */
+        unsigned int avoid_tearing : 1; /*!< ä½¿ç¨åé¨ RGB ç¼å²åºä½ä¸?LVGL
+                                           ç»å¾ç¼å²åºä»¥é¿åæè£ */
     } flags;
 } lvgl_disp_rgb_cfg_t;
 
@@ -83,10 +87,11 @@ typedef struct {
  * @brief MIPI-DSI æ¾ç¤ºç¹å®éç½®
  */
 typedef struct {
-    lv_display_rotation_t sw_rotation;  /*!< è½¯ä»¶æè½¬è§åº¦ (PPA å é? */
+    lv_display_rotation_t sw_rotation; /*!< è½¯ä»¶æè½¬è§åº¦ (PPA å é? */
     struct {
-        unsigned int avoid_tearing: 1;  /*!< ä½¿ç¨åé¨ DSI ç¼å²åºä½ä¸?LVGL ç»å¾ç¼å²åºä»¥é¿åæè£ */
-        unsigned int use_ppa: 1;        /*!< ä½¿ç¨ PPA ç¡¬ä»¶å éæè½?*/
+        unsigned int avoid_tearing : 1; /*!< ä½¿ç¨åé¨ DSI ç¼å²åºä½ä¸?LVGL
+                                           ç»å¾ç¼å²åºä»¥é¿åæè£ */
+        unsigned int use_ppa : 1;       /*!< ä½¿ç¨ PPA ç¡¬ä»¶å éæè½?*/
     } flags;
 } lvgl_disp_dsi_cfg_t;
 

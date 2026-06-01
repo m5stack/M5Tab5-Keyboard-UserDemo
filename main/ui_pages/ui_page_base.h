@@ -68,25 +68,37 @@ public:
      * @brief 获取页面容器对象
      * @return 页面容器的LVGL对象指针
      */
-    lv_obj_t* getContainer() const { return m_container; }
+    lv_obj_t* getContainer() const
+    {
+        return m_container;
+    }
 
     /**
      * @brief 获取页面名称
      * @return 页面名称字符串
      */
-    const char* getName() const { return m_name; }
+    const char* getName() const
+    {
+        return m_name;
+    }
 
     /**
      * @brief 检查页面是否已创建
      * @return true=已创建 false=未创建
      */
-    bool isCreated() const { return m_created; }
+    bool isCreated() const
+    {
+        return m_created;
+    }
 
     /**
      * @brief 检查页面是否可见
      * @return true=可见, false=隐藏
      */
-    bool isVisible() const { return m_visible; }
+    bool isVisible() const
+    {
+        return m_visible;
+    }
 
     // ========== 显示/隐藏方法 ==========
 
@@ -105,10 +117,10 @@ public:
     void hide();
 
 protected:
-    lv_obj_t* m_container;    ///< 页面容器对象
-    const char* m_name;       ///< 页面名称
-    bool m_created;           ///< 是否已创建
-    bool m_visible;           ///< 是否可见
+    lv_obj_t* m_container;  ///< 页面容器对象
+    const char* m_name;     ///< 页面名称
+    bool m_created;         ///< 是否已创建
+    bool m_visible;         ///< 是否可见
 
     /**
      * @brief 创建页面容器
@@ -119,6 +131,6 @@ protected:
     void createContainer(lv_obj_t* parent);
 };
 
-#endif // __cplusplus
+#endif  // __cplusplus
 
-#endif // UI_PAGE_BASE_H
+#endif  // UI_PAGE_BASE_H

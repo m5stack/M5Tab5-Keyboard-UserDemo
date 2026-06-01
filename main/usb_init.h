@@ -16,8 +16,8 @@ extern "C" {
 #endif
 
 typedef enum {
-    USB_PORT_0_FULL_SPEED = 0, // Tab5 USB-C device pins, FS TinyUSB device
-    USB_PORT_1_HIGH_SPEED = 1  // Tab5 USB2.0 High-Speed PHY
+    USB_PORT_0_FULL_SPEED = 0,  // Tab5 USB-C device pins, FS TinyUSB device
+    USB_PORT_1_HIGH_SPEED = 1   // Tab5 USB2.0 High-Speed PHY
 } usb_port_t;
 
 typedef void (*usb_hid_log_cb_t)(const char* msg, uint32_t color);
@@ -56,4 +56,4 @@ bool usb_hid_is_mounted(void);
 }
 #endif
 
-#endif // USB_INIT_H
+#endif  // USB_INIT_H

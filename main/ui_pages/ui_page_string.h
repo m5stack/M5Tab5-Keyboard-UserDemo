@@ -46,13 +46,13 @@ public:
     void appendLog(uint8_t modifier, const char* fmt, ...);
 
 private:
-    std::deque<std::string> m_log_lines; ///< 日志行缓存 (FIFO)
+    std::deque<std::string> m_log_lines;  ///< 日志行缓存 (FIFO)
     static const size_t MAX_LOG_LINES = 16;
-    
-    lv_obj_t* m_textarea;    ///< 文本输入区域
-    lv_obj_t* m_log_ta;      ///< 只有显示的日志区域
+
+    lv_obj_t* m_textarea;  ///< 文本输入区域
+    lv_obj_t* m_log_ta;    ///< 只有显示的日志区域
 };
 
-#endif // __cplusplus
+#endif  // __cplusplus
 
-#endif // UI_PAGE_STRING_H
+#endif  // UI_PAGE_STRING_H

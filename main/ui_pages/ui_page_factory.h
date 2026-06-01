@@ -13,13 +13,13 @@
 
 #ifdef __cplusplus
 
-/**
- * @brief 工厂测试页面
- *
- * 用于测试物理键盘的所有按键是否正常工作
- * 显示5x14网格，每个按键按下后会高亮显示
- */
-class FactoryPage : public BasePage {
+    /**
+     * @brief 工厂测试页面
+     *
+     * 用于测试物理键盘的所有按键是否正常工作
+     * 显示5x14网格，每个按键按下后会高亮显示
+     */
+    class FactoryPage : public BasePage {
 public:
     FactoryPage();
     virtual ~FactoryPage();
@@ -66,32 +66,32 @@ public:
     void resetAllKeys();
 
 private:
-    lv_obj_t* m_placeholder;           ///< 占位容器
-    FactoryTestKeyboard* m_keyboard;   ///< 工厂测试键盘对象
+    lv_obj_t* m_placeholder;            ///< 占位容器
+    FactoryTestKeyboard* m_keyboard;    ///< 工厂测试键盘对象
     m5::M5Tab5Keyboard* m_kb_instance;  ///< 物理键盘实例
 
     // RGB显示UI
-    lv_obj_t* m_rgb_container;         ///< RGB显示容器
-    lv_obj_t* m_rgb1_indicator;        ///< RGB1指示器
-    lv_obj_t* m_rgb2_indicator;        ///< RGB2指示器
-    lv_obj_t* m_rgb1_label;            ///< RGB1颜色标签
-    lv_obj_t* m_rgb2_label;            ///< RGB2颜色标签
-    lv_obj_t* m_version_label;         ///< 左上角版本标签
-    lv_obj_t* m_brightness_label;      ///< 亮度标签
-    lv_obj_t* m_brightness_bar;        ///< 亮度条
+    lv_obj_t* m_rgb_container;     ///< RGB显示容器
+    lv_obj_t* m_rgb1_indicator;    ///< RGB1指示器
+    lv_obj_t* m_rgb2_indicator;    ///< RGB2指示器
+    lv_obj_t* m_rgb1_label;        ///< RGB1颜色标签
+    lv_obj_t* m_rgb2_label;        ///< RGB2颜色标签
+    lv_obj_t* m_version_label;     ///< 左上角版本标签
+    lv_obj_t* m_brightness_label;  ///< 亮度标签
+    lv_obj_t* m_brightness_bar;    ///< 亮度条
 
     // 结果显示UI
-    lv_obj_t* m_result_container;      ///< 结果显示容器
-    lv_obj_t* m_result_label;          ///< 结果标签
+    lv_obj_t* m_result_container;  ///< 结果显示容器
+    lv_obj_t* m_result_label;      ///< 结果标签
 
     // RGB呼吸灯效果
-    lv_timer_t* m_rgb_timer;           ///< RGB更新定时器
-    uint8_t m_current_color_index;     ///< 当前颜色索引
-    uint8_t m_manual_color_index;      ///< 手动覆盖模式下的颜色索引
-    uint8_t m_breath_value;            ///< 呼吸值
-    bool m_breath_increasing;          ///< 呼吸方向
-    uint8_t m_pause_counter;           ///< 停顿计数器
-    bool m_manual_override_active;     ///< 当前页面是否启用手动覆盖模式
+    lv_timer_t* m_rgb_timer;        ///< RGB更新定时器
+    uint8_t m_current_color_index;  ///< 当前颜色索引
+    uint8_t m_manual_color_index;   ///< 手动覆盖模式下的颜色索引
+    uint8_t m_breath_value;         ///< 呼吸值
+    bool m_breath_increasing;       ///< 呼吸方向
+    uint8_t m_pause_counter;        ///< 停顿计数器
+    bool m_manual_override_active;  ///< 当前页面是否启用手动覆盖模式
 
     /**
      * @brief 创建RGB显示UI
@@ -102,8 +102,6 @@ private:
      * @brief 创建结果显示UI
      */
     void createResultDisplayUI();
-
-
 
     /**
      * @brief 检查所有按键是否已按下
@@ -151,9 +149,6 @@ private:
     void applyFactoryManualColor(uint8_t brightness, uint8_t color_index);
 };
 
-#endif // __cplusplus
+#endif  // __cplusplus
 
-#endif // UI_PAGE_FACTORY_H
-
-
-
+#endif  // UI_PAGE_FACTORY_H

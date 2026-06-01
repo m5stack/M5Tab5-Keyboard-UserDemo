@@ -17,12 +17,12 @@
  * @brief 页面ID枚举
  */
 typedef enum {
-    PAGE_ID_FACTORY = 0,  ///< 工厂测试页面
-    PAGE_ID_NORMAL = 1,   ///< 正常模式页面
-    PAGE_ID_STRING = 2,   ///< 字符模式页面
-    PAGE_ID_HID = 3,      ///< HID模式页面
-    PAGE_ID_REGISTRY = 4, ///< 注册表/寄存器读写页面
-    PAGE_ID_MAX = 5       ///< 页面总数
+    PAGE_ID_FACTORY  = 0,  ///< 工厂测试页面
+    PAGE_ID_NORMAL   = 1,  ///< 正常模式页面
+    PAGE_ID_STRING   = 2,  ///< 字符模式页面
+    PAGE_ID_HID      = 3,  ///< HID模式页面
+    PAGE_ID_REGISTRY = 4,  ///< 注册表/寄存器读写页面
+    PAGE_ID_MAX      = 5   ///< 页面总数
 } page_id_t;
 
 /**
@@ -74,13 +74,19 @@ public:
      * @brief 获取当前页面对象
      * @return 当前页面指针
      */
-    BasePage* getCurrentPage() const { return m_current_page; }
+    BasePage* getCurrentPage() const
+    {
+        return m_current_page;
+    }
 
     /**
      * @brief 获取当前页面ID
      * @return 当前页面ID
      */
-    int getCurrentPageId() const { return m_current_page_id; }
+    int getCurrentPageId() const
+    {
+        return m_current_page_id;
+    }
 
     // ========== 全局组件管理 ==========
 
@@ -88,25 +94,37 @@ public:
      * @brief 设置全局菜单对象
      * @param menu 菜单对象指针
      */
-    void setGlobalMenu(lv_obj_t* menu) { m_global_menu = menu; }
+    void setGlobalMenu(lv_obj_t* menu)
+    {
+        m_global_menu = menu;
+    }
 
     /**
      * @brief 设置全局log标签对象
      * @param log log标签对象指针
      */
-    void setGlobalLog(lv_obj_t* log) { m_global_log = log; }
+    void setGlobalLog(lv_obj_t* log)
+    {
+        m_global_log = log;
+    }
 
     /**
      * @brief 获取全局log标签对象
      * @return log标签对象指针
      */
-    lv_obj_t* getGlobalLog() const { return m_global_log; }
+    lv_obj_t* getGlobalLog() const
+    {
+        return m_global_log;
+    }
 
     /**
      * @brief 获取全局菜单对象
      * @return 菜单对象指针
      */
-    lv_obj_t* getGlobalMenu() const { return m_global_menu; }
+    lv_obj_t* getGlobalMenu() const
+    {
+        return m_global_menu;
+    }
 
     /**
      * @brief 更新全局log标签文本
@@ -119,13 +137,19 @@ public:
      * @brief 设置页面容器的父对象
      * @param parent 父对象（通常是主screen）
      */
-    void setParent(lv_obj_t* parent) { m_parent = parent; }
+    void setParent(lv_obj_t* parent)
+    {
+        m_parent = parent;
+    }
 
     /**
      * @brief 获取页面容器的父对象
      * @return 父对象指针
      */
-    lv_obj_t* getParent() const { return m_parent; }
+    lv_obj_t* getParent() const
+    {
+        return m_parent;
+    }
 
 private:
     /**
@@ -139,7 +163,7 @@ private:
     ~PageManager();
 
     // 禁止拷贝和赋值
-    PageManager(const PageManager&) = delete;
+    PageManager(const PageManager&)            = delete;
     PageManager& operator=(const PageManager&) = delete;
 
     static PageManager* s_instance;  ///< 单例实例指针
@@ -148,11 +172,11 @@ private:
     BasePage* m_current_page;        ///< 当前页面指针
     int m_current_page_id;           ///< 当前页面ID
 
-    lv_obj_t* m_parent;              ///< 页面容器的父对象
-    lv_obj_t* m_global_menu;         ///< 全局菜单对象
-    lv_obj_t* m_global_log;          ///< 全局log标签对象
+    lv_obj_t* m_parent;       ///< 页面容器的父对象
+    lv_obj_t* m_global_menu;  ///< 全局菜单对象
+    lv_obj_t* m_global_log;   ///< 全局log标签对象
 };
 
-#endif // __cplusplus
+#endif  // __cplusplus
 
-#endif // UI_PAGE_MANAGER_H
+#endif  // UI_PAGE_MANAGER_H

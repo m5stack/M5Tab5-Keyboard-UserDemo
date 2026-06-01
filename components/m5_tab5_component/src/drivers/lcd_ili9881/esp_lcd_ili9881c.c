@@ -27,8 +27,8 @@
 #include "driver/gpio.h"
 #include "esp_lcd_ili9881c.h"
 
-#define ILI9881C_CMD_GS_BIT     (1 << 0)
-#define ILI9881C_CMD_SS_BIT     (1 << 1)
+#define ILI9881C_CMD_GS_BIT (1 << 0)
+#define ILI9881C_CMD_SS_BIT (1 << 1)
 
 typedef struct {
     esp_lcd_panel_io_handle_t io;
@@ -265,79 +265,79 @@ static const ili9881c_lcd_init_cmd_t vendor_specific_init_default[] = {
 };
 
 esp_err_t esp_lcd_new_panel_ili9881c(const esp_lcd_panel_io_handle_t io,
-                                      const esp_lcd_panel_dev_config_t *panel_dev_config,
-                                      esp_lcd_panel_handle_t *ret_panel)
+                                     const esp_lcd_panel_dev_config_t *panel_dev_config,
+                                     esp_lcd_panel_handle_t *ret_panel)
 {
     ESP_RETURN_ON_FALSE(io && panel_dev_config && ret_panel, ESP_ERR_INVALID_ARG, TAG, "invalid arguments");
     ili9881c_vendor_config_t *vendor_config = (ili9881c_vendor_config_t *)panel_dev_config->vendor_config;
     ESP_RETURN_ON_FALSE(vendor_config && vendor_config->mipi_config.dpi_config && vendor_config->mipi_config.dsi_bus,
                         ESP_ERR_INVALID_ARG, TAG, "invalid vendor config");
 
-    esp_err_t ret = ESP_OK;
+    esp_err_t ret              = ESP_OK;
     ili9881c_panel_t *ili9881c = (ili9881c_panel_t *)calloc(1, sizeof(ili9881c_panel_t));
     ESP_RETURN_ON_FALSE(ili9881c, ESP_ERR_NO_MEM, TAG, "no mem for ili9881c panel");
 
     if (panel_dev_config->reset_gpio_num >= 0) {
         gpio_config_t io_conf = {
-            .mode = GPIO_MODE_OUTPUT,
+            .mode         = GPIO_MODE_OUTPUT,
             .pin_bit_mask = 1ULL << panel_dev_config->reset_gpio_num,
         };
         ESP_GOTO_ON_ERROR(gpio_config(&io_conf), err, TAG, "configure GPIO for RST line failed");
     }
 
     switch (panel_dev_config->rgb_ele_order) {
-    case LCD_RGB_ELEMENT_ORDER_RGB:
-        ili9881c->madctl_val = 0;
-        break;
-    case LCD_RGB_ELEMENT_ORDER_BGR:
-        ili9881c->madctl_val |= LCD_CMD_BGR_BIT;
-        break;
-    default:
-        ESP_GOTO_ON_FALSE(false, ESP_ERR_NOT_SUPPORTED, err, TAG, "unsupported color space");
-        break;
+        case LCD_RGB_ELEMENT_ORDER_RGB:
+            ili9881c->madctl_val = 0;
+            break;
+        case LCD_RGB_ELEMENT_ORDER_BGR:
+            ili9881c->madctl_val |= LCD_CMD_BGR_BIT;
+            break;
+        default:
+            ESP_GOTO_ON_FALSE(false, ESP_ERR_NOT_SUPPORTED, err, TAG, "unsupported color space");
+            break;
     }
 
     switch (panel_dev_config->bits_per_pixel) {
-    case 16:
-        ili9881c->colmod_val = 0x55;
-        break;
-    case 18:
-        ili9881c->colmod_val = 0x66;
-        break;
-    case 24:
-        ili9881c->colmod_val = 0x77;
-        break;
-    default:
-        ESP_GOTO_ON_FALSE(false, ESP_ERR_NOT_SUPPORTED, err, TAG, "unsupported pixel width");
-        break;
+        case 16:
+            ili9881c->colmod_val = 0x55;
+            break;
+        case 18:
+            ili9881c->colmod_val = 0x66;
+            break;
+        case 24:
+            ili9881c->colmod_val = 0x77;
+            break;
+        default:
+            ESP_GOTO_ON_FALSE(false, ESP_ERR_NOT_SUPPORTED, err, TAG, "unsupported pixel width");
+            break;
     }
 
-    ili9881c->io = io;
-    ili9881c->init_cmds = vendor_config->init_cmds;
-    ili9881c->init_cmds_size = vendor_config->init_cmds_size;
-    ili9881c->lane_num = vendor_config->mipi_config.lane_num;
-    ili9881c->reset_gpio_num = panel_dev_config->reset_gpio_num;
+    ili9881c->io                = io;
+    ili9881c->init_cmds         = vendor_config->init_cmds;
+    ili9881c->init_cmds_size    = vendor_config->init_cmds_size;
+    ili9881c->lane_num          = vendor_config->mipi_config.lane_num;
+    ili9881c->reset_gpio_num    = panel_dev_config->reset_gpio_num;
     ili9881c->flags.reset_level = panel_dev_config->flags.reset_active_high;
 
     // Create the MIPI DPI panel / 创建 MIPI DPI 面板
-    ESP_GOTO_ON_ERROR(esp_lcd_new_panel_dpi(vendor_config->mipi_config.dsi_bus,
-                      vendor_config->mipi_config.dpi_config, ret_panel),
-                      err, TAG, "create MIPI DPI panel failed");
+    ESP_GOTO_ON_ERROR(
+        esp_lcd_new_panel_dpi(vendor_config->mipi_config.dsi_bus, vendor_config->mipi_config.dpi_config, ret_panel),
+        err, TAG, "create MIPI DPI panel failed");
     ESP_LOGD(TAG, "new MIPI DPI panel @%p", *ret_panel);
 
     // Save the original functions of the MIPI DPI panel / 保存 MIPI DPI 面板原始函数
-    ili9881c->del = (*ret_panel)->del;
+    ili9881c->del  = (*ret_panel)->del;
     ili9881c->init = (*ret_panel)->init;
     // Overwrite them with ILI9881C-specific functions / 用 ILI9881C 专用函数覆盖
-    (*ret_panel)->del = panel_ili9881c_del;
-    (*ret_panel)->init = panel_ili9881c_init;
-    (*ret_panel)->reset = panel_ili9881c_reset;
-    (*ret_panel)->mirror = panel_ili9881c_mirror;
-    (*ret_panel)->swap_xy = panel_ili9881c_swap_xy;
+    (*ret_panel)->del          = panel_ili9881c_del;
+    (*ret_panel)->init         = panel_ili9881c_init;
+    (*ret_panel)->reset        = panel_ili9881c_reset;
+    (*ret_panel)->mirror       = panel_ili9881c_mirror;
+    (*ret_panel)->swap_xy      = panel_ili9881c_swap_xy;
     (*ret_panel)->invert_color = panel_ili9881c_invert_color;
-    (*ret_panel)->disp_on_off = panel_ili9881c_disp_on_off;
-    (*ret_panel)->disp_sleep = panel_ili9881c_sleep;
-    (*ret_panel)->user_data = ili9881c;
+    (*ret_panel)->disp_on_off  = panel_ili9881c_disp_on_off;
+    (*ret_panel)->disp_sleep   = panel_ili9881c_sleep;
+    (*ret_panel)->user_data    = ili9881c;
     ESP_LOGD(TAG, "new ili9881c panel @%p", ili9881c);
 
     return ESP_OK;
@@ -368,27 +368,33 @@ static esp_err_t panel_ili9881c_del(esp_lcd_panel_t *panel)
 
 static esp_err_t panel_ili9881c_init(esp_lcd_panel_t *panel)
 {
-    ili9881c_panel_t *ili9881c = (ili9881c_panel_t *)panel->user_data;
-    esp_lcd_panel_io_handle_t io = ili9881c->io;
+    ili9881c_panel_t *ili9881c               = (ili9881c_panel_t *)panel->user_data;
+    esp_lcd_panel_io_handle_t io             = ili9881c->io;
     const ili9881c_lcd_init_cmd_t *init_cmds = NULL;
-    uint16_t init_cmds_size = 0;
+    uint16_t init_cmds_size                  = 0;
 
     // Set MADCTL / 设置 MADCTL
-    ESP_RETURN_ON_ERROR(esp_lcd_panel_io_tx_param(io, LCD_CMD_MADCTL, (uint8_t[]) {
-        ili9881c->madctl_val,
-    }, 1), TAG, "send command failed");
+    ESP_RETURN_ON_ERROR(esp_lcd_panel_io_tx_param(io, LCD_CMD_MADCTL,
+                                                  (uint8_t[]){
+                                                      ili9881c->madctl_val,
+                                                  },
+                                                  1),
+                        TAG, "send command failed");
 
     // Set COLMOD / 设置 COLMOD
-    ESP_RETURN_ON_ERROR(esp_lcd_panel_io_tx_param(io, LCD_CMD_COLMOD, (uint8_t[]) {
-        ili9881c->colmod_val,
-    }, 1), TAG, "send command failed");
+    ESP_RETURN_ON_ERROR(esp_lcd_panel_io_tx_param(io, LCD_CMD_COLMOD,
+                                                  (uint8_t[]){
+                                                      ili9881c->colmod_val,
+                                                  },
+                                                  1),
+                        TAG, "send command failed");
 
     // Vendor-specific initialization / 厂商专用初始化
     if (ili9881c->init_cmds) {
-        init_cmds = ili9881c->init_cmds;
+        init_cmds      = ili9881c->init_cmds;
         init_cmds_size = ili9881c->init_cmds_size;
     } else {
-        init_cmds = vendor_specific_init_default;
+        init_cmds      = vendor_specific_init_default;
         init_cmds_size = sizeof(vendor_specific_init_default) / sizeof(ili9881c_lcd_init_cmd_t);
     }
 
@@ -396,21 +402,22 @@ static esp_err_t panel_ili9881c_init(esp_lcd_panel_t *panel)
     for (int i = 0; i < init_cmds_size; i++) {
         if (init_cmds[i].data_bytes > 0) {
             switch (init_cmds[i].cmd) {
-            case LCD_CMD_MADCTL:
-                is_cmd_overwritten = true;
-                ili9881c->madctl_val = ((uint8_t *)init_cmds[i].data)[0];
-                break;
-            case LCD_CMD_COLMOD:
-                is_cmd_overwritten = true;
-                ili9881c->colmod_val = ((uint8_t *)init_cmds[i].data)[0];
-                break;
-            default:
-                is_cmd_overwritten = false;
-                break;
+                case LCD_CMD_MADCTL:
+                    is_cmd_overwritten   = true;
+                    ili9881c->madctl_val = ((uint8_t *)init_cmds[i].data)[0];
+                    break;
+                case LCD_CMD_COLMOD:
+                    is_cmd_overwritten   = true;
+                    ili9881c->colmod_val = ((uint8_t *)init_cmds[i].data)[0];
+                    break;
+                default:
+                    is_cmd_overwritten = false;
+                    break;
             }
             if (is_cmd_overwritten) {
                 is_cmd_overwritten = false;
-                ESP_LOGW(TAG, "The %02Xh command has been used and will be overwritten by external initialization sequence",
+                ESP_LOGW(TAG,
+                         "The %02Xh command has been used and will be overwritten by external initialization sequence",
                          init_cmds[i].cmd);
             }
         }
@@ -427,7 +434,7 @@ static esp_err_t panel_ili9881c_init(esp_lcd_panel_t *panel)
 
 static esp_err_t panel_ili9881c_reset(esp_lcd_panel_t *panel)
 {
-    ili9881c_panel_t *ili9881c = (ili9881c_panel_t *)panel->user_data;
+    ili9881c_panel_t *ili9881c   = (ili9881c_panel_t *)panel->user_data;
     esp_lcd_panel_io_handle_t io = ili9881c->io;
 
     if (ili9881c->reset_gpio_num >= 0) {
@@ -447,7 +454,7 @@ static esp_err_t panel_ili9881c_reset(esp_lcd_panel_t *panel)
 
 static esp_err_t panel_ili9881c_invert_color(esp_lcd_panel_t *panel, bool invert_color_data)
 {
-    ili9881c_panel_t *ili9881c = (ili9881c_panel_t *)panel->user_data;
+    ili9881c_panel_t *ili9881c   = (ili9881c_panel_t *)panel->user_data;
     esp_lcd_panel_io_handle_t io = ili9881c->io;
     ESP_RETURN_ON_FALSE(io, ESP_ERR_INVALID_STATE, TAG, "invalid panel IO");
 
@@ -457,12 +464,13 @@ static esp_err_t panel_ili9881c_invert_color(esp_lcd_panel_t *panel, bool invert
 
 static esp_err_t panel_ili9881c_mirror(esp_lcd_panel_t *panel, bool mirror_x, bool mirror_y)
 {
-    ili9881c_panel_t *ili9881c = (ili9881c_panel_t *)panel->user_data;
+    ili9881c_panel_t *ili9881c   = (ili9881c_panel_t *)panel->user_data;
     esp_lcd_panel_io_handle_t io = ili9881c->io;
     ESP_RETURN_ON_FALSE(io, ESP_ERR_INVALID_STATE, TAG, "invalid panel IO");
 
     // Switch to CMD_Page 0 / 切换到命令页 0
-    ESP_RETURN_ON_ERROR(esp_lcd_panel_io_tx_param(io, 0xFF, (uint8_t[]){0x98, 0x81, 0x00}, 3), TAG, "send command failed");
+    ESP_RETURN_ON_ERROR(esp_lcd_panel_io_tx_param(io, 0xFF, (uint8_t[]){0x98, 0x81, 0x00}, 3), TAG,
+                        "send command failed");
 
     if (mirror_x) {
         ili9881c->madctl_val |= ILI9881C_CMD_SS_BIT;
@@ -474,9 +482,11 @@ static esp_err_t panel_ili9881c_mirror(esp_lcd_panel_t *panel, bool mirror_x, bo
     } else {
         ili9881c->madctl_val &= ~ILI9881C_CMD_GS_BIT;
     }
-    return esp_lcd_panel_io_tx_param(io, LCD_CMD_MADCTL, (uint8_t[]) {
-        ili9881c->madctl_val,
-    }, 1);
+    return esp_lcd_panel_io_tx_param(io, LCD_CMD_MADCTL,
+                                     (uint8_t[]){
+                                         ili9881c->madctl_val,
+                                     },
+                                     1);
 }
 
 static esp_err_t panel_ili9881c_swap_xy(esp_lcd_panel_t *panel, bool swap_xy)
@@ -486,7 +496,7 @@ static esp_err_t panel_ili9881c_swap_xy(esp_lcd_panel_t *panel, bool swap_xy)
 
 static esp_err_t panel_ili9881c_disp_on_off(esp_lcd_panel_t *panel, bool on_off)
 {
-    ili9881c_panel_t *ili9881c = (ili9881c_panel_t *)panel->user_data;
+    ili9881c_panel_t *ili9881c   = (ili9881c_panel_t *)panel->user_data;
     esp_lcd_panel_io_handle_t io = ili9881c->io;
     ESP_RETURN_ON_FALSE(io, ESP_ERR_INVALID_STATE, TAG, "invalid panel IO");
 
@@ -501,7 +511,7 @@ static esp_err_t panel_ili9881c_disp_on_off(esp_lcd_panel_t *panel, bool on_off)
 
 static esp_err_t panel_ili9881c_sleep(esp_lcd_panel_t *panel, bool sleep)
 {
-    ili9881c_panel_t *ili9881c = (ili9881c_panel_t *)panel->user_data;
+    ili9881c_panel_t *ili9881c   = (ili9881c_panel_t *)panel->user_data;
     esp_lcd_panel_io_handle_t io = ili9881c->io;
     ESP_RETURN_ON_FALSE(io, ESP_ERR_INVALID_STATE, TAG, "invalid panel IO");
 
@@ -512,4 +522,4 @@ static esp_err_t panel_ili9881c_sleep(esp_lcd_panel_t *panel, bool sleep)
     return ESP_OK;
 }
 
-#endif // SOC_MIPI_DSI_SUPPORTED
+#endif  // SOC_MIPI_DSI_SUPPORTED
