@@ -8,8 +8,6 @@
 #define UI_PAGE_STRING_H
 
 #include "ui_page_base.h"
-#include <deque>
-#include <string>
 
 #ifdef __cplusplus
 
@@ -46,7 +44,6 @@ public:
     void appendLog(uint8_t modifier, const char* fmt, ...);
 
 private:
-    std::deque<std::string> m_log_lines;  ///< 日志行缓存 (FIFO)
     static const size_t MAX_LOG_LINES = 16;
 
     lv_obj_t* m_textarea;  ///< 文本输入区域

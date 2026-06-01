@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-﻿#ifndef UI_PAGE_FACTORY_H
+#ifndef UI_PAGE_FACTORY_H
 #define UI_PAGE_FACTORY_H
 
 #include "ui_page_base.h"

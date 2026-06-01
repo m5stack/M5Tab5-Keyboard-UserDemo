@@ -16,6 +16,41 @@ LV_FONT_DECLARE(lv_font_montserrat_24);
 
 static const char* TAG = "StringPage";
 
+namespace {
+
+void sanitizeLogText(char* dst, size_t dst_size, const char* src)
+{
+    if (!dst || dst_size == 0) {
+        return;
+    }
+
+    size_t out = 0;
+    if (src) {
+        for (const char* p = src; *p && out + 1 < dst_size; ++p) {
+            const unsigned char ch = static_cast<unsigned char>(*p);
+            dst[out++]            = (ch == '\r' || ch == '\n') ? ' ' : static_cast<char>(ch);
+        }
+    }
+    dst[out] = '\0';
+}
+
+void appendLogLabel(lv_obj_t* parent, const char* text, uint32_t color, size_t max_lines)
+{
+    lv_obj_t* label = lv_label_create(parent);
+    lv_label_set_text(label, text ? text : "");
+    lv_label_set_long_mode(label, LV_LABEL_LONG_WRAP);
+    lv_obj_set_width(label, lv_pct(100));
+    lv_obj_set_style_text_font(label, &lv_font_montserrat_16, 0);
+    lv_obj_set_style_text_color(label, lv_color_hex(color), 0);
+
+    while (lv_obj_get_child_count(parent) > max_lines) {
+        lv_obj_delete(lv_obj_get_child(parent, 0));
+    }
+    lv_obj_scroll_to_view(label, LV_ANIM_OFF);
+}
+
+}  // namespace
+
 StringPage::StringPage() : BasePage("String"), m_textarea(nullptr), m_log_ta(nullptr)
 {
 }
@@ -66,23 +101,15 @@ void StringPage::onCreate()
     // lv_label_set_recolor(ta_label, true);
 
     // 2. 创建日志显示区域（下方，只读）
-    m_log_ta = lv_textarea_create(m_container);
+    m_log_ta = lv_obj_create(m_container);
     lv_obj_set_size(m_log_ta, lv_pct(95), lv_pct(50));
     lv_obj_align_to(m_log_ta, m_textarea, LV_ALIGN_OUT_BOTTOM_MID, 0, 20);  // 位于输入框下方 20px
 
     // 设置为只读、不可选中、不可点击光标
-    lv_textarea_set_cursor_click_pos(m_log_ta, false);
-    // lv_textarea_set_editable(m_log_ta, false); // LVGL does not have this, we control it by flags
-    lv_obj_clear_flag(m_log_ta, LV_OBJ_FLAG_CLICKABLE);  // 禁止点击
-
-    // 启用多色支持 (通过Label)
-    lv_obj_t* label = lv_textarea_get_label(m_log_ta);
-    lv_label_set_recolor(label, true);
-
-    // 样式设置
-    lv_textarea_set_placeholder_text(m_log_ta, "Log buffer...");
-    lv_obj_set_style_text_font(m_log_ta, &lv_font_montserrat_16, 0);
-    // 默认文字颜色设为白色，具体颜色由recolor控制
+    lv_obj_set_flex_flow(m_log_ta, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_scrollbar_mode(m_log_ta, LV_SCROLLBAR_MODE_AUTO);
+    lv_obj_set_style_pad_all(m_log_ta, 8, 0);
+    lv_obj_set_style_pad_row(m_log_ta, 2, 0);
     lv_obj_set_style_text_color(m_log_ta, lv_color_hex(0xFFFFFF), 0);
     lv_obj_set_style_bg_color(m_log_ta, lv_color_hex(0x101010), 0);  // 深色背景
 
@@ -105,19 +132,6 @@ void StringPage::onHide()
 {
     BasePage::onHide();
     ESP_LOGI(TAG, "String page hidden");
-}
-
-static std::string escape_hash(const char* input)
-{
-    if (!input) return "";
-    std::string s = input;
-    size_t pos    = 0;
-    while ((pos = s.find('#', pos)) != std::string::npos) {
-        // 使用 \# 转义井号，LVGL recolor 模式支持此写法
-        s.replace(pos, 1, "\\#");
-        pos += 2;
-    }
-    return s;
 }
 
 void StringPage::handleStringInput(const char* str_data, uint8_t str_len, uint8_t modifier)
@@ -173,44 +187,26 @@ void StringPage::appendLog(uint8_t modifier, const char* fmt, ...)
     vsnprintf(msg_buf, sizeof(msg_buf), fmt, args);
     va_end(args);
 
-    // 移除原有换行符
-    size_t len = strlen(msg_buf);
-    if (len > 0 && msg_buf[len - 1] == '\n') msg_buf[len - 1] = '\0';
+    char safe_msg[192];
+    sanitizeLogText(safe_msg, sizeof(safe_msg), msg_buf);
 
-    // 1. 转义消息中的井号
-    std::string esc_msg = escape_hash(msg_buf);
-
-    // 2. 决定颜色 (#RRGGBB)
+    // 1. 决定颜色 (RRGGBB，不带 #)
     // 0:黄色, 1:深蓝色, 4:深灰色, 5:深蓝色, 其他:白色
-    const char* color_hex = "#FFFFFF";
+    uint32_t color = 0xFFFFFF;
     if (modifier == 0)
-        color_hex = "#FFFF00";  // Yellow
+        color = 0xFFFF00;  // Yellow
     else if (modifier == 1)
-        color_hex = "#4169E1";  // RoyalBlue
+        color = 0x4169E1;  // RoyalBlue
     else if (modifier == 4)
-        color_hex = "#A9A9A9";  // DarkGray
+        color = 0xA9A9A9;  // DarkGray
     else if (modifier == 5)
-        color_hex = "#087447";  // DeepBlue
-
-    // 3. 组装带颜色的字符串
-    char final_buf[512];                                                           // 增加buffer防止溢出
-    snprintf(final_buf, sizeof(final_buf), "%s %s#", color_hex, esc_msg.c_str());  // 注意空格
+        color = 0x087447;  // DeepBlue
 
     // FIFO 处理
-    m_log_lines.push_back(std::string(final_buf));
-    while (m_log_lines.size() > MAX_LOG_LINES) {
-        m_log_lines.pop_front();
+    if (lvgl_port_lock(50)) {
+        appendLogLabel(m_log_ta, safe_msg, color, MAX_LOG_LINES);
+        lvgl_port_unlock();
     }
 
     // 重建完整日志文本
-    std::string full_log;
-    for (const auto& line : m_log_lines) {
-        full_log += line;
-        full_log += "\n";
-    }
-
-    if (lvgl_port_lock(50)) {
-        lv_textarea_set_text(m_log_ta, full_log.c_str());
-        lvgl_port_unlock();
-    }
 }

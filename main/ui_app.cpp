@@ -741,7 +741,6 @@ esp_err_t lvgl_ui_create(void* kb_handle, int menu_scope_mask)
 
     // Create background event processing task
     BaseType_t ret = xTaskCreatePinnedToCore(kb_event_task, "kb_event", 4096, NULL, 7, &kb_event_task_handle, 1);
-    );
     if (ret != pdPASS) {
         ESP_LOGE(TAG, "Failed to create keyboard event task");
         vQueueDelete(kb_rgb_queue);
@@ -866,7 +865,6 @@ esp_err_t lvgl_ui_create(void* kb_handle, int menu_scope_mask)
     // Create hotplug monitor task
     BaseType_t hp_ret =
         xTaskCreatePinnedToCore(kb_hotplug_monitor_task, "kb_hotplug", 3072, NULL, 3, &kb_hotplug_task_handle, 0);
-    );
     if (hp_ret != pdPASS) {
         ESP_LOGE(TAG, "Failed to create keyboard hotplug monitor task");
     } else {

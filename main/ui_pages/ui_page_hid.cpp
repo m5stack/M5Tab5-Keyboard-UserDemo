@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
- "ui_page_hid.h"
+#include "ui_page_hid.h"
 #include "ui_page_manager.h"
 #include "m5_tab5_keyboard.h"
 #include "lvgl_port.h"
@@ -16,6 +16,41 @@
 LV_FONT_DECLARE(lv_font_montserrat_16);
 
 static const char* TAG = "HIDPage";
+
+namespace {
+
+void sanitizeLogText(char* dst, size_t dst_size, const char* src)
+{
+    if (!dst || dst_size == 0) {
+        return;
+    }
+
+    size_t out = 0;
+    if (src) {
+        for (const char* p = src; *p && out + 1 < dst_size; ++p) {
+            const unsigned char ch = static_cast<unsigned char>(*p);
+            dst[out++]            = (ch == '\r' || ch == '\n') ? ' ' : static_cast<char>(ch);
+        }
+    }
+    dst[out] = '\0';
+}
+
+void appendLogLabel(lv_obj_t* parent, const char* text, uint32_t color, size_t max_lines)
+{
+    lv_obj_t* label = lv_label_create(parent);
+    lv_label_set_text(label, text ? text : "");
+    lv_label_set_long_mode(label, LV_LABEL_LONG_WRAP);
+    lv_obj_set_width(label, lv_pct(100));
+    lv_obj_set_style_text_font(label, &lv_font_montserrat_16, 0);
+    lv_obj_set_style_text_color(label, lv_color_hex(color), 0);
+
+    while (lv_obj_get_child_count(parent) > max_lines) {
+        lv_obj_delete(lv_obj_get_child(parent, 0));
+    }
+    lv_obj_scroll_to_view(label, LV_ANIM_OFF);
+}
+
+}  // namespace
 
 HIDPage* HIDPage::s_instance = nullptr;
 
@@ -114,25 +149,23 @@ void HIDPage::onCreate()
 
     // 日志文本框 (完全仿照 ui_page_string 的位置和大小)
     // String 模式 Size(95%, 50%). Align to Textarea(Top:100, H:25%) -> Top log roughly at 50% screen height
-    m_ta_log = lv_textarea_create(m_container);
+    m_ta_log = lv_obj_create(m_container);
     lv_obj_set_size(m_ta_log, lv_pct(95), lv_pct(50));
     // 修改对齐方式：跟随上方控件，而不是强制到底部
     // 这样在高分辨率屏幕上，底部会留出空间给 info_label，防止重叠
     lv_obj_align_to(m_ta_log, m_ctrl_container, LV_ALIGN_OUT_BOTTOM_MID, 0, 20);
 
     // 设置只读
-    lv_obj_clear_flag(m_ta_log, LV_OBJ_FLAG_CLICKABLE);
-    lv_textarea_set_cursor_click_pos(m_ta_log, false);
+    lv_obj_set_flex_flow(m_ta_log, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_scrollbar_mode(m_ta_log, LV_SCROLLBAR_MODE_AUTO);
+    lv_obj_set_style_pad_all(m_ta_log, 8, 0);
+    lv_obj_set_style_pad_row(m_ta_log, 2, 0);
 
     // 样式设置
-    lv_textarea_set_placeholder_text(m_ta_log, "USB HID Log...");
-    lv_obj_set_style_text_font(m_ta_log, &lv_font_montserrat_16, 0);
     lv_obj_set_style_bg_color(m_ta_log, lv_color_hex(0x101010), 0);
     lv_obj_set_style_text_color(m_ta_log, lv_color_hex(0xFFFFFF), 0);
 
     // 启用多色支持
-    lv_obj_t* label = lv_textarea_get_label(m_ta_log);
-    lv_label_set_recolor(label, true);
 
     // 底部说明标签 (仿照 ui_page_string)
     lv_obj_t* info_label = lv_label_create(m_container);
@@ -281,15 +314,13 @@ void HIDPage::appendLog(const char* msg, uint32_t color)
 
     lvgl_port_lock(0);
 
-    char color_hex[8];
-    snprintf(color_hex, sizeof(color_hex), "#%06lX", (unsigned long)(color & 0xFFFFFF));
+    char safe_msg[192];
+    sanitizeLogText(safe_msg, sizeof(safe_msg), msg);
 
-    // 使用 LVGL recolor 格式: #RRGGBB text#
     char formatted_msg[256];
-    // 使用 > 作为前缀，保持简约
-    snprintf(formatted_msg, sizeof(formatted_msg), "%s > %s#\n", color_hex, msg);
+    snprintf(formatted_msg, sizeof(formatted_msg), "> %s", safe_msg);
 
-    lv_textarea_add_text(m_ta_log, formatted_msg);
+    appendLogLabel(m_ta_log, formatted_msg, color & 0xFFFFFF, 64);
     lvgl_port_unlock();
 }
 

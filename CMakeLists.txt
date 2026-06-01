@@ -4,3 +4,4 @@ cmake_minimum_required(VERSION 3.16)
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(p259_tab5_keyboard_internal_firmware_test_idf551)
+
