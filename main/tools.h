@@ -7,6 +7,14 @@
 #ifndef TOOLS_H
 #define TOOLS_H
 
+#include <esp_err.h>
+
+#ifdef __cplusplus
+namespace m5::tab5 {
+class m5tab5_component;
+}
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -21,6 +29,8 @@ void run_keyboard_i2c_address_test(void);
 
 #ifdef __cplusplus
 }
+
+esp_err_t start_battery_charge_monitor(m5::tab5::m5tab5_component* board);
 #endif
 
 #endif  // TOOLS_H

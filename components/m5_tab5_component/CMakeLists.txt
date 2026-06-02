@@ -17,6 +17,7 @@ set(m5_tab5_component_srcs
     "src/drivers/touch_gt911/esp_lcd_touch_gt911.c"
     "src/drivers/extio_pi4ioe5v6408/m5tab5_extio_pi4ioe5v6408.cpp"
     "src/drivers/rtc_rx8130/m5tab5_rtc_rx8130.cpp"
+    "src/drivers/ina226/m5tab5_ina226.cpp"
     "src/variants/m5tab5_variant_registry.cpp"
     "src/variants/m5tab5_variant_reference.cpp"
     "src/variants/m5tab5_variant_autodetect.cpp"

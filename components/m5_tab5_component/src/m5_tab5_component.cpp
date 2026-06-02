@@ -303,6 +303,21 @@ esp_err_t m5tab5_component::set_charge_fast(bool fast)
     return ret;
 }
 
+esp_err_t m5tab5_component::charge_enable(bool enable)
+{
+    static const char* TAG = "m5tab5.chg";
+
+    if (runtime_.ioexpander_high_handle == nullptr) {
+        ESP_LOGE(TAG, "ioexpander_high_handle not available -- call begin() first");
+        return ESP_ERR_INVALID_STATE;
+    }
+    auto* dev = static_cast<m5tab5_extio_pi4ioe5v6408_t*>(runtime_.ioexpander_high_handle);
+    esp_err_t ret = m5tab5_extio_pi4ioe5v6408_write_pin(
+        dev, static_cast<M5TAB5_ExtIo_PI4IOE5V6408_Pin>(M5TAB5_EXTIO_ADDR_HIGH_CHG_EN), enable);
+    if (ret == ESP_OK) ESP_LOGI(TAG, "CHG_EN -> %s", enable ? "ENABLED" : "DISABLED");
+    return ret;
+}
+
 esp_err_t m5tab5_component::set_rf_antenna(m5tab5_rf_antenna_t ant)
 {
     if (runtime_.ioexpander_handle == nullptr) return ESP_ERR_INVALID_STATE;

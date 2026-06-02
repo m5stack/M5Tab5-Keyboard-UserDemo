@@ -71,6 +71,12 @@ public:
     /// 必须?begin() 成功后调用?
     esp_err_t set_charge_fast(bool fast);
 
+    /// Enable or disable charging via the IO expander (ADDR_HIGH 0x44 P7 = CHG_EN).
+    /// 通过 IO 扩展器（ADDR_HIGH 0x44 P7 = CHG_EN）启用或禁用充电。
+    /// Must be called after begin() succeeds.
+    /// 必须在 begin() 成功后调用。
+    esp_err_t charge_enable(bool enable);
+
     // ── RX8130 RTC / RX8130 实时时钟 ─────────────────────────────────────────
 
     /// Initialize the built-in RX8130 RTC on the SYS I2C bus.

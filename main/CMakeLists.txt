@@ -1,4 +1,4 @@
-set(FIRMWARE_VERSION "V1")
+set(FIRMWARE_VERSION "1.0.2-dev")
 string(TIMESTAMP FIRMWARE_BUILD_TIME "%Y%m%d_%H%M%S")
 
 idf_component_register(SRCS "tools.cpp" "main.cpp"

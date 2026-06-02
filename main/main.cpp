@@ -5,16 +5,18 @@
  */
 
 #include <stdio.h>
-#include <inttypes.h>
 #include <esp_log.h>
 #include <esp_err.h>
 
 #include "lcd_tools.h"
+#include "tools.h"
 #include "ui_app.h"
 #include "app_build_info.h"
 #include "m5_tab5_component.h"
 #include "m5_tab5_keyboard.h"
 #include "lvgl_port.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 static const char* TAG = "main";
 
@@ -84,6 +86,12 @@ extern "C" void app_main(void)
         return;
     }
     ESP_LOGI(TAG, "UI created successfully");
+
+    ret = start_battery_charge_monitor(&s_tab5_board);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to start battery charge monitor: %s", esp_err_to_name(ret));
+        return;
+    }
 
     ESP_LOGI(TAG, "Entering main loop...");
     while (1) {

@@ -6,12 +6,20 @@
 
 #include "tools.h"
 #include <stdio.h>
+#include <inttypes.h>
 #include <esp_log.h>
 #include <esp_err.h>
+#include "m5_tab5_component.h"
 #include "m5_tab5_keyboard.h"
 #include <i2c_bus.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 static const char* TOOLS_TAG = "tools";
+static const char* CHARGE_MONITOR_TAG = "charge_monitor";
+
+// Configurable voltage threshold in mV to enable charging (e.g. 6000 mV = 6.0 V)
+static uint32_t s_charge_voltage_threshold_mv = 6000;
 
 // I2C test configuration
 static constexpr i2c_port_t KB_TEST_I2C_PORT = I2C_NUM_1;
@@ -23,6 +31,81 @@ static constexpr int16_t KB_I2C_TEST_START_ADDR =
 
 // Keyboard driver instance
 static m5::M5Tab5Keyboard device_kb;
+
+static void battery_charge_monitor_task(void* pvParameters)
+{
+    auto* board = static_cast<m5::tab5::m5tab5_component*>(pvParameters);
+    if (board == nullptr) {
+        ESP_LOGE(CHARGE_MONITOR_TAG, "Invalid board handle");
+        vTaskDelete(NULL);
+        return;
+    }
+
+    esp_err_t ret = board->ina226_init();
+    if (ret != ESP_OK) {
+        ESP_LOGE(CHARGE_MONITOR_TAG, "Failed to initialize INA226: %s", esp_err_to_name(ret));
+        vTaskDelete(NULL);
+        return;
+    }
+
+    ESP_LOGI(CHARGE_MONITOR_TAG, "INA226 initialized. Monitoring started with threshold %" PRIu32 " mV",
+             s_charge_voltage_threshold_mv);
+
+    ret = board->charge_enable(false);
+    if (ret != ESP_OK) {
+        ESP_LOGE(CHARGE_MONITOR_TAG, "Failed to disable charging initially: %s", esp_err_to_name(ret));
+    } else {
+        ESP_LOGI(CHARGE_MONITOR_TAG, "Charging disabled by default");
+    }
+
+    m5::tab5::m5tab5_component::ina226_reading_t reading;
+    bool charging_status = false;
+
+    while (true) {
+        vTaskDelay(pdMS_TO_TICKS(5000));
+
+        ret = board->ina226_read(&reading);
+        if (ret == ESP_OK) {
+            float voltage_mv = reading.bus_voltage_v * 1000.0f;
+            ESP_LOGI(CHARGE_MONITOR_TAG, "Bus Voltage: %.2f mV, Current: %.4f A, Power: %.4f W", voltage_mv,
+                     reading.current_a, reading.power_w);
+
+            if (voltage_mv > s_charge_voltage_threshold_mv) {
+                if (!charging_status) {
+                    ESP_LOGI(CHARGE_MONITOR_TAG, "Voltage %.2f mV > %" PRIu32 " mV, enabling charge", voltage_mv,
+                             s_charge_voltage_threshold_mv);
+                    board->charge_enable(true);
+                    charging_status = true;
+                }
+            } else {
+                if (charging_status) {
+                    ESP_LOGI(CHARGE_MONITOR_TAG, "Voltage %.2f mV <= %" PRIu32 " mV, disabling charge", voltage_mv,
+                             s_charge_voltage_threshold_mv);
+                    board->charge_enable(false);
+                    charging_status = false;
+                }
+            }
+        } else {
+            ESP_LOGE(CHARGE_MONITOR_TAG, "Failed to read INA226: %s", esp_err_to_name(ret));
+        }
+    }
+}
+
+esp_err_t start_battery_charge_monitor(m5::tab5::m5tab5_component* board)
+{
+    if (board == nullptr) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    BaseType_t result =
+        xTaskCreatePinnedToCore(battery_charge_monitor_task, "charge_monitor", 4096, board, 5, NULL, 1);
+    if (result != pdPASS) {
+        ESP_LOGE(CHARGE_MONITOR_TAG, "Failed to create charge monitor task");
+        return ESP_FAIL;
+    }
+
+    return ESP_OK;
+}
 
 static i2c_bus_handle_t create_kb_test_i2c_bus()
 {
