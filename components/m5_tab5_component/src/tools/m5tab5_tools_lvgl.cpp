@@ -92,7 +92,8 @@ esp_err_t m5tab5_lvgl_init(const m5tab5_runtime_t& runtime, lv_display_t** lv_di
         }
     }
 
-    ESP_LOGI(TAG, "LVGL initialized: %ux%u, touch=%s", LCD_W, LCD_H, *lv_touch_indev ? "yes" : "no");
+    ESP_LOGI(TAG, "LVGL initialized: %ux%u, touch=%s", (unsigned)LCD_W, (unsigned)LCD_H,
+             *lv_touch_indev ? "yes" : "no");
     return ESP_OK;
 }
 
